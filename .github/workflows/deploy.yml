@@ -15,31 +15,25 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # 1. Entrar na pasta do projeto ou criar se não existir
+            # 1. Entrar na pasta do projeto
             mkdir -p ~/Marketplace-Tech
             cd ~/Marketplace-Tech
             
-            # 2. Verificar se a pasta já é um repositório Git
+            # 2. Sincronizar com o commit atual
             if [ ! -d ".git" ]; then
-              echo "Limpando pasta para clone inicial (incluindo arquivos ocultos)..."
-              # Remove tudo, incluindo arquivos que começam com ponto, para o clone não falhar
+              echo "Repositório não encontrado localmente. Clonando..."
               find . -mindepth 1 -delete
               git clone https://github.com/WilmarFilho/Marketplace-Tech.git .
             else
-              echo "Repositório detectado. Sincronizando com a Main..."
+              echo "Sincronizando repositório existente..."
               git fetch origin main
               git reset --hard origin/main
             fi
 
-            # 3. Executar o Docker Compose
-            # O script testa se o comando é 'docker compose' (v2) ou 'docker-compose' (v1)
-            if docker compose version > /dev/null 2>&1; then
-              echo "Usando Docker Compose V2"
-              docker compose up -d --build
-            else
-              echo "Usando Docker Compose V1"
-              docker-compose up -d --build
-            fi
+            # 3. Docker Compose (Sempre com hífen conforme solicitado)
+            # Nota: Certifique-se de ter o Alias ou a versão V1 instalada na VPS
+            docker-compose down
+            docker-compose up -d --build
 
-            # 4. Limpeza opcional de imagens antigas para não encher o disco da VPS
+            # 4. Limpeza de imagens antigas para poupar espaço
             docker image prune -f
