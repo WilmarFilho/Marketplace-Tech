@@ -15,17 +15,18 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Garante que a pasta existe
-            mkdir -p ~/Marketplace-Tech
             cd ~/Marketplace-Tech
             
-            # Inicializa o git se não houver, ou clona
+            # Se não houver a pasta .git, limpa e clona do zero
             if [ ! -d ".git" ]; then
+              echo "Pasta vazia ou sem git. Clonando..."
+              rm -rf *
               git clone https://github.com/WilmarFilho/Marketplace-Tech.git .
+            else
+              echo "Pasta já é um repositório. Atualizando..."
+              git fetch origin main
+              git reset --hard origin/main
             fi
-            
-            # Puxa as alterações ignorando erros de histórico não relacionado
-            git pull origin main --rebase
-            
-            # Sobe o sistema
+
+            # Comando do Docker corrigido (usando compose)
             docker compose up -d --build
