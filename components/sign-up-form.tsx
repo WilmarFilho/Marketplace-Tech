@@ -20,9 +20,11 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [role, setRole] = useState<"comprador" | "vendedor">("comprador");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -45,6 +47,10 @@ export function SignUpForm({
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/protected`,
+          data: {
+            full_name: nome,
+            role: role,
+          },
         },
       });
       if (error) throw error;
@@ -60,18 +66,50 @@ export function SignUpForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <CardTitle className="text-2xl">Se cadastre</CardTitle>
+          <CardDescription>Crie uma nova conta</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
+                <Label>Eu quero:</Label>
+                <div className="flex gap-2 p-1 bg-muted rounded-lg border">
+                  <Button
+                    type="button"
+                    variant={role === "comprador" ? "default" : "ghost"}
+                    className="flex-1"
+                    onClick={() => setRole("comprador")}
+                  >
+                    Comprar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={role === "vendedor" ? "default" : "ghost"}
+                    className="flex-1"
+                    onClick={() => setRole("vendedor")}
+                  >
+                    Vender
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Nome Completo</Label>
+                <Input
+                  id="nome"
+                  type="text"
+                  placeholder="João da Silva Alves"
+                  required
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="seumelhoremail@hotmail.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -79,7 +117,7 @@ export function SignUpForm({
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Senha</Label>
                 </div>
                 <Input
                   id="password"
@@ -91,7 +129,7 @@ export function SignUpForm({
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
+                  <Label htmlFor="repeat-password">Repita a Senha</Label>
                 </div>
                 <Input
                   id="repeat-password"
@@ -103,13 +141,13 @@ export function SignUpForm({
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating an account..." : "Sign up"}
+                {isLoading ? "Criando..." : "Cadastrar"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
+              Já tem uma conta?{" "}
               <Link href="/auth/login" className="underline underline-offset-4">
-                Login
+                Entrar
               </Link>
             </div>
           </form>
