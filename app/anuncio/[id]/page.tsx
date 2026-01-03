@@ -6,8 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 
-export const dynamic = "force-dynamic";
-
 // 1. Componente que lida com a busca de dados (Dinâmico)
 async function ProductContent({ id }: { id: string }) {
   const supabase = await createClient();
