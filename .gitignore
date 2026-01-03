@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# Chaves SSH (Segurança Crítica)
+chave_sem_senha
+chave_sem_senha.pub
