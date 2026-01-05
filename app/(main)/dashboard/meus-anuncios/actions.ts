@@ -57,3 +57,18 @@ export async function updateAd(productId: string, formData: FormData) {
 
   revalidatePath("/dashboard/meus-anuncios");
 }
+
+export async function getMyAds() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data: products } = await supabase
+    .from("products")
+    .select("*")
+    .eq("seller_id", user.id)
+    .order("created_at", { ascending: false });
+
+  return products || [];
+}

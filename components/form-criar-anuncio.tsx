@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createAd } from "@/app/(main)/dashboard/anunciar/actions";
 
-export function CreateAdForm() {
+export function FormCriarAnuncio() {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");

@@ -1,23 +1,16 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { getDashboardData } from "./actions";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const { user, profile } = await getDashboardData();
 
   if (!user) {
     redirect("/auth/login");
   }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
 
   const isSeller = profile?.role === 'vendedor' || profile?.role === 'admin';
 
@@ -98,7 +91,7 @@ export default async function DashboardPage() {
                 <Card className="hover:bg-muted/50 transition-colors border-red-200 dark:border-red-900 flex flex-col justify-between">
                     <CardHeader>
                         <CardTitle>Moderação</CardTitle>
-                        <CardDescription>Gerenciar anúncios pendentes</CardDescription>
+                        <CardDescription>Gerenciar anúncios e usuários</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <Button asChild className="w-full" variant="destructive">
@@ -106,8 +99,7 @@ export default async function DashboardPage() {
                         </Button>
                     </CardContent>
                 </Card>
-            )}
-
+             )}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreateAdForm } from "@/components/create-ad-form";
+import { FormCriarAnuncio } from "@/components/form-criar-anuncio";
 
 export default async function AnunciarPage() {
   const supabase = await createClient();
@@ -18,7 +18,7 @@ export default async function AnunciarPage() {
           <CardTitle className="text-2xl">Criar Novo Anúncio</CardTitle>
         </CardHeader>
         <CardContent>
-          <CreateAdForm />
+          <FormCriarAnuncio />
         </CardContent>
       </Card>
     </div>

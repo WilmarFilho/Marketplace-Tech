@@ -1,47 +1,22 @@
 import { Suspense } from "react";
-import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { FavoriteButton } from "@/components/favorite-button";
+import { BotaoFavoritar } from "@/components/botao-favoritar";
+import { getProductDetails } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-// 1. Componente que lida com a busca de dados (Dinâmico)
 async function ProductContent({ id }: { id: string }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const data = await getProductDetails(id);
 
-  const { data: product } = await supabase
-    .from("products")
-    .select(`
-      *,
-      seller:seller_id (
-        full_name,
-        phone
-      )
-    `)
-    .eq("id", id)
-    .single();
-
-  if (!product) {
+  if (!data || !data.product) {
     return notFound();
   }
 
-  let isFavorite = false;
-  if (user) {
-    const { data: favorite } = await supabase
-      .from("favorites")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("product_id", id)
-      .single();
-    
-    isFavorite = !!favorite;
-  }
-
+  const { product, isFavorite, currentUserId } = data;
   const seller = product.seller as unknown as { full_name: string | null; phone: string | null } | null;
 
   return (
@@ -76,7 +51,7 @@ async function ProductContent({ id }: { id: string }) {
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}
             </p>
           </div>
-          {user && <FavoriteButton productId={product.id} initialIsFavorite={isFavorite} />}
+          {currentUserId && <BotaoFavoritar productId={product.id} initialIsFavorite={isFavorite} />}
         </div>
 
         <Card>
@@ -113,14 +88,13 @@ async function ProductContent({ id }: { id: string }) {
   );
 }
 
-// 2. Página Principal (Resolvendo o erro de build)
 export default async function AnuncioPage({ params }: { params: Promise<{ id: string }> }) {
-  // O await params é obrigatório no Next.js 15+
+
   const { id } = await params;
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* O Suspense isola a rota dinâmica e permite o build passar */}
+      
       <Suspense fallback={<div className="text-center py-20">Carregando detalhes do produto...</div>}>
         <ProductContent id={id} />
       </Suspense>

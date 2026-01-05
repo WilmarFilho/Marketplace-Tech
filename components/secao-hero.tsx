@@ -1,4 +1,4 @@
-export function Hero() {
+export function SecaoHero() {
   return (
     <div className="flex flex-col items-center justify-center py-60 text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
       <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">

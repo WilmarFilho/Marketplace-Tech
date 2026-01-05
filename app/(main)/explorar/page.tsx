@@ -1,17 +1,12 @@
-import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
+import { getProducts } from "./actions";
 
 async function ProductGrid() {
-  const supabase = await createClient();
-  
-  const { data: products } = await supabase
-    .from("products")
-    .select("*")
-    .eq("status", "aprovado");
+  const products = await getProducts();
 
   if (!products || products.length === 0) {
     return (

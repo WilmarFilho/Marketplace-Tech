@@ -36,3 +36,36 @@ export async function toggleFavorite(productId: string) {
   revalidatePath(`/anuncio/${productId}`);
   revalidatePath("/dashboard/favoritos");
 }
+
+export async function getProductDetails(id: string) {
+  const supabase = await createClient();
+  const { data: product, error } = await supabase
+    .from("products")
+    .select(`
+      *,
+      seller:seller_id (
+        full_name,
+        avatar_url,
+        phone
+      )
+    `)
+    .eq("id", id)
+    .single();
+
+  if (error) return null;
+
+  const { data: { user } } = await supabase.auth.getUser();
+  let isFavorite = false;
+
+  if (user) {
+    const { data: favorite } = await supabase
+      .from("favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("product_id", id)
+      .single();
+    isFavorite = !!favorite;
+  }
+
+  return { product, isFavorite, currentUserId: user?.id };
+}

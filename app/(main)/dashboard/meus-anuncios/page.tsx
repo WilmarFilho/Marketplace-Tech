@@ -4,8 +4,8 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { DeleteAdButton } from "@/components/delete-ad-button";
-import { EditAdModal } from "@/components/edit-ad-modal";
+import { BotaoExcluirAnuncio } from "@/components/botao-excluir-anuncio";
+import { ModalEditarAnuncio } from "@/components/modal-editar-anuncio";
 
 export default async function MeusAnunciosPage() {
   const supabase = await createClient();
@@ -66,8 +66,8 @@ export default async function MeusAnunciosPage() {
                   {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}
                 </p>
                 <div className="flex gap-2 w-full">
-                  <EditAdModal product={product} />
-                  <DeleteAdButton productId={product.id} />
+                  <ModalEditarAnuncio product={product} />
+                  <BotaoExcluirAnuncio productId={product.id} />
                 </div>
               </CardFooter>
             </Card>

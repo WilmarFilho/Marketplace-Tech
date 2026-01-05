@@ -1,59 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { revalidatePath } from "next/cache";
 import Image from "next/image";
+import { getModerationPageData, approveProduct, rejectProduct } from "./actions";
 
 export default async function ModeracaoPage() {
-  const supabase = await createClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
-
-  // Double check admin role (middleware does it, but good for safety)
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.role !== "admin") {
-    redirect("/");
-  }
-
-  const { data: pendingProducts } = await supabase
-    .from("products")
-    .select("*")
-    .eq("status", "pendente");
-
-  async function approveProduct(formData: FormData) {
-    "use server";
-    const productId = formData.get("productId") as string;
-    const supabase = await createClient();
-    
-    await supabase
-      .from("products")
-      .update({ status: "aprovado" })
-      .eq("id", productId);
-      
-    revalidatePath("/admin/moderacao");
-    revalidatePath("/explorar");
-  }
-
-  async function rejectProduct(formData: FormData) {
-    "use server";
-    const productId = formData.get("productId") as string;
-    const supabase = await createClient();
-    
-    await supabase
-      .from("products")
-      .update({ status: "rejeitado" })
-      .eq("id", productId);
-      
-    revalidatePath("/admin/moderacao");
-  }
+  const { pendingProducts } = await getModerationPageData();
 
   return (
     <div className="container mx-auto py-8 px-4">

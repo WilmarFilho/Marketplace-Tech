@@ -11,7 +11,7 @@ interface FavoriteButtonProps {
   initialIsFavorite: boolean;
 }
 
-export function FavoriteButton({ productId, initialIsFavorite }: FavoriteButtonProps) {
+export function BotaoFavoritar({ productId, initialIsFavorite }: FavoriteButtonProps) {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isLoading, setIsLoading] = useState(false);
 

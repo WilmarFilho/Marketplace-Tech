@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { LogoutButton } from "./logout-button";
+import { BotaoSair } from "./botao-sair";
 
-export default async function Header() {
+export default async function Cabecalho() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -33,7 +33,7 @@ export default async function Header() {
                                 <Link href="/dashboard">Minha conta</Link>
                             </Button>
 
-                            <LogoutButton />
+                            <BotaoSair />
                         </>
                     ) : (
                         <div className="flex items-center gap-2">

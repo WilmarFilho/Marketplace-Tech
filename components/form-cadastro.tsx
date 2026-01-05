@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { signUp } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,54 +13,24 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useFormState } from "react-dom";
 
-export function SignUpForm({
+export function FormCadastro({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [full_name, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
   const [role, setRole] = useState<"comprador" | "vendedor">("comprador");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
-
-    if (password !== repeatPassword) {
-      setError("As senhas não coincidem");
-      setIsLoading(false);
-      return;
-    }
-
+  const [isPending, setIsPending] = useState(false);
+  
+  const [state, formAction] = useFormState(async (prevState: { error: string | null }, formData: FormData) => {
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/confirmar`,
-          data: {
-            full_name,
-            role,
-          },
-        },
-      });
-      if (error) throw error;
-      router.push("/auth/cadastro-realizado");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ocorreu um erro");
-    } finally {
-      setIsLoading(false);
+      await signUp(formData);
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
     }
-  };
+  }, { error: null });
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -70,8 +40,9 @@ export function SignUpForm({
           <CardDescription>Crie uma nova conta</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignUp}>
+          <form action={formAction} onSubmit={() => setIsPending(true)}>
             <div className="flex flex-col gap-6">
+              <input type="hidden" name="role" value={role} />
               <div className="grid gap-2">
                 <Label>Eu quero:</Label>
                 <div className="flex gap-2 p-1 bg-muted rounded-lg border">
@@ -97,22 +68,20 @@ export function SignUpForm({
                 <Label htmlFor="email">Nome Completo</Label>
                 <Input
                   id="nome"
+                  name="fullName"
                   type="text"
                   placeholder="João da Silva Alves"
                   required
-                  value={full_name}
-                  onChange={(e) => setFullName(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="seumelhoremail@hotmail.com"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
@@ -121,10 +90,9 @@ export function SignUpForm({
                 </div>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
@@ -133,15 +101,14 @@ export function SignUpForm({
                 </div>
                 <Input
                   id="repeat-password"
+                  name="repeatPassword"
                   type="password"
                   required
-                  value={repeatPassword}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Criando..." : "Cadastrar"}
+              {state.error && <p className="text-sm text-red-500">{state.error}</p>}
+              <Button type="submit" className="w-full" disabled={isPending}>
+                {isPending ? "Criando..." : "Cadastrar"}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">

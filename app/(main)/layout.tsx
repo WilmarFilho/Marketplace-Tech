@@ -1,4 +1,4 @@
-import Header from "@/components/header";
+import Cabecalho from "@/components/cabecalho";
 
 export default function MainLayout({
   children,
@@ -7,7 +7,7 @@ export default function MainLayout({
 }>) {
   return (
     <>
-      <Header />
+      <Cabecalho />
       {children}
     </>
   );

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
-import { LogoutButton } from "./logout-button";
+import { BotaoSair } from "./botao-sair";
 
-export async function AuthButton() {
+export async function BotaoAuth() {
   const supabase = await createClient();
 
   // You can also use getUser() which will be slower.
@@ -14,7 +14,7 @@ export async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       Hey, {user.email}!
-      <LogoutButton />
+      <BotaoSair />
     </div>
   ) : (
     <div className="flex gap-2">

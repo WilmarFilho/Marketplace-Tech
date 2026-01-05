@@ -9,7 +9,7 @@ interface DeleteAdButtonProps {
   productId: string;
 }
 
-export function DeleteAdButton({ productId }: DeleteAdButtonProps) {
+export function BotaoExcluirAnuncio({ productId }: DeleteAdButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async (e: React.MouseEvent) => {

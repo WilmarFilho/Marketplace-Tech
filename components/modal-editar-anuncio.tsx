@@ -21,7 +21,7 @@ interface EditAdModalProps {
   product: Product;
 }
 
-export function EditAdModal({ product }: EditAdModalProps) {
+export function ModalEditarAnuncio({ product }: EditAdModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   

@@ -1,45 +1,16 @@
-import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-interface Product {
-  id: string;
-  title: string;
-  price: number;
-  images_urls: string[];
-  status: string;
-}
-
-interface Favorite {
-  id: string;
-  product: Product[];
-}
+import { getFavorites } from "./actions";
+import type { Favorite } from "@/src/types/products";
 
 export default async function FavoritosPage() {
-  const supabase = await createClient();
+  const favorites = await getFavorites();
   
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    // Middleware should handle this, but safe check
+  if (!favorites) {
     return <div>Acesso negado</div>;
   }
-
-  const { data: favorites } = await supabase
-    .from("favorites")
-    .select(`
-      id,
-      product:products (
-        id,
-        title,
-        price,
-        images_urls,
-        status
-      )
-    `)
-    .eq("user_id", user.id);
 
   return (
     <div className="container mx-auto py-8 px-4">
