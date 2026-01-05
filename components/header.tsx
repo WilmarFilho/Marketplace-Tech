@@ -30,7 +30,7 @@ export default async function Header() {
                     {user ? (
                         <>
                             <Button asChild variant="outline">
-                                <Link href="/dashboard/favoritos">Minha conta</Link>
+                                <Link href="/dashboard">Minha conta</Link>
                             </Button>
 
                             <LogoutButton />

@@ -38,8 +38,7 @@ export function LoginForm({
         password,
       });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
+      router.push("/");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Ocorreu um erro");
     } finally {
@@ -74,7 +73,7 @@ export function LoginForm({
                 <div className="flex items-center">
                   <Label htmlFor="password">Senha</Label>
                   <Link
-                    href="/auth/forgot-password"
+                    href="/auth/esqueci-senha"
                     className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                   >
                     Esqueceu sua senha?

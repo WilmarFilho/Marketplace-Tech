@@ -59,32 +59,13 @@ async function ProductGrid() {
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {[...Array(8)].map((_, i) => (
-        <Card key={i} className="h-full">
-          <CardHeader className="p-0">
-            <div className="w-full h-48 bg-gray-200 animate-pulse rounded-t-lg" />
-          </CardHeader>
-          <CardContent className="p-4 space-y-2">
-            <div className="h-6 bg-gray-200 animate-pulse rounded w-3/4" />
-            <div className="h-4 bg-gray-200 animate-pulse rounded w-1/4" />
-          </CardContent>
-          <CardFooter className="p-4 pt-0">
-            <div className="h-6 bg-gray-200 animate-pulse rounded w-1/2" />
-          </CardFooter>
-        </Card>
-      ))}
-    </div>
+    <div></div>
   );
 }
 
 export default function ExplorarPage() {
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Explorar Hardware</h1>
-      
-      {/* Filters could go here */}
-      
       <Suspense fallback={<ProductGridSkeleton />}>
         <ProductGrid />
       </Suspense>

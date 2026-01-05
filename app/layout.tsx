@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import Header from "@/components/header";
 import "./globals.css";
 
 const defaultUrl = process.env.SITE_URL
@@ -34,8 +33,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        ><Header />
-          
+        >
           {children}
         </ThemeProvider>
       </body>

@@ -20,7 +20,7 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [nome, setNome] = useState("");
+  const [full_name, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -46,15 +46,15 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/auth/confirmar`,
           data: {
-            full_name: nome,
-            role: role,
+            full_name,
+            role,
           },
         },
       });
       if (error) throw error;
-      router.push("/auth/sign-up-success");
+      router.push("/auth/cadastro-realizado");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "Ocorreu um erro");
     } finally {
@@ -100,8 +100,8 @@ export function SignUpForm({
                   type="text"
                   placeholder="João da Silva Alves"
                   required
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
+                  value={full_name}
+                  onChange={(e) => setFullName(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
