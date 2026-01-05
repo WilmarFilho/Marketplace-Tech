@@ -66,17 +66,31 @@ export default async function DashboardPage() {
 
             {/* Seller Actions */}
             {isSeller && (
-                <Card className="hover:bg-muted/50 transition-colors border-primary/20 flex flex-col justify-between">
-                    <CardHeader>
-                        <CardTitle>Anunciar</CardTitle>
-                        <CardDescription>Crie um novo anúncio de venda</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button asChild className="w-full" variant="default">
-                            <Link href="/dashboard/anunciar">Criar Anúncio</Link>
-                        </Button>
-                    </CardContent>
-                </Card>
+                <>
+                    <Card className="hover:bg-muted/50 transition-colors border-primary/20 flex flex-col justify-between">
+                        <CardHeader>
+                            <CardTitle>Anunciar</CardTitle>
+                            <CardDescription>Crie um novo anúncio de venda</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button asChild className="w-full" variant="default">
+                                <Link href="/dashboard/anunciar">Criar Anúncio</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="hover:bg-muted/50 transition-colors flex flex-col justify-between">
+                        <CardHeader>
+                            <CardTitle>Meus Anúncios</CardTitle>
+                            <CardDescription>Gerencie seus produtos à venda</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button asChild className="w-full" variant="outline">
+                                <Link href="/dashboard/meus-anuncios">Ver Meus Anúncios</Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </>
             )}
              
              {/* Admin Actions */}
