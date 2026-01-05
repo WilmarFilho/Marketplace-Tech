@@ -11,7 +11,7 @@ async function ProductGrid() {
   const { data: products } = await supabase
     .from("products")
     .select("*")
-    .eq("status", "pendente");
+    .eq("status", "aprovado");
 
   if (!products || products.length === 0) {
     return (
