@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
+import { FavoriteButton } from "@/components/favorite-button";
 
 export const dynamic = "force-dynamic";
 
 // 1. Componente que lida com a busca de dados (Dinâmico)
 async function ProductContent({ id }: { id: string }) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   const { data: product } = await supabase
     .from("products")
@@ -26,6 +28,18 @@ async function ProductContent({ id }: { id: string }) {
 
   if (!product) {
     return notFound();
+  }
+
+  let isFavorite = false;
+  if (user) {
+    const { data: favorite } = await supabase
+      .from("favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("product_id", id)
+      .single();
+    
+    isFavorite = !!favorite;
   }
 
   const seller = product.seller as unknown as { full_name: string | null; phone: string | null } | null;
@@ -54,12 +68,15 @@ async function ProductContent({ id }: { id: string }) {
 
       {/* Details Section */}
       <div className="space-y-6">
-        <div>
-          <Badge className="mb-2">{product.category || 'Hardware'}</Badge>
-          <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
-          <p className="text-3xl font-bold text-primary">
-            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}
-          </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <Badge className="mb-2">{product.category || 'Hardware'}</Badge>
+            <h1 className="text-3xl font-bold mb-2">{product.title}</h1>
+            <p className="text-3xl font-bold text-primary">
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}
+            </p>
+          </div>
+          {user && <FavoriteButton productId={product.id} initialIsFavorite={isFavorite} />}
         </div>
 
         <Card>

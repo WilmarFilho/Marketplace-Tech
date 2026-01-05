@@ -46,7 +46,7 @@ export default async function FavoritosPage() {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {favorites?.map((fav: Favorite) => {
-            const product = fav.product[0];
+            const product = Array.isArray(fav.product) ? fav.product[0] : fav.product;
             if (!product) return null;
             
             return (
