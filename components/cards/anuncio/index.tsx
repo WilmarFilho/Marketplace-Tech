@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Heart, House, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import styles from "./card-em-alta.module.css";
+import styles from "./card-anuncio.module.css";
 import type { Tables } from "@/src/types/supabase";
 
 export type ProductRow = Tables<"products">;
@@ -57,9 +57,7 @@ export function CardAnuncio({ product, fallbackBgSrc }: CardAnuncioProps) {
               <div className={cn("font-medium", styles.cardTitle)}>{product.title}</div>
               <div className="flex items-center gap-[6px]">
                 <House className="h-4 w-4 text-black" />
-                <span className={cn("font-medium", styles.locationText)}>
-                  Localização indisponível
-                </span>
+                <span className={cn("font-medium", styles.locationText)}>Localização indisponível</span>
               </div>
             </div>
 

@@ -1,8 +1,7 @@
-import { SecaoHero } from "@/components/secao-hero";
-import { AlternadorTema } from "@/components/alternador-tema";
-import Cabecalho from "@/components/cabecalho";
-import { SecaoEmAlta } from "@/components/secao-em-alta";
-import { SecaoPorQue } from "@/components/secao-por-que";
+import { SecaoHero } from "@/components/sections/hero";
+import Cabecalho from "@/components/layout/cabecalho";
+import { SecaoEmAlta } from "@/components/sections/em-alta";
+import { SecaoPorQue } from "@/components/sections/por-que";
 
 export default function Home() {
   return (
@@ -21,7 +20,6 @@ export default function Home() {
 
       <footer className="w-full border-t py-8">
         <div className="container mx-auto flex flex-col items-center justify-center gap-4">
-          <AlternadorTema />
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} DropTech. Todos os direitos reservados.
           </p>

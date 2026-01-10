@@ -4,9 +4,9 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BotaoExcluirAnuncio } from "@/components/botao-excluir-anuncio";
-import { ModalEditarAnuncio } from "@/components/modal-editar-anuncio";
-import Cabecalho from "@/components/cabecalho";
+import { BotaoExcluirAnuncio } from "@/components/ui/botao-excluir-anuncio";
+import { ModalEditarAnuncio } from "@/components/modals/modal-editar-anuncio";
+import Cabecalho from "@/components/layout/cabecalho";
 
 export default async function MeusAnunciosPage() {
   const supabase = await createClient();

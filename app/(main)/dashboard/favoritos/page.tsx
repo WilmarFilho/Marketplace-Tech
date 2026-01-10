@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { getFavorites } from "./actions";
 import type { Favorite } from "@/src/types/products";
-import Cabecalho from "@/components/cabecalho";
+import Cabecalho from "@/components/layout/cabecalho";
 
 export default async function FavoritosPage() {
   const favorites = await getFavorites();

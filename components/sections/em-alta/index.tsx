@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import styles from "./secao-em-alta.module.css";
 import { cn } from "@/lib/utils";
-import { CardAnuncio, type ProductRow } from "./card-em-alta";
+import { CardAnuncio, type ProductRow } from "@/components/cards/anuncio/index";
 
 export async function SecaoEmAlta() {
   const supabase = await createClient();

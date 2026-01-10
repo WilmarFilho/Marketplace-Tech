@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
 import { getProducts } from "./actions";
-import Cabecalho from "@/components/cabecalho";
+import Cabecalho from "@/components/layout/cabecalho";
 
 async function ProductGrid() {
   const products = await getProducts();

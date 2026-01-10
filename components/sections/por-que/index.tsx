@@ -35,7 +35,12 @@ export function SecaoPorQue() {
 
         {/* Content */}
         <div className="relative flex w-full items-stretch gap-[57px]">
-          <div className={cn("relative flex w-full flex-col gap-10 px-6 pb-6 pt-10 md:px-6", styles.greenPanel)}>
+          <div
+            className={cn(
+              "relative flex w-full flex-col gap-10 px-6 pb-6 pt-10 md:px-6",
+              styles.greenPanel
+            )}
+          >
             {/* Illustration */}
             <Image
               src="/figma/por-que-illustration.png"
@@ -49,26 +54,14 @@ export function SecaoPorQue() {
             <div className="relative flex flex-col items-center gap-8 md:flex-row md:gap-[72px]">
               {/* Glass cards */}
               <div className={cn("flex flex-col items-center justify-center p-10", styles.glassCard)}>
-                <Image
-                  src="/figma/icon-users-three.svg"
-                  alt=""
-                  width={81}
-                  height={81}
-                  aria-hidden
-                />
+                <Image src="/figma/icon-users-three.svg" alt="" width={81} height={81} aria-hidden />
                 <div className="mt-6 whitespace-pre-line">
                   <div className={styles.glassTitle}>{"Público\nqualificado"}</div>
                 </div>
               </div>
 
               <div className={cn("flex flex-col items-center justify-center p-10", styles.glassCard)}>
-                <Image
-                  src="/figma/icon-cpu.svg"
-                  alt=""
-                  width={78}
-                  height={78}
-                  aria-hidden
-                />
+                <Image src="/figma/icon-cpu.svg" alt="" width={78} height={78} aria-hidden />
                 <div className="mt-6 whitespace-pre-line">
                   <div className={styles.glassTitle}>{"Nada genérico\nSó tecnologia"}</div>
                 </div>

@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import { BotaoFavoritar } from "@/components/botao-favoritar";
+import { BotaoFavoritar } from "@/components/ui/botao-favoritar";
 import { getProductDetails } from "./actions";
-import Cabecalho from "@/components/cabecalho";
+import Cabecalho from "@/components/layout/cabecalho";
 
 export const dynamic = "force-dynamic";
 

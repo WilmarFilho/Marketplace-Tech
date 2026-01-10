@@ -3,7 +3,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { getModerationPageData, approveProduct, rejectProduct } from "./actions";
-import Cabecalho from "@/components/cabecalho";
+import Cabecalho from "@/components/layout/cabecalho";
 
 export default async function ModeracaoPage() {
   const { pendingProducts } = await getModerationPageData();

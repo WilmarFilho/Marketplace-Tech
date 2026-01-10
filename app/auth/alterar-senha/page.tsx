@@ -1,4 +1,4 @@
-import { FormAtualizarSenha } from "@/components/form-atualizar-senha";
+import { FormAtualizarSenha } from "@/components/forms/form-atualizar-senha";
 
 export default function Page() {
   return (

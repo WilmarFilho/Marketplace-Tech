@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getDashboardData } from "./actions";
-import Cabecalho from "@/components/cabecalho";
+import Cabecalho from "@/components/layout/cabecalho";
 
 export default async function DashboardPage() {
   const { user, profile } = await getDashboardData();

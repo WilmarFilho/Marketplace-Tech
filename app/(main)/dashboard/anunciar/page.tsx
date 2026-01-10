@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormCriarAnuncio } from "@/components/form-criar-anuncio";
-import Cabecalho from "@/components/cabecalho";
+import { FormCriarAnuncio } from "@/components/forms/form-criar-anuncio";
+import Cabecalho from "@/components/layout/cabecalho";
 
 export default async function AnunciarPage() {
   const supabase = await createClient();

@@ -1,4 +1,4 @@
-import { FormEsqueciSenha } from "@/components/form-esqueci-senha";
+import { FormEsqueciSenha } from "@/components/forms/form-esqueci-senha";
 
 export default function Page() {
   return (
