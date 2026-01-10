@@ -1,0 +1,40 @@
+.tag {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 100px;
+  padding: 8px 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 14px;
+  line-height: 0.9285714286em;
+  color: #ffffff;
+}
+
+.tagAlt {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.heart {
+  width: 38px;
+  height: 38px;
+  border-radius: 900px;
+}
+
+.cardTitle {
+  font-size: 20px;
+  line-height: 0.75em;
+  color: #000000;
+}
+
+.locationText {
+  font-size: 14px;
+  line-height: 0.8571428571em;
+  color: rgba(0, 0, 0, 0.64);
+}
+
+.price {
+  font-size: 26px;
+  line-height: 0.7692307692em;
+  letter-spacing: 0.04em;
+  color: #00875f;
+}

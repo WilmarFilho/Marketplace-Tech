@@ -1,6 +1,7 @@
 import { SecaoHero } from "@/components/secao-hero";
 import { AlternadorTema } from "@/components/alternador-tema";
 import Cabecalho from "@/components/cabecalho";
+import { SecaoEmAlta } from "@/components/secao-em-alta";
 
 export default function Home() {
   return (
@@ -11,6 +12,8 @@ export default function Home() {
           <Cabecalho floating />
           <SecaoHero />
         </div>
+
+        <SecaoEmAlta />
       </main>
 
       <footer className="w-full border-t py-8">
