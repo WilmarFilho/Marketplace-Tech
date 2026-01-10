@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { K2D, Poppins } from "next/font/google";
+import { Bebas_Neue, K2D, Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -27,6 +27,13 @@ const k2d = K2D({
   display: "swap",
 });
 
+const bebasNeue = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-bebas-neue",
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${poppins.className} ${poppins.variable} ${k2d.variable} antialiased`}>
+      <body className={`${poppins.className} ${poppins.variable} ${k2d.variable} ${bebasNeue.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
