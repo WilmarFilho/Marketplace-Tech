@@ -1,0 +1,53 @@
+.hero {
+  min-height: 933px;
+  background-color: #0f0f0f;
+  background-image:
+    radial-gradient(circle at -7% -20%, rgba(168, 154, 4, 0.15) 0%, rgba(15, 15, 15, 0) 65%),
+    url("/figma/hero-bg.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.highlight {
+  color: #00FFB2;
+  text-transform: uppercase;
+  font-family: var(--font-k2d), var(--font-poppins), sans-serif;
+}
+
+.title {
+  font-size: 81px;
+  line-height: 1.1358024691em;
+}
+
+.subtitle {
+  font-size: 30px;
+  line-height: 1.4666666667em;
+}
+
+.ctaPrimary {
+  padding: 15px 19px;
+  border-radius: 20px;
+  background: #ecf230;
+  color: #312e2e;
+  font-size: 21px;
+  line-height: 0.9047619048em;
+}
+
+.ctaSecondary {
+  padding: 15px 19px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 21px;
+  line-height: 0.9047619048em;
+}
+
+.secondaryTitle {
+  font-size: 81px;
+  line-height: 1.1358024691em;
+  text-align: center;
+}

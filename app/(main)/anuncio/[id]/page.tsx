@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { BotaoFavoritar } from "@/components/botao-favoritar";
 import { getProductDetails } from "./actions";
+import Cabecalho from "@/components/cabecalho";
 
 export const dynamic = "force-dynamic";
 
@@ -93,11 +94,13 @@ export default async function AnuncioPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      
-      <Suspense fallback={<div className="text-center py-20">Carregando detalhes do produto...</div>}>
-        <ProductContent id={id} />
-      </Suspense>
-    </div>
+    <>
+      <Cabecalho />
+      <div className="container mx-auto py-8 px-4">
+        <Suspense fallback={<div className="text-center py-20">Carregando detalhes do produto...</div>}>
+          <ProductContent id={id} />
+        </Suspense>
+      </div>
+    </>
   );
 }

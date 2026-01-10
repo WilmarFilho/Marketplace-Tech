@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getDashboardData } from "./actions";
+import Cabecalho from "@/components/cabecalho";
 
 export default async function DashboardPage() {
   const { user, profile } = await getDashboardData();
@@ -15,8 +16,10 @@ export default async function DashboardPage() {
   const isSeller = profile?.role === 'vendedor' || profile?.role === 'admin';
 
   return (
-    <div className="container mx-auto py-10 px-4">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <>
+      <Cabecalho />
+      <div className="container mx-auto py-10 px-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* User Info Card */}
         <Card className="col-span-full md:col-span-1 h-fit">
           <CardHeader>
@@ -102,6 +105,7 @@ export default async function DashboardPage() {
              )}
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

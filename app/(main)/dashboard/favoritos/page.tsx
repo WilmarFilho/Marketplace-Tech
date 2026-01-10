@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { getFavorites } from "./actions";
 import type { Favorite } from "@/src/types/products";
+import Cabecalho from "@/components/cabecalho";
 
 export default async function FavoritosPage() {
   const favorites = await getFavorites();
@@ -13,9 +14,11 @@ export default async function FavoritosPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <>
+      <Cabecalho />
+      <div className="container mx-auto py-8 px-4">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {favorites?.map((fav: Favorite) => {
             const product = Array.isArray(fav.product) ? fav.product[0] : fav.product;
             if (!product) return null;
@@ -57,7 +60,8 @@ export default async function FavoritosPage() {
             Você ainda não tem favoritos.
           </div>
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

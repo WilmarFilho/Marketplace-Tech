@@ -3,13 +3,16 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { getModerationPageData, approveProduct, rejectProduct } from "./actions";
+import Cabecalho from "@/components/cabecalho";
 
 export default async function ModeracaoPage() {
   const { pendingProducts } = await getModerationPageData();
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-8">Moderação de Anúncios</h1>
+    <>
+      <Cabecalho />
+      <div className="container mx-auto py-8 px-4">
+        <h1 className="text-3xl font-bold mb-8">Moderação de Anúncios</h1>
       
       <div className="grid grid-cols-1 gap-6">
         {pendingProducts?.map((product) => (
@@ -61,6 +64,7 @@ export default async function ModeracaoPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

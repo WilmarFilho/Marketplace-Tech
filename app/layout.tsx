@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { K2D, Poppins } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -20,6 +20,13 @@ const poppins = Poppins({
   display: "swap",
 });
 
+const k2d = K2D({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-k2d",
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${poppins.className} antialiased`}>
+      <body className={`${poppins.className} ${poppins.variable} ${k2d.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

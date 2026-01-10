@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import { Suspense } from "react";
 import { getProducts } from "./actions";
+import Cabecalho from "@/components/cabecalho";
 
 async function ProductGrid() {
   const products = await getProducts();
@@ -60,10 +61,13 @@ function ProductGridSkeleton() {
 
 export default function ExplorarPage() {
   return (
-    <div className="container mx-auto py-8 px-4">
-      <Suspense fallback={<ProductGridSkeleton />}>
-        <ProductGrid />
-      </Suspense>
-    </div>
+    <>
+      <Cabecalho />
+      <div className="container mx-auto py-8 px-4">
+        <Suspense fallback={<ProductGridSkeleton />}>
+          <ProductGrid />
+        </Suspense>
+      </div>
+    </>
   );
 }

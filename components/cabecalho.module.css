@@ -1,0 +1,26 @@
+.pill {
+  background: #0f0f0f;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 120px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.navText {
+  font-size: 21px;
+  line-height: 0.9047619048em;
+}
+
+.entrarText {
+  font-size: 21px;
+  line-height: 0.7142857143em;
+}
+
+.ctaButton {
+  font-size: 21px;
+  line-height: 0.9047619048em;
+  padding: 15px 19px;
+  border-radius: 20px;
+  background: #ecf230;
+  color: #312e2e;
+}
