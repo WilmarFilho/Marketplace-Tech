@@ -26,3 +26,40 @@
   font-size: 30px;
   line-height: 1.1em;
 }
+
+.tickerWrap {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+  padding: 0 16px 60px 16px;
+}
+
+.tickerTrack {
+  display: flex;
+  align-items: center;
+  gap: 57px;
+  width: max-content;
+  animation: droptech-ticker-ltr 42s linear infinite;
+  will-change: transform;
+}
+
+.tickerItem {
+  flex: 0 0 auto;
+}
+
+@keyframes droptech-ticker-ltr {
+  0% {
+    transform: translateX(-35%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tickerTrack {
+    animation: none;
+  }
+}

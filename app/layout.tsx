@@ -41,7 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${poppins.className} ${poppins.variable} ${k2d.variable} ${bebasNeue.variable} antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${poppins.className} ${poppins.variable} ${k2d.variable} ${bebasNeue.variable} antialiased`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

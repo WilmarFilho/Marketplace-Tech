@@ -47,7 +47,7 @@ export function SecaoPorQue() {
               alt=""
               width={1225}
               height={891}
-              className="pointer-events-none absolute right-0 top-[-260px] hidden w-[740px] max-w-none md:block"
+              className="pointer-events-none absolute right-0 top-[-260px] hidden w-[1040px] max-w-none md:block"
               aria-hidden
             />
 

@@ -1,0 +1,80 @@
+.footer {
+    background-color: #0F0F0F;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 80px 20px 80px;
+    gap: 40px;
+    color: #FFFFFF;
+}
+
+.containerTop {
+    display: flex;
+    justify-content: space-between;
+}
+
+.containerBottom {
+    display: flex;
+    border-top: 1px solid #ffffff2c;
+    padding-top: 20px;
+    gap: 12px;
+}
+
+.rightsSection {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.rightsSection img {
+    width: 86px;
+    height: 66px;
+}
+
+.logo {
+    width: 100%;
+}
+
+.logoSection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.newsletterSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.newsletter h4 {
+    font-family: var(--font-bebas-neue);
+    font-size: 36px;
+}
+
+.newsletterForm {
+    display: flex;
+    gap: 8px;   
+    justify-content: end;
+}
+
+.newsletterForm input {
+    border-radius: 200px;
+    padding: 4px 12px;
+    text-align: center;
+}
+
+.newsletterForm button {
+    background-color: #E4E4E4;
+    color: #0F0F0F;
+    border-radius: 200px;
+    padding: 8px 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+}   
+
+.nav {
+    display: flex;
+    gap: 12px;
+}

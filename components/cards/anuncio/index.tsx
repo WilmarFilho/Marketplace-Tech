@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Heart, House, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import styles from "./card-anuncio.module.css";
@@ -16,24 +15,21 @@ export function CardAnuncio({ product, fallbackBgSrc }: CardAnuncioProps) {
   const imageSrc = product.images_urls?.[0] || fallbackBgSrc;
   const tag1 = product.category ? `#${product.category}` : "#Produtos";
   const tag2 = "#Seminovo";
+  const backgroundStyle = imageSrc
+    ? {
+        backgroundImage: `url(${imageSrc})`,
+        display: "block",
+        minWidth: "400px",
+      }
+    : undefined;
 
   return (
     <Link
       href={`/anuncio/${product.id}`}
-      className="group relative h-[395px] w-full max-w-[478px] overflow-hidden rounded-[20px] p-[10px]"
+      style={backgroundStyle}
+      className="group relative h-[395px] w-full max-w-[478px] overflow-hidden rounded-[20px] bg-cover bg-center p-[10px]"
     >
-      {imageSrc ? (
-        <Image
-          src={imageSrc}
-          alt={product.title}
-          fill
-          sizes="(max-width: 768px) 100vw, 478px"
-          className="object-cover"
-          priority={false}
-        />
-      ) : (
-        <div className="absolute inset-0 bg-white/5" />
-      )}
+      {!imageSrc && <div className="absolute inset-0 bg-white/5" />}
 
       <div className="absolute inset-0 bg-black/10" />
 
