@@ -67,14 +67,14 @@ function TestimonialCard({ name, text, className }: { name: string; text: string
 
 export function SecaoMissao() {
   return (
-    <section className={cn("w-full", styles.section)}>
+    <section id="sobre" className={cn("w-full scroll-mt-[262px]", styles.section)}>
       <div className={cn("mx-auto w-full max-w-[1800px]", styles.inner)}>
         <div className={styles.grid}>
           <div className={styles.left} aria-hidden>
             <div className={styles.productMock} />
           </div>
 
-          <div className={styles.right}>
+          <div id="missao"  className={styles.right}>
             <div className={styles.kicker}>Nossa missão</div>
 
             <h2 className={styles.title}>

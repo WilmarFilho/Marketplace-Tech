@@ -19,7 +19,6 @@ export function CardAnuncio({ product, fallbackBgSrc }: CardAnuncioProps) {
     ? {
         backgroundImage: `url(${imageSrc})`,
         display: "block",
-        minWidth: "400px",
       }
     : undefined;
 

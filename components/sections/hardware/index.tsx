@@ -110,14 +110,27 @@ export async function SecaoHardware() {
 
       <div className={styles.tickerWrap}>
         <div className={styles.tickerTrack}>
-          {items.map((product, index) => (
-            <div key={`${product.id}-${index}`} className={styles.tickerItem}>
-              <CardAnuncio
-                product={product}
-                fallbackBgSrc={fallbacks[index % fallbacks.length]}
-              />
-            </div>
-          ))}
+          <div className={styles.tickerGroup}>
+            {items.map((product, index) => (
+              <div key={`${product.id}-${index}`} className={styles.tickerItem}>
+                <CardAnuncio
+                  product={product}
+                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.tickerGroup} aria-hidden>
+            {items.map((product, index) => (
+              <div key={`${product.id}-${index}-dup`} className={styles.tickerItem}>
+                <CardAnuncio
+                  product={product}
+                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

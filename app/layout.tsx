@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, K2D, Poppins } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 const defaultUrl = process.env.SITE_URL
@@ -45,14 +44,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${poppins.className} ${poppins.variable} ${k2d.variable} ${bebasNeue.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

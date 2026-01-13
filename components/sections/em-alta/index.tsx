@@ -78,10 +78,13 @@ export async function SecaoEmAlta() {
   ];
 
   return (
-    <section className={cn("w-full", styles.section)}>
-      <div className="mx-auto flex w-full flex-col items-center gap-[80px] px-4 py-[50px] pb-[60px] md:px-16 lg:px-[199px]">
+    <section
+      
+      className={cn("w-full scroll-mt-[262px]", styles.section)}
+    >
+      <div id="ofertas-do-dia" className="mx-auto flex w-full flex-col items-center gap-[80px] px-4 py-[50px] pb-[60px] md:px-16 lg:px-[199px]">
         {/* Header */}
-        <div className="flex w-full max-w-[1040px] flex-col items-center justify-center gap-6 text-center">
+        <div   className="flex w-full max-w-[1040px] flex-col items-center justify-center gap-6 text-center">
           <div className={styles.kicker}>Em alta agora</div>
           <h2 className={cn("text-white font-medium", styles.title)}>
             Produtos que movimentaram a DropTech essa semana
@@ -95,14 +98,27 @@ export async function SecaoEmAlta() {
 
       <div className={styles.tickerWrap}>
         <div className={styles.tickerTrack}>
-          {items.map((product, index) => (
-            <div key={`${product.id}-${index}`} className={styles.tickerItem}>
-              <CardAnuncio
-                product={product}
-                fallbackBgSrc={fallbacks[index % fallbacks.length]}
-              />
-            </div>
-          ))}
+          <div className={styles.tickerGroup}>
+            {items.map((product, index) => (
+              <div key={`${product.id}-${index}`} className={styles.tickerItem}>
+                <CardAnuncio
+                  product={product}
+                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.tickerGroup} aria-hidden>
+            {items.map((product, index) => (
+              <div key={`${product.id}-${index}-dup`} className={styles.tickerItem}>
+                <CardAnuncio
+                  product={product}
+                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

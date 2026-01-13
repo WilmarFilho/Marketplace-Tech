@@ -9,6 +9,11 @@
 .navText {
   font-size: 21px;
   line-height: 0.9047619048em;
+  transition: .4;
+}
+
+.navText:hover {
+  color: #ECF230
 }
 
 .entrarText {

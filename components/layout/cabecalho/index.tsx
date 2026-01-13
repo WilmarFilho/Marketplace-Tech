@@ -57,7 +57,7 @@ export default async function Cabecalho({ floating }: CabecalhoProps) {
               Explorar
             </Link>
             <Link
-              href="/#sobre"
+              href="/#missao"
               className={cn(
                 "text-white font-medium hover:opacity-80 transition-opacity",
                 styles.navText

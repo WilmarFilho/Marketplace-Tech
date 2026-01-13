@@ -30,8 +30,8 @@
 .tickerWrap {
   width: 100vw;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   overflow: hidden;
   padding: 0 16px 60px 16px;
 }
@@ -39,22 +39,28 @@
 .tickerTrack {
   display: flex;
   align-items: center;
-  gap: 57px;
   width: max-content;
-  animation: droptech-ticker-ltr 42s linear infinite;
+  animation: droptech-marquee var(--marquee-duration, 55s) linear infinite;
   will-change: transform;
+}
+
+.tickerGroup {
+  display: flex;
+  align-items: center;
+  gap: 57px;
 }
 
 .tickerItem {
   flex: 0 0 auto;
+  width: min(478px, 92vw);
 }
 
-@keyframes droptech-ticker-ltr {
+@keyframes droptech-marquee {
   0% {
-    transform: translateX(-35%);
+    transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translateX(0%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
