@@ -6,6 +6,9 @@
   border-radius: 10px;
   padding: 24px;
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
 .title {
@@ -24,8 +27,48 @@
   align-items: center;
   color: #d6ff00;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 12px;
+}
+
+.sectionToggle {
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 6px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sectionToggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sectionToggleIcon {
+  transition: transform 0.2s ease;
+}
+
+.sectionToggleIconOpen {
+  transition: transform 0.2s ease;
+  transform: rotate(180deg);
+}
+
+.sectionContent {
+  overflow: hidden;
+  max-height: 1000px;
+  opacity: 1;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+}
+
+.sectionContentCollapsed {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
 }
 
 .label {
@@ -86,7 +129,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   cursor: pointer;
   transition: 0.5s;
 }
@@ -100,6 +143,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  padding-right: 8px;
 }
 
 .radio {

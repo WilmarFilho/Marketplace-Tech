@@ -4,6 +4,7 @@ import Cabecalho from "@/components/layout/cabecalho";
 import Filters from "@/components/filters/filters";
 import FilterBar from "@/components/filterbar/filterbar";
 import { CardAnuncio, type ProductRow } from "@/components/cards/anuncio";
+import Rodape from "@/components/layout/rodape";
 
 function mockProducts(): ProductRow[] {
   return [
@@ -92,10 +93,10 @@ function mockProducts(): ProductRow[] {
       images_urls: ["/figma/card-bg-4.png"],
     },
   ].map((m) =>
-    ({
-      ...(m as unknown as ProductRow),
-      status: "aprovado",
-    })
+  ({
+    ...(m as unknown as ProductRow),
+    status: "aprovado",
+  })
   );
 }
 
@@ -119,7 +120,7 @@ async function ProductGrid() {
   ];
 
   return (
-    <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {items.map((product, index) => (
         <CardAnuncio
           key={`${product.id}-${index}`}
@@ -141,22 +142,28 @@ export default function ExplorarPage() {
   return (
     <>
       <Cabecalho />
-      <div className="mx-auto w-full max-w-[1800px] px-4 py-10 md:px-[44px]">
-        
-        <FilterBar />
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-          <div className="w-full lg:w-[380px] shrink-0">
-            <Filters />
-          </div>
+      <main>
+        <div className="mx-auto w-full max-w-[1800px] px-4 py-10 md:px-[44px]">
 
-          <div className="min-w-0 flex-1">
-            <Suspense fallback={<ProductGridSkeleton />}>
-              <ProductGrid />
-            </Suspense>
+          <FilterBar />
+
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+            <div className="w-full lg:w-[380px] shrink-0">
+              <Filters />
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <Suspense fallback={<ProductGridSkeleton />}>
+                <ProductGrid />
+              </Suspense>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Rodape />
+
     </>
   );
 }
