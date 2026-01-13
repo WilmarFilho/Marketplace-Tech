@@ -5,8 +5,132 @@
 
 .gallery {
   position: relative;
+  width: 100vw;
+  height: 520px;
+  overflow: hidden;
+  margin-left: calc(-50vw + 50%);
+}
+
+.galleryContainer {
   width: 100%;
-  height: 420px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.galleryTrack {
+  display: flex;
+  height: 100%;
+  transition: transform 0.3s ease-in-out;
+}
+
+.gallerySlide {
+  flex: 0 0 33.333%;
+  height: 100%;
+  padding: 0 8px;
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.galleryImage:hover {
+  transform: scale(1.01);
+}
+
+/* Lightbox Styles */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightboxImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: -50px;
+  right: -10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.lightboxClose:hover {
+  background: #fff;
+  transform: scale(1.1);
+}
+
+.lightboxPrev,
+.lightboxNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.lightboxPrev {
+  left: -70px;
+}
+
+.lightboxNext {
+  right: -70px;
+}
+
+.lightboxPrev:hover,
+.lightboxNext:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .gallery img {
@@ -20,21 +144,54 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: #fff;
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
   border: none;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
-.galleryArrowLeft { left: 16px; }
-.galleryArrowRight { right: 16px; }
+.galleryArrowLeft {
+  left: 24px;
+}
+
+.galleryArrowRight {
+  right: 24px;
+}
+
+.galleryArrowLeft:hover,
+.galleryArrowRight:hover {
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.galleryArrowLeft:disabled,
+.galleryArrowRight:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.galleryArrowLeft:disabled:hover,
+.galleryArrowRight:disabled:hover {
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+}
 
 .content {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1fr 500px;
   gap: 24px;
   margin-top: -80px;
+  position: relative;
+  z-index: 999;
 }
 
 .productCard,
@@ -46,11 +203,81 @@
   margin-bottom: 24px;
 }
 
+.productCard {
+  display: flex;
+  flex-direction: column;
+  gap: 62px;
+}
+
 .contactCard {
+  color: #FFF;
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex-grow: 1;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formLabel {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.formInput,
+.formTextarea {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
   background: #fff;
-  border-radius: 16px;
-  padding: 24px;
+}
+
+.formInput:focus,
+.formTextarea:focus {
+  outline: none;
+  border-color: #00d084;
+  box-shadow: 0 0 0 3px rgba(0, 208, 132, 0.1);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: #94a3b8;
+}
+
+.formTextarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.productTitlePrice {
+  display: flex;
+  justify-content: space-between;
+}
+
+.contactCardHeader {
+  background-color: #FFF;
   color: #000;
+  padding: 24px;
+  gap: 32px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
 }
 
 .tags span {
@@ -73,7 +300,118 @@
 .send {
   background: #00f2a9;
   border-radius: 12px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   height: 48px;
   border: none;
   font-weight: 700;
+}
+
+.productHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.productTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.productTitle h1 {
+  font-family: var(--font-k2d);
+  font-size: 42px;
+  margin-bottom: 4px;
+}
+
+.meta, .meta span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.meta span {
+  gap: 8px;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-poppins);
+  font-size: 25px;
+  color: rgba(0, 0, 0, 0.813);
+}
+
+.meta svg {
+  width: 28px;
+  height: 28px;
+}
+
+.description h3 {
+  font-size: 34px;
+  font-family: var(--font-k2d);
+}
+
+.description p {
+  font-size: 22px;
+  font-family: var(--font-poppins);
+  font-weight: 200;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.category {
+  background-color: #fff !important;
+}
+
+.sellerCard h3 {
+  font-size: 42px;
+  font-family: var(--font-k2d);
+}
+
+.sellerContent {
+  display: flex;
+  justify-content: center;
+  gap: 120px;
+}
+
+.sellerInfo, .sellerStats, .sellerReputation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sellerStats button, .sellerReputation button {
+  background: #FFF;
+  border-radius: 1000px;
+  height: 90px;
+  width: 90px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sellerStats span, .sellerReputation span {
+  font-size: 28px;
+  font-family: var(--font-poppins);
+}
+
+.sellerInfo span {
+  font-size: 24px;
+  font-family: var(--font-poppins);
+  text-transform: uppercase;
+}
+
+.sellerInfo img {
+  width: 90px;
+  height: 90px;
+}
+
+.sellerCard {
+  gap: 52px;
+  display: flex;
+  flex-direction: column;
 }

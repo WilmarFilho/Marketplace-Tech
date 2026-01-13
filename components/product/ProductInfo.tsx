@@ -9,23 +9,35 @@ export default function ProductInfo() {
   return (
     <section className={styles.productCard}>
       <header className={styles.productHeader}>
-        <h1>SETUP GAMER COMPLETO ULTRA MAX</h1>
+        <div className={styles.productTitle}>
+          <h1>SETUP GAMER COMPLETO ULTRA MAX</h1>
+
+          <div className={styles.tags}>
+            <span className={styles.category}>Headphone</span>
+            <span>#Headphone</span>
+            <span>#Consoles</span>
+          </div>
+        </div>
+
         <button className={styles.favorite}>
           <Heart />
         </button>
+
       </header>
 
-      <div className={styles.tags}>
-        <span>Headphone</span>
-        <span>#Headphone</span>
-        <span>#Consoles</span>
+
+      <div className={styles.description}>
+        <h3>DESCRIÇÃO DO PRODUTO</h3>
+        <p>
+          Lorem Ipsum has been the  standard dummy text ever since
+          the 1500s Lorem Ipsum has been the  standard dummy text ever since
+          the 1500s  Lorem Ipsum has been the  standard dummy text ever since
+          the 1500s Lorem Ipsum has been the  standard dummy text ever since
+          the 1500s Lorem Ipsum has been the  standard dummy text ever since
+          the 1500s
+        </p>
       </div>
 
-      <h3>DESCRIÇÃO DO PRODUTO</h3>
-      <p>
-        Lorem Ipsum has been the  standard dummy text ever since
-        the 1500s...
-      </p>
 
       <footer className={styles.meta}>
         <span>

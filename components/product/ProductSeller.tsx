@@ -7,25 +7,29 @@ export default function ProductSeller() {
     <section className={styles.sellerCard}>
       <h3>INFORMAÇÕES DO VENDEDOR</h3>
 
-      <div className={styles.sellerInfo}>
-        <Image src="/avatar.png" alt="Vendedor" width={50} height={50} />
-
-        <div>
-          <strong>ALFREDO FAST</strong>
+      <div className={styles.sellerContent}>
+        <div className={styles.sellerInfo}>
+          <Image src="/figma/avatar.png" alt="Vendedor" width={50} height={50} />
+          <span>ALFREDO FAST</span>
         </div>
-      </div>
 
-      <div className={styles.sellerStats}>
-        <div>
-          <Layers />
+        <div className={styles.sellerStats}>
+
+          <button>
+            <Layers />
+          </button>
+
           <span>+100 anúncios</span>
         </div>
 
-        <div>
-          <BadgeCheck />
+        <div className={styles.sellerReputation}>
+          <button>
+            <BadgeCheck />
+          </button>
           <span>Boa Reputação</span>
         </div>
       </div>
+
     </section>
   );
 }

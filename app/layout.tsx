@@ -8,8 +8,11 @@ const defaultUrl = process.env.SITE_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Marktplace Tech",
+  title: "DROPTECH - Marketplace de Tecnologia",
   description: "Onde você encontra e anuncia produtos tecnológicos usados.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 const poppins = Poppins({

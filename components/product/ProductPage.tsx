@@ -9,7 +9,7 @@ export default function ProductPage() {
     <div className={styles.page}>
       <ProductGallery />
 
-      <div className={styles.content}>
+      <div className={`${styles.content}`}>
         <div className={styles.left}>
           <ProductInfo />
           <ProductSeller />
