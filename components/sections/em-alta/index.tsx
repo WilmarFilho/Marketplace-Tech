@@ -3,79 +3,33 @@ import styles from "./secao-em-alta.module.css";
 import { cn } from "@/lib/utils";
 import { CardAnuncio, type ProductRow } from "@/components/cards/anuncio/index";
 
-function mockProducts(): ProductRow[] {
-  const mocks = [
-    {
-      id: "mock-ps5-slim-em-alta",
-      title: "Videogame PS5 Slim",
-      price: 4499,
-      category: "Consoles",
-      images_urls: ["/figma/card-bg-1.png"],
-    },
-    {
-      id: "mock-macbook-air-em-alta",
-      title: "Macbook Air 2025",
-      price: 6100,
-      category: "Computadores",
-      images_urls: ["/figma/card-bg-2.png"],
-    },
-    {
-      id: "mock-s22-em-alta",
-      title: "Celular Samsung S22",
-      price: 2100,
-      category: "Celulares",
-      images_urls: ["/figma/card-bg-3.png"],
-    },
-    {
-      id: "mock-headset-asus-em-alta",
-      title: "Headset Gamer Asus",
-      price: 600,
-      category: "Acessorios",
-      images_urls: ["/figma/card-bg-4.png"],
-    },
-    {
-      id: "mock-ssd-1tb-em-alta",
-      title: "SSD NVMe 1TB",
-      price: 399,
-      category: "Armazenamento",
-      images_urls: ["/figma/card-bg-1.png"],
-    },
-    {
-      id: "mock-ram-32gb-em-alta",
-      title: "Memória RAM 32GB DDR4",
-      price: 480,
-      category: "Hardware",
-      images_urls: ["/figma/card-bg-2.png"],
-    },
-  ];
-
-  return mocks.map((m) =>
-    ({
-      ...(m as unknown as ProductRow),
-      status: "aprovado",
-    })
-  );
-}
-
 export async function SecaoEmAlta() {
   const supabase = await createClient();
 
   const { data: products } = await supabase
     .from("products")
-    .select("*")
+    .select(`
+      *,
+      tags:products_tags(
+        tag:tags(
+          name
+        )
+      )
+    `)
     .eq("status", "aprovado")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(20);
 
-  const dbItems = (products ?? []) as ProductRow[];
-  const mocks = mockProducts();
-  const items = [...dbItems, ...mocks, ...mocks];
+  // Transformar os dados para o formato esperado
+  const transformedProducts = (products ?? []).map(product => ({
+    ...product,
+    tags: product.tags?.map((t: { tag: { name: string } }) => t.tag).filter(Boolean) || []
+  }));
 
-  const fallbacks = [
-    "/figma/card-bg-1.png",
-    "/figma/card-bg-2.png",
-    "/figma/card-bg-3.png",
-    "/figma/card-bg-4.png",
-  ];
+  const items = transformedProducts as ProductRow[];
+  
+  // Se não houver produtos suficientes, duplique para efeito visual
+  const displayItems = items.length < 10 ? [...items, ...items, ...items] : items;
 
   return (
     <section
@@ -99,22 +53,20 @@ export async function SecaoEmAlta() {
       <div className={styles.tickerWrap}>
         <div className={styles.tickerTrack}>
           <div className={styles.tickerGroup}>
-            {items.map((product, index) => (
+            {displayItems.map((product, index) => (
               <div key={`${product.id}-${index}`} className={styles.tickerItem}>
                 <CardAnuncio
                   product={product}
-                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
                 />
               </div>
             ))}
           </div>
 
           <div className={styles.tickerGroup} aria-hidden>
-            {items.map((product, index) => (
+            {displayItems.map((product, index) => (
               <div key={`${product.id}-${index}-dup`} className={styles.tickerItem}>
                 <CardAnuncio
                   product={product}
-                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
                 />
               </div>
             ))}

@@ -4,17 +4,47 @@ import { cn } from "@/lib/utils";
 import styles from "./card-anuncio.module.css";
 import type { Tables } from "@/src/types/supabase";
 
-export type ProductRow = Tables<"products">;
+export type ProductRow = Tables<"products"> & {
+  tags?: Array<{ name: string; }>;
+};
 
 type CardAnuncioProps = {
   product: ProductRow;
-  fallbackBgSrc?: string;
 };
 
-export function CardAnuncio({ product, fallbackBgSrc }: CardAnuncioProps) {
-  const imageSrc = product.images_urls?.[0] || fallbackBgSrc;
-  const tag1 = product.category ? `#${product.category}` : "#Produtos";
-  const tag2 = "#Seminovo";
+export function CardAnuncio({ product }: CardAnuncioProps) {
+  const imageSrc = product.images_urls?.[0];
+
+  // Formatar tags (no máximo 2)
+  const getTags = () => {
+    if (!product.tags || product.tags.length === 0) {
+      return ["#Produtos", "#Seminovo"];
+    }
+    
+    const availableTags = product.tags.map(tag => `#${tag.name}`);
+    
+    // Se tem apenas 1 tag, adiciona uma tag genérica
+    if (availableTags.length === 1) {
+      return [availableTags[0], "#Seminovo"];
+    }
+    
+    // Se tem 2 ou mais tags, pega as 2 primeiras
+    return availableTags.slice(0, 2);
+  };
+
+  // Formatar localização
+  const formatLocation = () => {
+    const parts = [];
+    if (product.city) parts.push(product.city);
+    if (product.state) parts.push(product.state);
+    
+    if (parts.length === 0) return "Localização indisponível";
+    if (parts.length === 1) return parts[0];
+    return parts.join(" - ");
+  };
+
+  const [tag1, tag2] = getTags();
+  
   const backgroundStyle = imageSrc
     ? {
         backgroundImage: `url(${imageSrc})`,
@@ -28,7 +58,7 @@ export function CardAnuncio({ product, fallbackBgSrc }: CardAnuncioProps) {
       style={backgroundStyle}
       className="group relative h-[395px] w-full max-w-[478px] overflow-hidden rounded-[20px] bg-cover bg-center p-[10px]"
     >
-      {!imageSrc && <div className="absolute inset-0 bg-white/5" />}
+      {!imageSrc && <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600" />}
 
       <div className="absolute inset-0 bg-black/10" />
 
@@ -52,7 +82,7 @@ export function CardAnuncio({ product, fallbackBgSrc }: CardAnuncioProps) {
               <div className={cn("font-medium", styles.cardTitle)}>{product.title}</div>
               <div className="flex items-center gap-[6px]">
                 <House className="h-4 w-4 text-black" />
-                <span className={cn("font-medium", styles.locationText)}>Localização indisponível</span>
+                <span className={cn("font-medium", styles.locationText)}>{formatLocation()}</span>
               </div>
             </div>
 

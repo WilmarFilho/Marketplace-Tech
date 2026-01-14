@@ -415,3 +415,84 @@
   display: flex;
   flex-direction: column;
 }
+
+.favorite svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Novos estilos para funcionalidade real */
+.sellerAvatar {
+  width: 90px !important;
+  height: 90px !important;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.whatsappButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.whatsappButton:hover {
+  transform: scale(1.05);
+}
+
+.submitButton {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+  margin-top: 20px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.submitButton:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.successMessage {
+  background: #10b981;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.successMessage h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.successMessage p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.errorMessage {
+  background: #ef4444;
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}

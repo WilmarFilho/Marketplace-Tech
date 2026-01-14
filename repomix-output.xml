@@ -1,3 +1,69 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: src/app/**/*.{tsx,ts}, src/types/**/*.ts, supabase/migrations/**/*.sql, src/components/ui/**/*.{tsx,ts}
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+src/types/products.ts
+src/types/supabase.ts
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/types/products.ts">
+export interface Product {
+  id: string;
+  title: string;
+  price: number;
+  images_urls: string[];
+  status: string;
+}
+
+export interface Favorite {
+  id: string;
+  product: Product | Product[];
+}
+</file>
+
+<file path="src/types/supabase.ts">
 export type Json =
   | string
   | number
@@ -14,27 +80,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      categories: {
-        Row: {
-          created_at: string | null
-          id: string
-          name: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          name: string
-          slug: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          name?: string
-          slug?: string
-        }
-        Relationships: []
-      }
       favorites: {
         Row: {
           created_at: string | null
@@ -71,62 +116,9 @@ export type Database = {
           },
         ]
       }
-      messages: {
-        Row: {
-          created_at: string | null
-          email: string
-          full_name: string
-          id: string
-          message_content: string
-          phone: string
-          product_id: string | null
-          read: boolean | null
-          vendor_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          full_name: string
-          id?: string
-          message_content: string
-          phone: string
-          product_id?: string | null
-          read?: boolean | null
-          vendor_id: string
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          full_name?: string
-          id?: string
-          message_content?: string
-          phone?: string
-          product_id?: string | null
-          read?: boolean | null
-          vendor_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_vendor_id_fkey"
-            columns: ["vendor_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       products: {
         Row: {
-          address: string | null
           category: string | null
-          city: string | null
           contact_phone: string | null
           created_at: string | null
           description: string | null
@@ -134,14 +126,11 @@ export type Database = {
           images_urls: string[] | null
           price: number
           seller_id: string
-          state: string | null
           status: string | null
           title: string
         }
         Insert: {
-          address?: string | null
           category?: string | null
-          city?: string | null
           contact_phone?: string | null
           created_at?: string | null
           description?: string | null
@@ -149,14 +138,11 @@ export type Database = {
           images_urls?: string[] | null
           price: number
           seller_id: string
-          state?: string | null
           status?: string | null
           title: string
         }
         Update: {
-          address?: string | null
           category?: string | null
-          city?: string | null
           contact_phone?: string | null
           created_at?: string | null
           description?: string | null
@@ -164,7 +150,6 @@ export type Database = {
           images_urls?: string[] | null
           price?: number
           seller_id?: string
-          state?: string | null
           status?: string | null
           title?: string
         }
@@ -174,66 +159,6 @@ export type Database = {
             columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      products_categories: {
-        Row: {
-          category_id: string
-          product_id: string
-        }
-        Insert: {
-          category_id: string
-          product_id: string
-        }
-        Update: {
-          category_id?: string
-          product_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "products_categories_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "products_categories_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      products_tags: {
-        Row: {
-          product_id: string
-          tag_id: string
-        }
-        Insert: {
-          product_id: string
-          tag_id: string
-        }
-        Update: {
-          product_id?: string
-          tag_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "products_tags_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "products_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "tags"
             referencedColumns: ["id"]
           },
         ]
@@ -262,24 +187,6 @@ export type Database = {
           phone?: string | null
           role?: string | null
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      tags: {
-        Row: {
-          created_at: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          name?: string
         }
         Relationships: []
       }
@@ -421,3 +328,6 @@ export const Constants = {
     Enums: {},
   },
 } as const
+</file>
+
+</files>

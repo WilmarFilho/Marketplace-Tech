@@ -43,7 +43,8 @@ export async function getProductDetails(id: string) {
     .from("products")
     .select(`
       *,
-      seller:seller_id (
+      seller:profiles!seller_id (
+        id,
         full_name,
         avatar_url,
         phone
@@ -67,5 +68,61 @@ export async function getProductDetails(id: string) {
     isFavorite = !!favorite;
   }
 
-  return { product, isFavorite, currentUserId: user?.id };
+  // Buscar estatísticas do vendedor
+  const { count: totalProducts } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("seller_id", product.seller_id)
+    .eq("status", "aprovado");
+
+  return { 
+    product: {
+      ...product,
+      sellerStats: {
+        totalProducts: totalProducts ?? 0
+      }
+    }, 
+    isFavorite, 
+    currentUserId: user?.id 
+  };
+}
+
+export async function sendMessage(formData: FormData) {
+  const supabase = await createClient();
+  
+  const productId = formData.get("productId") as string;
+  const fullName = formData.get("fullName") as string;
+  const email = formData.get("email") as string;
+  const phone = formData.get("phone") as string;
+  const messageContent = formData.get("message") as string;
+  
+  // Buscar o vendedor do produto
+  const { data: product } = await supabase
+    .from("products")
+    .select("seller_id")
+    .eq("id", productId)
+    .single();
+  
+  if (!product) {
+    throw new Error("Produto não encontrado");
+  }
+  
+  // Inserir a mensagem
+  const { error } = await supabase
+    .from("messages")
+    .insert({
+      product_id: productId,
+      vendor_id: product.seller_id,
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      message_content: messageContent,
+      read: false
+    });
+  
+  if (error) {
+    throw new Error("Erro ao enviar mensagem");
+  }
+  
+  return { success: true };
 }

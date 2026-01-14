@@ -3,19 +3,33 @@ import ProductGallery from './ProductGallery';
 import ProductInfo from './ProductInfo';
 import ProductSeller from './ProductSeller';
 import ProductContact from './ProductContact';
+import { getProductDetails } from '@/app/(main)/anuncio/[id]/actions';
+import { notFound } from 'next/navigation';
 
-export default function ProductPage() {
+interface ProductPageProps {
+  productId: string;
+}
+
+export default async function ProductPage({ productId }: ProductPageProps) {
+  const result = await getProductDetails(productId);
+  
+  if (!result?.product) {
+    notFound();
+  }
+  
+  const { product, isFavorite, currentUserId } = result;
+
   return (
     <div className={styles.page}>
-      <ProductGallery />
+      <ProductGallery product={product} />
 
       <div className={`${styles.content}`}>
         <div className={styles.left}>
-          <ProductInfo />
-          <ProductSeller />
+          <ProductInfo product={product} isFavorite={isFavorite} currentUserId={currentUserId} />
+          <ProductSeller product={product} />
         </div>
 
-        <ProductContact />
+        <ProductContact product={product} />
       </div>
     </div>
   );

@@ -3,94 +3,58 @@ import { cn } from "@/lib/utils";
 import { CardAnuncio, type ProductRow } from "@/components/cards/anuncio";
 import styles from "./secao-hardware.module.css";
 
-function mockProducts(): ProductRow[] {
-  const mocks = [
-    {
-      id: "mock-ps5-slim",
-      title: "Videogame PS5 Slim",
-      price: 4499,
-      category: "Consoles",
-      images_urls: ["/figma/card-bg-1.png"],
-    },
-    {
-      id: "mock-macbook-air",
-      title: "Macbook Air 2025",
-      price: 6100,
-      category: "Computadores",
-      images_urls: ["/figma/card-bg-2.png"],
-    },
-    {
-      id: "mock-s22",
-      title: "Celular Samsung S22",
-      price: 2100,
-      category: "Celulares",
-      images_urls: ["/figma/card-bg-3.png"],
-    },
-    {
-      id: "mock-headset-asus",
-      title: "Headset Gamer Asus",
-      price: 600,
-      category: "Acessorios",
-      images_urls: ["/figma/card-bg-4.png"],
-    },
-    {
-      id: "mock-ssd-1tb",
-      title: "SSD NVMe 1TB",
-      price: 399,
-      category: "Armazenamento",
-      images_urls: ["/figma/card-bg-1.png"],
-    },
-    {
-      id: "mock-ram-32gb",
-      title: "Memória RAM 32GB DDR4",
-      price: 480,
-      category: "Hardware",
-      images_urls: ["/figma/card-bg-2.png"],
-    },
-    {
-      id: "mock-rtx-4070",
-      title: "Placa de Vídeo RTX 4070",
-      price: 3890,
-      category: "Placas de vídeo",
-      images_urls: ["/figma/card-bg-3.png"],
-    },
-    {
-      id: "mock-ryzen-7",
-      title: "Processador Ryzen 7",
-      price: 1290,
-      category: "Processadores",
-      images_urls: ["/figma/card-bg-4.png"],
-    },
-  ];
-
-  return mocks.map((m) =>
-    ({
-      ...(m as unknown as ProductRow),
-      status: "aprovado",
-    })
-  );
-}
-
 export async function SecaoHardware() {
   const supabase = await createClient();
 
   const { data: products } = await supabase
     .from("products")
-    .select("*")
+    .select(`
+      *,
+      tags:products_tags(
+        tag:tags(
+          name
+        )
+      )
+    `)
     .eq("status", "aprovado")
+    .ilike("category", "%hardware%")
     .order("created_at", { ascending: false })
-    .limit(12);
+    .limit(20);
 
-  const dbItems = (products ?? []) as ProductRow[];
-  const mocks = mockProducts();
-  const items = [...dbItems, ...mocks, ...mocks];
+  // Transformar os dados para o formato esperado
+  let transformedProducts = (products ?? []).map(product => ({
+    ...product,
+    tags: product.tags?.map(t => t.tag).filter(Boolean) || []
+  }));
 
-  const fallbacks = [
-    "/figma/card-bg-1.png",
-    "/figma/card-bg-2.png",
-    "/figma/card-bg-3.png",
-    "/figma/card-bg-4.png",
-  ];
+  let items = transformedProducts as ProductRow[];
+  
+  // Se não houver produtos de hardware, buscar produtos gerais
+  if (items.length === 0) {
+    const { data: generalProducts } = await supabase
+      .from("products")
+      .select(`
+        *,
+        tags:products_tags(
+          tag:tags(
+            name
+          )
+        )
+      `)
+      .eq("status", "aprovado")
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    const transformedGeneral = (generalProducts ?? []).map(product => ({
+      ...product,
+      tags: product.tags?.map(t => t.tag).filter(Boolean) || []
+    }));
+
+    items = transformedGeneral as ProductRow[];
+  }
+  
+  // Se não houver produtos suficientes, duplique para efeito visual
+  const displayItems = items.length < 10 ? [...items, ...items, ...items] : items;
 
   return (
     <section className={cn("w-full", styles.section)}>
@@ -111,22 +75,20 @@ export async function SecaoHardware() {
       <div className={styles.tickerWrap}>
         <div className={styles.tickerTrack}>
           <div className={styles.tickerGroup}>
-            {items.map((product, index) => (
+            {displayItems.map((product, index) => (
               <div key={`${product.id}-${index}`} className={styles.tickerItem}>
                 <CardAnuncio
                   product={product}
-                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
                 />
               </div>
             ))}
           </div>
 
           <div className={styles.tickerGroup} aria-hidden>
-            {items.map((product, index) => (
+            {displayItems.map((product, index) => (
               <div key={`${product.id}-${index}-dup`} className={styles.tickerItem}>
                 <CardAnuncio
                   product={product}
-                  fallbackBgSrc={fallbacks[index % fallbacks.length]}
                 />
               </div>
             ))}

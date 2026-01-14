@@ -4,21 +4,27 @@ import { ChevronLeft, ChevronRight} from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import styles from './product.module.css';
+import type { Tables } from '@/src/types/supabase';
 
-const mockImages = [
-  { src: '/figma/card-bg-4.png', alt: 'PC Gamer Completo' },
-  { src: '/figma/card-bg-2.png', alt: 'Setup Gaming 1' },
-  { src: '/figma/card-bg-2.png', alt: 'Setup Gaming 2' },
-  { src: '/figma/card-bg-3.png', alt: 'Setup Gaming 3' },
-  { src: '/figma/card-bg-4.png', alt: 'Setup Gaming 4' },
-  { src: '/figma/hero-bg.webp', alt: 'Setup Premium' }
-];
+interface ProductGalleryProps {
+  product: Tables<'products'>;
+}
 
-export default function ProductGallery() {
+export default function ProductGallery({ product }: ProductGalleryProps) {
+  const images = product.images_urls && product.images_urls.length > 0 
+    ? product.images_urls.map((url, index) => ({ 
+        src: url, 
+        alt: `${product.title} - Imagem ${index + 1}` 
+      }))
+    : [{ 
+        src: '/figma/card-bg-1.png', 
+        alt: product.title 
+      }];
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxImage, setLightboxImage] = useState<number | null>(null);
-  const imagesPerView = 3;
-  const maxIndex = mockImages.length - imagesPerView;
+  const imagesPerView = Math.min(3, images.length);
+  const maxIndex = Math.max(0, images.length - imagesPerView);
 
   const handlePrevious = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));
@@ -38,13 +44,13 @@ export default function ProductGallery() {
 
   const nextImage = () => {
     if (lightboxImage !== null) {
-      setLightboxImage((lightboxImage + 1) % mockImages.length);
+      setLightboxImage((lightboxImage + 1) % images.length);
     }
   };
 
   const prevImage = () => {
     if (lightboxImage !== null) {
-      setLightboxImage((lightboxImage - 1 + mockImages.length) % mockImages.length);
+      setLightboxImage((lightboxImage - 1 + images.length) % images.length);
     }
   };
 
@@ -63,10 +69,10 @@ export default function ProductGallery() {
           className={styles.galleryTrack}
           style={{ 
             transform: `translateX(-${currentIndex * (100 / imagesPerView)}%)`,
-            width: `${(mockImages.length / imagesPerView) * 100}%`
+            width: `${(images.length / imagesPerView) * 100}%`
           }}
         >
-          {mockImages.map((image, index) => (
+          {images.map((image, index) => (
             <div key={index} className={styles.gallerySlide}>
               <Image 
                 src={image.src} 
@@ -98,8 +104,8 @@ export default function ProductGallery() {
             </button>
             
             <Image 
-              src={mockImages[lightboxImage].src}
-              alt={mockImages[lightboxImage].alt}
+              src={images[lightboxImage].src}
+              alt={images[lightboxImage].alt}
               width={800}
               height={600}
               className={styles.lightboxImage}
