@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb', // Aumenta o limite para 50MB para permitir upload de múltiplas imagens
+    },
+  },
   images: {
     remotePatterns: [
       {

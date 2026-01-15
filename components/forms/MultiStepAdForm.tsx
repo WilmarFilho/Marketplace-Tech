@@ -1,0 +1,246 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { StepBasicInfo } from "@/components/forms/steps/StepBasicInfo";
+import { StepCategoryTags } from "@/components/forms/steps/StepCategoryTags";
+import { StepPhotos } from "@/components/forms/steps/StepPhotos";
+import { StepContactReview } from "@/components/forms/steps/StepContactReview";
+import { createAdWithDetails } from "@/app/(main)/dashboard/anunciar/actions";
+
+export interface AdFormData {
+  title: string;
+  price: number;
+  description: string;
+  contact_phone: string;
+  address: string;
+  city: string;
+  state: string;
+  category_id: string;
+  tag_ids: string[];
+  images: File[];
+  imageUrls: string[];
+}
+
+interface FormError {
+  field: string;
+  message: string;
+}
+
+export function MultiStepAdForm() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState<AdFormData>({
+    title: "",
+    price: 0,
+    description: "",
+    contact_phone: "",
+    address: "",
+    city: "",
+    state: "",
+    category_id: "",
+    tag_ids: [],
+    images: [],
+    imageUrls: []
+  });
+  const [errors, setErrors] = useState<FormError[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const steps = [
+    { title: "Informações Básicas", component: StepBasicInfo },
+    { title: "Categoria e Tags", component: StepCategoryTags },
+    { title: "Fotos", component: StepPhotos },
+    { title: "Contato e Revisão", component: StepContactReview }
+  ];
+
+  const progress = ((currentStep + 1) / steps.length) * 100;
+
+  const validateStep = (step: number): FormError[] => {
+    const stepErrors: FormError[] = [];
+
+    switch (step) {
+      case 0: // Informações Básicas
+        if (!formData.title.trim()) {
+          stepErrors.push({ field: "title", message: "Título é obrigatório" });
+        }
+        if (formData.price <= 0) {
+          stepErrors.push({ field: "price", message: "Preço deve ser maior que zero" });
+        }
+        if (!formData.description.trim()) {
+          stepErrors.push({ field: "description", message: "Descrição é obrigatória" });
+        }
+        break;
+
+      case 1: // Categoria e Tags
+        if (!formData.category_id) {
+          stepErrors.push({ field: "category_id", message: "Categoria é obrigatória" });
+        }
+        break;
+
+      case 2: // Fotos
+        if (formData.images.length < 3) {
+          stepErrors.push({ field: "images", message: "Mínimo de 3 fotos é obrigatório" });
+        }
+        break;
+
+      case 3: // Contato e Revisão
+        if (!formData.contact_phone.trim()) {
+          stepErrors.push({ field: "contact_phone", message: "Telefone de contato é obrigatório" });
+        }
+        if (!formData.address.trim()) {
+          stepErrors.push({ field: "address", message: "Endereço é obrigatório" });
+        }
+        if (!formData.city.trim()) {
+          stepErrors.push({ field: "city", message: "Cidade é obrigatória" });
+        }
+        if (!formData.state.trim()) {
+          stepErrors.push({ field: "state", message: "Estado é obrigatório" });
+        }
+        break;
+    }
+
+    return stepErrors;
+  };
+
+  const nextStep = () => {
+    const stepErrors = validateStep(currentStep);
+    setErrors(stepErrors);
+
+    if (stepErrors.length === 0 && currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const updateFormData = (updates: Partial<AdFormData>) => {
+    setFormData(prev => ({ ...prev, ...updates }));
+  };
+
+  const handleSubmit = async () => {
+    const stepErrors = validateStep(currentStep);
+    setErrors(stepErrors);
+
+    if (stepErrors.length > 0) return;
+
+    setIsLoading(true);
+    try {
+      await createAdWithDetails(formData);
+    } catch (error) {
+      console.error("Erro ao criar anúncio:", error);
+      setErrors([{ field: "general", message: "Erro ao criar anúncio. Tente novamente." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const CurrentStepComponent = steps[currentStep].component;
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 300 : -300,
+      opacity: 0
+    })
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto space-y-8">
+      {/* Progress Bar */}
+      <div className="space-y-4">
+        <div className="flex justify-between text-sm text-muted-foreground">
+          {steps.map((step, index) => (
+            <span 
+              key={index}
+              className={`font-medium ${index <= currentStep ? 'text-primary' : ''}`}
+            >
+              {step.title}
+            </span>
+          ))}
+        </div>
+        <Progress value={progress} className="h-2" />
+      </div>
+
+      {/* Step Content with Animation */}
+      <div className="relative overflow-hidden">
+        <AnimatePresence mode="wait" custom={currentStep}>
+          <motion.div
+            key={currentStep}
+            custom={currentStep}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 }
+            }}
+            className="w-full"
+          >
+            <CurrentStepComponent
+              formData={formData}
+              updateFormData={updateFormData}
+              errors={errors.filter(e => e.field !== 'general')}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* General Error */}
+      {errors.some(e => e.field === 'general') && (
+        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+          {errors.find(e => e.field === 'general')?.message}
+        </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={prevStep}
+          disabled={currentStep === 0}
+          className="flex items-center gap-2"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Voltar
+        </Button>
+
+        {currentStep < steps.length - 1 ? (
+          <Button
+            type="button"
+            onClick={nextStep}
+            className="flex items-center gap-2"
+          >
+            Próximo
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="flex items-center gap-2"
+          >
+            {isLoading ? "Publicando..." : "Publicar Anúncio"}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}

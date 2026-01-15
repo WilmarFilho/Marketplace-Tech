@@ -69,7 +69,7 @@ export default function ProductContact({ product }: ProductContactProps) {
   };
 
   const handleWhatsAppClick = () => {
-    const phone = product.seller?.phone || product.contact_phone;
+    const phone = product.contact_phone;
     if (phone) {
       const cleanPhone = phone.replace(/\D/g, '');
       const message = `Olá! Vi seu anúncio "${product.title}" na DropTech e gostaria de mais informações.`;
@@ -86,7 +86,7 @@ export default function ProductContact({ product }: ProductContactProps) {
             <strong>{formatPrice(product.price)}</strong>
           </div>
 
-          {(product.seller?.phone || product.contact_phone) && (
+          {product.contact_phone && (
             <button onClick={handleWhatsAppClick} className={styles.whatsappButton}>
               <Image src="/figma/wpp.png" alt="WhatsApp" width={48} height={48} />
             </button>
