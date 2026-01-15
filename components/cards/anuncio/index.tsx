@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { Heart, House, ArrowUpRight, X } from "lucide-react";
+import { Heart, House, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import styles from "./card-anuncio.module.css";
 import type { Tables } from "@/src/types/supabase";
@@ -185,10 +185,6 @@ export function CardAnuncio({ product }: CardAnuncioProps) {
                   <span className={cn("font-medium", styles.locationText)}>{formatLocation()}</span>
                 </div>
               </div>
-
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-black/5 group-hover:bg-black/10 transition-colors">
-                <ArrowUpRight className="h-5 w-5 text-black" />
-              </div>
             </div>
 
             <div className="border-t border-black/10 px-[22px] pb-4 pt-3">
@@ -217,14 +213,14 @@ export function CardAnuncio({ product }: CardAnuncioProps) {
               </button>
             </div>
             
-            <p className="text-gray-600 mb-6 text-balance">
+            <p className="text-gray-600 mb-6 text-center">
               Você precisa estar logado para favoritar anúncios. Faça login para salvar seus produtos favoritos.
             </p>
             
             <div className="flex gap-3">
               <button
                 onClick={handleLoginRedirect}
-                className="flex-1 bg-[#ecf230] text-[#312e2e] px-4 py-2 rounded-lg hover:brightness-95 transition-all font-medium"
+                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Fazer Login
               </button>

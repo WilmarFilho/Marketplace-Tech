@@ -8,10 +8,10 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import { useState } from "react";
 import { useFormState } from "react-dom";
 
@@ -34,8 +34,17 @@ export function FormAtualizarSenha({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Redefina sua Senha</CardTitle>
-          <CardDescription>
+          <div className="flex justify-center mb-2">
+            <Image
+              src="/logo.svg"
+              alt="DROPTECH"
+              width={200}
+              height={29}
+              priority
+              className="h-[29px] w-auto"
+            />
+          </div>
+          <CardDescription className="text-center">
             Por favor, digite sua nova senha abaixo.
           </CardDescription>
         </CardHeader>
@@ -53,7 +62,11 @@ export function FormAtualizarSenha({
                 />
               </div>
               {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button 
+                type="submit" 
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+                disabled={isPending}
+              >
                 {isPending ? "Salvando..." : "Salvar nova senha"}
               </Button>
             </div>

@@ -22,9 +22,9 @@ export async function SecaoHardware() {
     .limit(20);
 
   // Transformar os dados para o formato esperado
-  let transformedProducts = (products ?? []).map(product => ({
+  const transformedProducts = (products ?? []).map(product => ({
     ...product,
-    tags: product.tags?.map(t => t.tag).filter(Boolean) || []
+    tags: product.tags?.map((t: { tag: { name: string } }) => t.tag).filter(Boolean) || []
   }));
 
   let items = transformedProducts as ProductRow[];
@@ -47,7 +47,7 @@ export async function SecaoHardware() {
 
     const transformedGeneral = (generalProducts ?? []).map(product => ({
       ...product,
-      tags: product.tags?.map(t => t.tag).filter(Boolean) || []
+      tags: product.tags?.map((t: { tag: { name: string } }) => t.tag).filter(Boolean) || []
     }));
 
     items = transformedGeneral as ProductRow[];
@@ -58,7 +58,7 @@ export async function SecaoHardware() {
 
   return (
     <section className={cn("w-full", styles.section)}>
-      <div className="mx-auto flex w-full flex-col items-center gap-[80px] px-4 pb-[200px] pt-[100px] md:px-16 lg:px-[199px]">
+      <div className="mx-auto flex w-full flex-col items-center gap-[80px] px-4 py-[50px] pb-[60px] md:px-16 lg:px-[199px]">
         <div className="flex w-full max-w-[1369px] flex-col items-center justify-center gap-6 text-center">
           <div className={styles.kicker}>Hardware</div>
 
@@ -74,6 +74,7 @@ export async function SecaoHardware() {
 
       <div className={styles.tickerWrap}>
         <div className={styles.tickerTrack}>
+
           <div className={styles.tickerGroup}>
             {displayItems.map((product, index) => (
               <div key={`${product.id}-${index}`} className={styles.tickerItem}>

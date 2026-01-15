@@ -8,11 +8,11 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 export function FormEsqueciSenha({
@@ -42,8 +42,17 @@ export function FormEsqueciSenha({
       {success ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Verifique seu Email</CardTitle>
-            <CardDescription>Instruções de redefinição de senha enviadas</CardDescription>
+            <div className="flex justify-center mb-2">
+              <Image
+                src="/logo.svg"
+                alt="DROPTECH"
+                width={200}
+                height={29}
+                priority
+                className="h-[29px] w-auto"
+              />
+            </div>
+            <CardDescription className="text-center">Instruções de redefinição de senha enviadas</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -54,8 +63,17 @@ export function FormEsqueciSenha({
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Redefina sua Senha</CardTitle>
-            <CardDescription>
+            <div className="flex justify-center mb-2">
+              <Image
+                src="/logo.svg"
+                alt="DROPTECH"
+                width={200}
+                height={29}
+                priority
+                className="h-[29px] w-auto"
+              />
+            </div>
+            <CardDescription className="text-center">
               Digite seu email e enviaremos um link para redefinir sua senha
             </CardDescription>
           </CardHeader>
@@ -73,7 +91,11 @@ export function FormEsqueciSenha({
                   />
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+                  disabled={isLoading}
+                >
                   {isLoading ? "Enviando..." : "Enviar email de redefinição"}
                 </Button>
               </div>
