@@ -166,7 +166,7 @@ function ProductGrid() {
                 ref={index === allProducts.length - 1 ? lastProductElementRef : null}
                 className="w-full"
               >
-                <CardAnuncio product={product} />
+                <CardAnuncio product={product} showFavoriteButton={true} />
               </div>
             ))}
           </div>

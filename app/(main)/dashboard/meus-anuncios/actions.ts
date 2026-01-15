@@ -3,6 +3,30 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
+export async function getMeusAnuncios() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return null;
+
+  const { data: products } = await supabase
+    .from("products")
+    .select(`
+      *,
+      tags:products_tags(
+        tag:tags(name)
+      )
+    `)
+    .eq("seller_id", user.id)
+    .order("created_at", { ascending: false });
+
+  // Transformar a estrutura de tags
+  return products?.map(product => ({
+    ...product,
+    tags: product.tags?.map((t: any) => ({ name: t.tag.name })) || []
+  })) || [];
+}
+
 export async function deleteAd(productId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

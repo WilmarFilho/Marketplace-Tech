@@ -17,9 +17,10 @@ export type ProductRow = Tables<"products"> & {
 
 type CardAnuncioProps = {
   product: ProductRow;
+  showFavoriteButton?: boolean;
 };
 
-export function CardAnuncio({ product }: CardAnuncioProps) {
+export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncioProps) {
   const [isFavorited, setIsFavorited] = useState(product.isFavorited || false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -160,7 +161,8 @@ export function CardAnuncio({ product }: CardAnuncioProps) {
                 {
                   "bg-red-500/80": isFavorited,
                   "hover:bg-red-500/60": !isFavorited,
-                  "opacity-70": isLoading
+                  "opacity-70": isLoading,
+                  "hidden": !showFavoriteButton
                 }
               )}
             >
@@ -213,7 +215,7 @@ export function CardAnuncio({ product }: CardAnuncioProps) {
               </button>
             </div>
             
-            <p className="text-gray-600 mb-6 text-center">
+            <p className="text-gray-600 mb-6 text-balance">
               Você precisa estar logado para favoritar anúncios. Faça login para salvar seus produtos favoritos.
             </p>
             

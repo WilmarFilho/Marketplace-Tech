@@ -14,6 +14,7 @@ export interface FilterParams {
   state?: string;
   dateFilter?: string;
   sortBy?: 'newest' | 'oldest' | 'price_asc' | 'price_desc';
+  status?: string;
   page?: number;
   limit?: number;
 }

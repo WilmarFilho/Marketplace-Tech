@@ -105,7 +105,7 @@ function Rodape() {
             <div className={styles.containerBottom}>
                 <Link href="https://instagram.com/nkw_tech" target="_blank" aria-label="Página inicial" >
                     <Image
-                        src="/figma/instagram.svg"
+                        src="/figma/Instagram.svg"
                         alt="DROPTECH"
                         width={256}
                         height={37}
@@ -125,7 +125,7 @@ function Rodape() {
                 </Link >
                 <Link href="https://www.youtube.com/@NKWTECNOLOGIA" target="_blank" aria-label="Página inicial" >
                     <Image
-                        src="/figma/youtube.svg"
+                        src="/figma/Youtube.svg"
                         alt="DROPTECH"
                         width={256}
                         height={37}

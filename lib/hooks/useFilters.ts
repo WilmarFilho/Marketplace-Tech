@@ -24,6 +24,7 @@ export function useFilters() {
     state: '',
     dateFilter: '',
     sortBy: 'newest',
+    status: '',
     page: 1,
     limit: 12
   });

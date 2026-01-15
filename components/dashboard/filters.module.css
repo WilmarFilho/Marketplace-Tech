@@ -1,0 +1,4 @@
+/* Importar estilos do filtro original */
+@import '../filters/filter.module.css';
+
+/* Adicionar estilos específicos se necessário */

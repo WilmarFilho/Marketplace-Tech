@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { getDashboardData } from "./actions";
 import Cabecalho from "@/components/layout/cabecalho";
+import Rodape from "@/components/layout/rodape";
+
 
 export default async function DashboardPage() {
   const { user, profile } = await getDashboardData();
@@ -18,10 +20,10 @@ export default async function DashboardPage() {
   return (
     <>
       <Cabecalho />
-      <div className="container mx-auto py-10 px-4">
+      <div className=" mx-auto py-10 px-[60px] w-full pb-80">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* User Info Card */}
-        <Card className="col-span-full md:col-span-1 h-fit">
+        <Card className="col-span-full md:col-span-1 h-[800px]">
           <CardHeader>
             <CardTitle>Perfil</CardTitle>
             <CardDescription>Suas informações pessoais</CardDescription>
@@ -106,6 +108,8 @@ export default async function DashboardPage() {
         </div>
       </div>
       </div>
+
+      <Rodape />
     </>
   );
 }
