@@ -12,10 +12,20 @@ import { useState, useTransition } from 'react';
 
 interface ProductInfoProps {
   product: Tables<'products'> & {
-    seller?: any;
+    seller?: {
+      id: string;
+      name?: string;
+      email?: string;
+    };
     sellerStats?: {
       totalProducts: number;
     };
+    product_tags?: {
+      tag: {
+        id: string;
+        name: string;
+      };
+    }[];
   };
   isFavorite: boolean;
   currentUserId?: string;
@@ -32,7 +42,7 @@ export default function ProductInfo({ product, isFavorite, currentUserId }: Prod
       setIsCurrentlyFavorite(!isCurrentlyFavorite);
       try {
         await toggleFavorite(product.id);
-      } catch (error) {
+      } catch {
         // Reverter o estado em caso de erro
         setIsCurrentlyFavorite(isCurrentlyFavorite);
       }
@@ -59,6 +69,11 @@ export default function ProductInfo({ product, isFavorite, currentUserId }: Prod
 
           <div className={styles.tags}>
             {product.category && <span className={styles.category}>{product.category}</span>}
+            {product.product_tags?.map((productTag) => (
+              <span key={productTag.tag.id} className={styles.tag}>
+                {productTag.tag.name}
+              </span>
+            ))}
           </div>
         </div>
 

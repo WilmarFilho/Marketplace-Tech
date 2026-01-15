@@ -48,6 +48,12 @@ export async function getProductDetails(id: string) {
         full_name,
         avatar_url,
         phone
+      ),
+      product_tags:products_tags (
+        tag:tags (
+          id,
+          name
+        )
       )
     `)
     .eq("id", id)

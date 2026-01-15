@@ -287,6 +287,11 @@
   margin-right: 8px;
 }
 
+.tag {
+  background: #00f2a9 !important;
+  color: #000 !important;
+}
+
 .price strong {
   font-size: 32px;
   color: #00d084;

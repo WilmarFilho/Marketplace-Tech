@@ -1,11 +1,14 @@
-import { Layers, BadgeCheck } from 'lucide-react';
+import { Layers, BadgeCheck, User } from 'lucide-react';
 import Image from 'next/image';
 import styles from './product.module.css';
 import type { Tables } from '@/src/types/supabase';
 
 interface ProductSellerProps {
   product: Tables<'products'> & {
-    seller?: any;
+    seller?: {
+      avatar_url?: string;
+      full_name?: string;
+    };
     sellerStats?: {
       totalProducts: number;
     };
@@ -15,20 +18,28 @@ interface ProductSellerProps {
 export default function ProductSeller({ product }: ProductSellerProps) {
   const seller = product.seller;
   const sellerStats = product.sellerStats;
-  
+
   return (
     <section className={styles.sellerCard}>
       <h3>INFORMAÇÕES DO VENDEDOR</h3>
 
       <div className={styles.sellerContent}>
         <div className={styles.sellerInfo}>
-          <Image 
-            src={seller?.avatar_url || "/figma/avatar.png"} 
-            alt="Vendedor" 
-            width={50} 
-            height={50}
-            className={styles.sellerAvatar}
-          />
+          {seller?.avatar_url ? (
+            <Image
+              src={seller.avatar_url}
+              alt="Vendedor"
+              width={50}
+              height={50}
+              className={styles.sellerAvatar}
+            />
+          ) : (
+            <div className={styles.sellerStats}>
+              <button>
+                <User />
+              </button>
+            </div>
+          )}
           <span>{seller?.full_name || 'Vendedor'}</span>
         </div>
 
@@ -44,8 +55,8 @@ export default function ProductSeller({ product }: ProductSellerProps) {
             <BadgeCheck />
           </button>
           <span>
-            {sellerStats && sellerStats.totalProducts > 5 
-              ? 'Boa Reputação' 
+            {sellerStats && sellerStats.totalProducts > 5
+              ? 'Boa Reputação'
               : 'Novo Vendedor'
             }
           </span>
