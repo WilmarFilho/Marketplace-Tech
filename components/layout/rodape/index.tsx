@@ -1,8 +1,13 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./rodape.module.css";
+import { useNewsletter } from "@/lib/hooks/useNewsletter";
 
 function Rodape() {
+    const { email, setEmail, isLoading, message, isSuccess, subscribe } = useNewsletter();
+
     return (
         <footer className={styles.footer}>
 
@@ -36,11 +41,36 @@ function Rodape() {
                 <div className={styles.newsletterSection}>
                     <div className={styles.newsletter}>
                         <h4>Se inscreva na nossa newsletter</h4>
-                        <div className={styles.newsletterForm}>
-                            <input type="email" placeholder="Digite seu email" />
-                            <button type="submit">Cadastrar</button>
-                        </div>
-
+                        <form className={styles.newsletterForm} onSubmit={subscribe}>
+                            <input 
+                                type="email" 
+                                placeholder="Digite seu email" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={isLoading}
+                                required
+                            />
+                            <button 
+                                type="submit" 
+                                disabled={isLoading || !email}
+                                style={{
+                                    opacity: isLoading || !email ? 0.6 : 1,
+                                    cursor: isLoading || !email ? 'not-allowed' : 'pointer'
+                                }}
+                            >
+                                {isLoading ? 'Cadastrando...' : 'Cadastrar'}
+                            </button>
+                        </form>
+                        {message && (
+                            <div style={{
+                                marginTop: '8px',
+                                fontSize: '14px',
+                                color: isSuccess ? '#10b981' : '#ef4444',
+                                textAlign: 'center'
+                            }}>
+                                {message}
+                            </div>
+                        )}
                     </div>
                     {/* Navigation */}
                     <nav className={styles.nav}>
@@ -57,7 +87,7 @@ function Rodape() {
                             Explorar
                         </Link>
                         <Link
-                            href="/#sobre"
+                            href="/#missao"
                             className={styles.navText}
                         >
                             Sobre

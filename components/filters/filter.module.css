@@ -8,7 +8,7 @@
   color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 22px;
 }
 
 .title {
@@ -92,6 +92,7 @@
   border: none;
   padding: 0 12px;
   color: #fff;
+  outline: none;
 }
 
 .arrow {
@@ -115,6 +116,7 @@
   padding: 0 12px;
   color: #fff;
   margin-bottom: 8px;
+  outline: none;
 }
 
 .tags {
@@ -132,11 +134,18 @@
   font-size: 12px;
   cursor: pointer;
   transition: 0.5s;
+  outline: none;
 }
 
 .tags button:hover {
   border-color: #d6ff00;
   color: #d6ff00;
+}
+
+.tagActive {
+  background: #d6ff00 !important;
+  color: #000 !important;
+  border-color: #d6ff00 !important;
 }
 
 .radioGroup {
@@ -152,6 +161,23 @@
   align-items: center;
   font-size: 15px;
   color: #d0d0d0;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.radio:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.radioActive {
+  background: rgba(214, 255, 0, 0.1) !important;
+  color: #d6ff00 !important;
+}
+
+.circleActive {
+  fill: #d6ff00;
 }
 
 .radio input {

@@ -29,6 +29,12 @@
   color: #ECF230;
 }
 
+.tagActive {
+  background: #ECF230 !important;
+  color: #312e2e !important;
+  border-color: #ECF230 !important;
+}
+
 .searchWrapper {
   display: flex;
   align-items: center;
