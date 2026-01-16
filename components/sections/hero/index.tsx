@@ -4,14 +4,14 @@ import styles from "./secao-hero.module.css";
 
 export function SecaoHero() {
   return (
-    <section className={cn("w-full min-h-[760px] md:min-h-[933px]", styles.hero)}>
-      <div className="mx-auto flex w-full min-h-[760px] md:min-h-[933px] max-w-[1800px] gap-[10px] px-4 pb-20 pt-32 md:px-[44px] md:pb-[86px] md:pt-[230px]">
+    <section className={cn("w-full", styles.hero)}>
+      <div className={cn("mx-auto flex w-full max-w-[1800px] gap-[10px]", styles.heroContainer)}>
+
         {/* Left column */}
-        <div className="flex flex-1 flex-col justify-between">
+        <div className="flex flex-1 flex-col justify-between pt-20">
           <h1
             className={cn(
               "text-white font-medium tracking-tight",
-              "text-[42px] leading-[1.15] sm:text-[56px] md:text-[64px]",
               styles.title
             )}
           >
@@ -19,11 +19,10 @@ export function SecaoHero() {
             onde <span className={styles.highlight}>tecnologia</span>
           </h1>
 
-          <div className="flex w-full flex-col gap-[26px] self-start">
+          <div className={cn("flex w-full flex-col gap-[26px] self-start", styles.subtitleContainer)}>
             <p
               className={cn(
                 "text-white/90 font-normal max-w-[720px]",
-                "text-[18px] leading-[1.55] sm:text-[22px]",
                 styles.subtitle
               )}
             >
@@ -56,12 +55,13 @@ export function SecaoHero() {
         </div>
 
         {/* Right column */}
-        <div className="hidden md:flex flex-1 items-center justify-end">
+        <div className="flex flex-1 items-center justify-end pt-20">
           <h2 className={cn("text-white font-medium tracking-tight", styles.secondaryTitle)}>
             vira oportunidade <br />
             de <span className={styles.highlight}>negócio</span>
           </h2>
         </div>
+        
       </div>
     </section>
   );

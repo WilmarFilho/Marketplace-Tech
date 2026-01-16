@@ -1,5 +1,5 @@
 .hero {
-  min-height: 933px;
+  min-height: 100vh;
   background-color: #0f0f0f;
   background-image:
     radial-gradient(circle at -7% -20%, rgba(168, 154, 4, 0.15) 0%, rgba(15, 15, 15, 0) 65%),
@@ -9,6 +9,39 @@
   background-repeat: no-repeat;
 }
 
+.heroContainer {
+  min-height: 100vh;
+  padding: clamp(80px, 12vh, 230px) clamp(16px, 4vw, 60px) clamp(40px, 8vh, 86px) clamp(16px, 4vw, 60px);
+}
+
+/* Altura responsiva por breakpoints */
+@media (max-width: 1199px) {
+  .hero {
+    min-height: 80vh;
+  }
+  
+  .heroContainer {
+    min-height: 80vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    min-height: 70vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    min-height: 65vh;
+  }
+  
+  .heroContainer {
+    min-height: 65vh;
+    padding: 0 40px;
+  }
+}
+
 .highlight {
   color: #00FFB2;
   text-transform: uppercase;
@@ -16,38 +49,118 @@
 }
 
 .title {
-  font-size: 81px;
+  font-size: clamp(32px, 8vw, 81px);
   line-height: 1.1358024691em;
 }
 
 .subtitle {
-  font-size: 30px;
+  font-size: clamp(16px, 3.5vw, 30px);
   line-height: 1.4666666667em;
+  text-wrap: balance;
 }
 
 .ctaPrimary {
-  padding: 15px 19px;
+  padding: clamp(12px, 1.5vw, 15px) clamp(16px, 2vw, 19px);
   border-radius: 20px;
   background: #ecf230;
   color: #312e2e;
-  font-size: 21px;
+  font-size: clamp(14px, 2.2vw, 21px);
   line-height: 0.9047619048em;
 }
 
 .ctaSecondary {
-  padding: 15px 19px;
+  padding: clamp(12px, 1.5vw, 15px) clamp(16px, 2vw, 19px);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: rgba(255, 255, 255, 0.6);
-  font-size: 21px;
+  font-size: clamp(14px, 2.2vw, 21px);
   line-height: 0.9047619048em;
 }
 
 .secondaryTitle {
-  font-size: 81px;
+  font-size: clamp(28px, 7vw, 81px);
   line-height: 1.1358024691em;
   text-align: center;
+}
+
+.subtitleContainer {
+  opacity: 1;
+}
+
+/* Media query para telas menores que 1200px */
+@media (max-width: 1499px) {
+  .secondaryTitle, .title {
+    font-size: clamp(20px, 5vw, 44px);
+    text-align: left;
+  }
+  .subtitle {
+    font-size: clamp(14px, 3vw, 20px);
+  }
+}
+
+@media (max-width: 1399px) {
+  .title {
+    font-size: clamp(24px, 6vw, 48px);
+  }
+  
+  .subtitle {
+    font-size: clamp(14px, 3vw, 22px);
+  }
+  
+  .ctaPrimary,
+  .ctaSecondary {
+    font-size: clamp(12px, 2vw, 18px);
+    padding: clamp(10px, 1.2vw, 14px) clamp(14px, 1.8vw, 18px);
+  }
+  
+  .secondaryTitle {
+    font-size: clamp(20px, 5vw, 36px);
+    text-align: left;
+  }
+}
+
+@media (max-width: 900px) {
+  .title {
+    font-size: clamp(20px, 6vw, 34px);
+  }
+}
+
+@media (max-width: 620px) {
+  .title {
+    font-size: clamp(20px, 6vw, 30px);
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 26px;
+    top: 140px;
+    position: absolute;
+  }
+
+  .subtitleContainer {
+    position: absolute;
+    bottom: 0;
+    width: 75%;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+  }
+  
+  .ctaPrimary,
+  .ctaSecondary {
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 16px;
+  }
+  
+  .secondaryTitle {
+    font-size: 26px;
+    top: 300px;
+    position: absolute;
+  }
 }
