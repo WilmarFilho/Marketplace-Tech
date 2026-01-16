@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   return (
     <>
       <Cabecalho />
-      <div className="mx-auto pb-60 py-10 px-4 md:px-[44px] w-full max-w-[1800px]">
+      <div className="mx-auto pb-60 py-10 px-4 px-[60px] w-full max-w-[1800px]">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* User Info Card */}
           <ProfileCard 

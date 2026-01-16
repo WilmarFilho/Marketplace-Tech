@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProfilePictureUpload } from "./ProfilePictureUpload";
 import { EditProfileModal } from "./EditProfileModal";
-import { Edit3 } from "lucide-react";
+import { MessagesModal } from "./MessagesModal";
+import { getUnreadMessagesCount } from "@/app/(main)/dashboard/actions";
+import { Edit3, Mail } from "lucide-react";
 
 interface ProfileCardProps {
   user: {
@@ -24,6 +26,29 @@ interface ProfileCardProps {
 
 export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMessagesModalOpen, setIsMessagesModalOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnreadCount = useCallback(async () => {
+    try {
+      const count = await getUnreadMessagesCount(user.id);
+      setUnreadCount(count);
+    } catch (error) {
+      console.error('Erro ao buscar mensagens não lidas:', error);
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    if (isSeller) {
+      fetchUnreadCount();
+    }
+  }, [isSeller, fetchUnreadCount]);
+
+  const handleMessagesModalClose = () => {
+    setIsMessagesModalOpen(false);
+    // Atualizar contagem quando modal é fechado
+    fetchUnreadCount();
+  };
 
   const formatPhone = (phone: string | null | undefined) => {
     if (!phone) return "Não informado";
@@ -49,15 +74,40 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
             <CardTitle>Perfil</CardTitle>
             <CardDescription>Suas informações pessoais</CardDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsModalOpen(true)}
-            className="h-8 w-8 p-0"
-          >
-            <Edit3 className="h-4 w-4" />
-            <span className="sr-only">Editar perfil</span>
-          </Button>
+          <div className="flex gap-2">
+            {isSeller && (
+              <Button
+                variant={unreadCount > 0 ? "default" : "outline"}
+                size="sm"
+                onClick={() => setIsMessagesModalOpen(true)}
+                className={`h-8 w-8 p-0 relative ${
+                  unreadCount > 0 
+                    ? 'bg-[#ECF230] hover:bg-[#dae029] text-black' 
+                    : ''
+                }`}
+                title={`Ver mensagens${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}
+              >
+                <Mail className="h-4 w-4" />
+                {unreadCount > 0 && (
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-4 w-4 p-0 text-[10px] bg-red-500 hover:bg-red-500 border-white border-2"
+                  >
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </Badge>
+                )}
+                <span className="sr-only">Ver mensagens</span>
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsModalOpen(true)}
+              className="h-8 w-8 p-0"
+            >
+              <Edit3 className="h-4 w-4" />
+              <span className="sr-only">Editar perfil</span>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Profile Picture Section */}
@@ -96,6 +146,12 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
         onClose={() => setIsModalOpen(false)}
         currentPhone={profile?.phone}
         userName={profile?.full_name || 'Usuário'}
+      />
+      
+      <MessagesModal
+        isOpen={isMessagesModalOpen}
+        onClose={handleMessagesModalClose}
+        userId={user.id}
       />
     </>
   );
