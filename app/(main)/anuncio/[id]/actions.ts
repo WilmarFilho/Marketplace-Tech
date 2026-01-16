@@ -63,6 +63,7 @@ export async function getProductDetails(id: string) {
 
   const { data: { user } } = await supabase.auth.getUser();
   let isFavorite = false;
+  let userRole = null;
 
   if (user) {
     const { data: favorite } = await supabase
@@ -72,6 +73,14 @@ export async function getProductDetails(id: string) {
       .eq("product_id", id)
       .single();
     isFavorite = !!favorite;
+    
+    // Buscar role do usuário
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    userRole = profile?.role;
   }
 
   // Buscar estatísticas do vendedor
@@ -89,7 +98,8 @@ export async function getProductDetails(id: string) {
       }
     }, 
     isFavorite, 
-    currentUserId: user?.id 
+    currentUserId: user?.id,
+    userRole
   };
 }
 
@@ -131,4 +141,45 @@ export async function sendMessage(formData: FormData) {
   }
   
   return { success: true };
+}
+
+export async function deleteProduct(productId: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error("Unauthorized");
+
+  // Buscar o produto e verificar permissões
+  const { data: product } = await supabase
+    .from("products")
+    .select("seller_id")
+    .eq("id", productId)
+    .single();
+
+  if (!product) throw new Error("Produto não encontrado");
+
+  // Verificar se é o dono ou admin
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const isOwner = product.seller_id === user.id;
+  const isAdmin = profile?.role === "admin";
+
+  if (!isOwner && !isAdmin) {
+    throw new Error("Você não tem permissão para deletar este anúncio");
+  }
+
+  // Deletar o produto
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", productId);
+
+  if (error) throw new Error("Erro ao deletar o anúncio");
+
+  revalidatePath("/dashboard/meus-anuncios");
+  revalidatePath("/admin/moderacao");
 }

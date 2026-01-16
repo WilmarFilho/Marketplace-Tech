@@ -3,12 +3,14 @@
 import {
   Heart,
   Calendar,
-  MapPin
+  MapPin,
+  Trash2
 } from 'lucide-react';
 import styles from './product.module.css';
 import type { Tables } from '@/src/types/supabase';
-import { toggleFavorite } from '@/app/(main)/anuncio/[id]/actions';
+import { toggleFavorite, deleteProduct } from '@/app/(main)/anuncio/[id]/actions';
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface ProductInfoProps {
   product: Tables<'products'> & {
@@ -29,11 +31,14 @@ interface ProductInfoProps {
   };
   isFavorite: boolean;
   currentUserId?: string;
+  userRole?: string;
 }
 
-export default function ProductInfo({ product, isFavorite, currentUserId }: ProductInfoProps) {
+export default function ProductInfo({ product, isFavorite, currentUserId, userRole }: ProductInfoProps) {
   const [isCurrentlyFavorite, setIsCurrentlyFavorite] = useState(isFavorite);
   const [isPending, startTransition] = useTransition();
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
   
   const handleToggleFavorite = () => {
     if (!currentUserId) return;
@@ -47,6 +52,32 @@ export default function ProductInfo({ product, isFavorite, currentUserId }: Prod
         setIsCurrentlyFavorite(isCurrentlyFavorite);
       }
     });
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!currentUserId) return;
+    
+    const isOwner = product.seller_id === currentUserId;
+    const isAdmin = userRole === 'admin';
+    
+    if (!isOwner && !isAdmin) {
+      alert('Você não tem permissão para deletar este anúncio');
+      return;
+    }
+    
+    const confirmDelete = confirm('Tem certeza que deseja deletar este anúncio? Esta ação não pode ser desfeita.');
+    
+    if (confirmDelete) {
+      setIsDeleting(true);
+      try {
+        await deleteProduct(product.id);
+        router.push('/dashboard/meus-anuncios');
+      } catch (error) {
+        console.error('Erro ao deletar anúncio:', error);
+        alert('Erro ao deletar o anúncio. Tente novamente.');
+        setIsDeleting(false);
+      }
+    }
   };
 
   const formatDate = (dateString: string | null) => {
@@ -78,16 +109,30 @@ export default function ProductInfo({ product, isFavorite, currentUserId }: Prod
         </div>
 
         {currentUserId && (
-          <button 
-            className={styles.favorite}
-            onClick={handleToggleFavorite}
-            disabled={isPending}
-            style={{
-              color: isCurrentlyFavorite ? '#ef4444' : '#6b7280'
-            }}
-          >
-            <Heart fill={isCurrentlyFavorite ? 'currentColor' : 'none'} />
-          </button>
+          <div className={styles.actionButtons}>
+            <button 
+              className={styles.favorite}
+              onClick={handleToggleFavorite}
+              disabled={isPending}
+              style={{
+                color: isCurrentlyFavorite ? '#ef4444' : '#6b7280'
+              }}
+            >
+              <Heart fill={isCurrentlyFavorite ? 'currentColor' : 'none'} />
+            </button>
+            
+            {/* Botão de deletar - apenas para o dono ou admin */}
+            {((product.seller_id === currentUserId) || (userRole === 'admin')) && (
+              <button
+                className={styles.deleteButton}
+                onClick={handleDeleteProduct}
+                disabled={isDeleting}
+                title="Deletar anúncio"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
+          </div>
         )}
       </header>
 

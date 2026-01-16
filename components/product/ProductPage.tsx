@@ -17,7 +17,7 @@ export default async function ProductPage({ productId }: ProductPageProps) {
     notFound();
   }
   
-  const { product, isFavorite, currentUserId } = result;
+  const { product, isFavorite, currentUserId, userRole } = result;
 
   return (
     <div className={styles.page}>
@@ -25,7 +25,7 @@ export default async function ProductPage({ productId }: ProductPageProps) {
 
       <div className={`${styles.content}`}>
         <div className={styles.left}>
-          <ProductInfo product={product} isFavorite={isFavorite} currentUserId={currentUserId} />
+          <ProductInfo product={product} isFavorite={isFavorite} currentUserId={currentUserId} userRole={userRole} />
           <ProductSeller product={product} />
         </div>
 
