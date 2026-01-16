@@ -20,10 +20,15 @@ export async function getMeusAnuncios() {
     .eq("seller_id", user.id)
     .order("created_at", { ascending: false });
 
-  // Transformar a estrutura de tags
+  // Transformar a estrutura de tags e garantir que todos os campos necessários estão presentes
   return products?.map(product => ({
     ...product,
-    tags: product.tags?.map((t: any) => ({ name: t.tag.name })) || []
+    tags: product.tags?.map((t: any) => ({ name: t.tag.name })) || [],
+    // Garantir que campos de localização existem para filtragem
+    city: product.city || '',
+    state: product.state || '',
+    category: product.category || '',
+    description: product.description || ''
   })) || [];
 }
 

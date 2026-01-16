@@ -17,7 +17,18 @@ export async function getFavorites() {
         title,
         price,
         images_urls,
-        status
+        status,
+        description,
+        category,
+        city,
+        state,
+        seller_id,
+        created_at,
+        address,
+        contact_phone,
+        tags:products_tags(
+          tag:tags(name)
+        )
       )
     `)
     .eq("user_id", user.id);

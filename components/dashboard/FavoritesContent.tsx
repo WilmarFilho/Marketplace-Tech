@@ -8,7 +8,26 @@ import { getFavorites } from "../../app/(main)/dashboard/favoritos/actions";
 import type { Favorite } from "@/src/types/products";
 import LocalFilterBar from "@/components/dashboard/LocalFilterBar";
 import LocalFilters from "@/components/dashboard/LocalFilters";
+import { ActiveFilters } from "@/components/dashboard/ActiveFilters";
 import type { FilterParams } from '../../app/(main)/explorar/actions';
+
+// Interface para o produto completo com campos adicionais
+interface ExtendedProduct {
+  id: string;
+  title: string;
+  price: number;
+  images_urls: string[] | null;
+  status: string;
+  address?: string | null;
+  category?: string | null;
+  city?: string | null;
+  contact_phone?: string | null;
+  created_at?: string | null;
+  description?: string | null;
+  seller_id?: string;
+  state?: string | null;
+  tags?: Array<{ tag: { name: string } }>;
+}
 
 // Converter Favorite para ProductRow
 function favoriteToProductRow(favorite: Favorite): ProductRow | null {
@@ -16,22 +35,24 @@ function favoriteToProductRow(favorite: Favorite): ProductRow | null {
   
   if (!product) return null;
   
+  const extendedProduct = product as ExtendedProduct;
+  
   return {
-    id: product.id,
-    title: product.title,
-    price: product.price,
-    images_urls: product.images_urls,
-    status: product.status,
-    address: null,
-    category: null,
-    city: null,
-    contact_phone: null,
-    created_at: null,
-    description: null,
-    seller_id: '',
-    state: null,
+    id: extendedProduct.id,
+    title: extendedProduct.title,
+    price: extendedProduct.price,
+    images_urls: extendedProduct.images_urls,
+    status: extendedProduct.status,
+    address: extendedProduct.address || null,
+    category: extendedProduct.category || null,
+    city: extendedProduct.city || null,
+    contact_phone: extendedProduct.contact_phone || null,
+    created_at: extendedProduct.created_at || null,
+    description: extendedProduct.description || null,
+    seller_id: extendedProduct.seller_id || '',
+    state: extendedProduct.state || null,
     isFavorited: true,
-    tags: []
+    tags: extendedProduct.tags?.map((t: { tag: { name: string } }) => ({ name: t.tag.name })) || []
   } as ProductRow;
 }
 
@@ -83,7 +104,20 @@ function FavoritesGrid({ filters }: { filters: FilterParams }) {
       );
     }
 
-    // Filtro por localização
+    // Filtro por localização (estado ou cidade)
+    if (filters.state) {
+      filtered = filtered.filter(product => 
+        product.state?.toLowerCase().includes(filters.state?.toLowerCase() || '')
+      );
+    }
+    
+    if (filters.city) {
+      filtered = filtered.filter(product => 
+        product.city?.toLowerCase().includes(filters.city?.toLowerCase() || '')
+      );
+    }
+
+    // Filtro por localização genérica (se ainda existe)
     if (filters.location) {
       filtered = filtered.filter(product => 
         product.city?.toLowerCase().includes(filters.location?.toLowerCase() || '') ||
@@ -107,6 +141,51 @@ function FavoritesGrid({ filters }: { filters: FilterParams }) {
         product.title.toLowerCase().includes(searchTerm) ||
         product.description?.toLowerCase().includes(searchTerm)
       );
+    }
+
+    // Filtro por tags
+    if (filters.tags && filters.tags.length > 0) {
+      filtered = filtered.filter(product => 
+        filters.tags?.some((filterTag: string) => 
+          product.tags?.some((productTag: { name: string }) => 
+            productTag.name?.toLowerCase() === filterTag.toLowerCase()
+          )
+        )
+      );
+    }
+
+    // Filtro por data
+    if (filters.dateFilter) {
+      const now = new Date();
+      let filterDate: Date | null = new Date();
+      
+      switch (filters.dateFilter) {
+        case 'today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          filterDate.setDate(now.getDate() - 7);
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'month':
+          filterDate.setMonth(now.getMonth() - 1);
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case '3months':
+          filterDate.setMonth(now.getMonth() - 3);
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        default:
+          // Se o valor não for reconhecido, não filtrar por data
+          filterDate = null;
+      }
+      
+      if (filterDate) {
+        filtered = filtered.filter(product => {
+          const productDate = product.created_at ? new Date(product.created_at) : null;
+          return productDate && productDate >= filterDate;
+        });
+      }
     }
 
     setFilteredProducts(filtered);
@@ -185,7 +264,8 @@ export default function FavoritesContent() {
     toggleTag,
     toggleCategory,
     setPriceRange,
-    setCustomPrice
+    setCustomPrice,
+    clearFilters
   } = useLocalFilters();
 
   return (
@@ -200,6 +280,14 @@ export default function FavoritesContent() {
         searchDebounce={searchDebounce}
         updateSearch={updateSearch}
         toggleTag={toggleTag}
+      />
+
+      <ActiveFilters 
+        filters={filters}
+        clearFilters={clearFilters}
+        toggleTag={toggleTag}
+        toggleCategory={toggleCategory}
+        updateFilters={updateFilters}
       />
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">

@@ -7,6 +7,7 @@ import { useLocalFilters } from "@/lib/hooks/useLocalFilters";
 import { getMeusAnuncios } from "../../app/(main)/dashboard/meus-anuncios/actions";
 import LocalFilterBar from "@/components/dashboard/LocalFilterBar";
 import LocalFilters from "@/components/dashboard/LocalFilters";
+import { ActiveFilters } from "@/components/dashboard/ActiveFilters";
 import Link from "next/link";
 import { Plus } from "lucide-react";import type { FilterParams } from '../../app/(main)/explorar/actions';
 function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
@@ -41,7 +42,7 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
   // Aplicar filtros localmente
   useEffect(() => {
     if (!allProducts.length) return;
-
+    
     let filtered = [...allProducts];
 
     // Filtro por categoria
@@ -53,7 +54,20 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
       );
     }
 
-    // Filtro por localização
+    // Filtro por localização (estado ou cidade)
+    if (filters.state) {
+      filtered = filtered.filter(product => 
+        product.state?.toLowerCase().includes(filters.state?.toLowerCase() || '')
+      );
+    }
+    
+    if (filters.city) {
+      filtered = filtered.filter(product => 
+        product.city?.toLowerCase().includes(filters.city?.toLowerCase() || '')
+      );
+    }
+
+    // Filtro por localização genérica (se ainda existe)
     if (filters.location) {
       filtered = filtered.filter(product => 
         product.city?.toLowerCase().includes(filters.location?.toLowerCase() || '') ||
@@ -77,6 +91,59 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
         product.title.toLowerCase().includes(searchTerm) ||
         product.description?.toLowerCase().includes(searchTerm)
       );
+    }
+
+    // Filtro por tags
+    if (filters.tags && filters.tags.length > 0) {
+      filtered = filtered.filter(product => 
+        filters.tags?.some((filterTag: string) => 
+          product.tags?.some((productTag: { name?: string }) => 
+            productTag.name?.toLowerCase() === filterTag.toLowerCase()
+          )
+        )
+      );
+    }
+
+    // Filtro por data
+    if (filters.dateFilter) {
+      console.log('🗓️ Aplicando filtro de data:', filters.dateFilter);
+      const now = new Date();
+      let filterDate: Date | null = new Date();
+      
+      switch (filters.dateFilter) {
+        case 'today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          filterDate.setDate(now.getDate() - 7);
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'month':
+          filterDate.setMonth(now.getMonth() - 1);
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case '3months':
+          filterDate.setMonth(now.getMonth() - 3);
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        default:
+          // Se o valor não for reconhecido, não filtrar por data
+          filterDate = null;
+      }
+      
+      if (filterDate) {
+        console.log('📅 Data limite:', filterDate.toISOString());
+        const beforeFilter = filtered.length;
+        filtered = filtered.filter(product => {
+          const productDate = product.created_at ? new Date(product.created_at) : null;
+          const isValid = productDate && productDate >= filterDate;
+          if (productDate) {
+            console.log(`📊 Produto: ${product.title} - Data: ${productDate.toISOString()} - Válido: ${isValid}`);
+          }
+          return isValid;
+        });
+        console.log(`✅ Filtro de data: ${beforeFilter} → ${filtered.length} produtos`);
+      }
     }
 
     setFilteredProducts(filtered);
@@ -164,7 +231,8 @@ export default function MeusAnunciosContent() {
     toggleTag,
     toggleCategory,
     setPriceRange,
-    setCustomPrice
+    setCustomPrice,
+    clearFilters
   } = useLocalFilters();
 
   return (
@@ -188,6 +256,14 @@ export default function MeusAnunciosContent() {
         searchDebounce={searchDebounce}
         updateSearch={updateSearch}
         toggleTag={toggleTag}
+      />
+
+      <ActiveFilters 
+        filters={filters}
+        clearFilters={clearFilters}
+        toggleTag={toggleTag}
+        toggleCategory={toggleCategory}
+        updateFilters={updateFilters}
       />
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">

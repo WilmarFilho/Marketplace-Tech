@@ -21,7 +21,7 @@ export function ModerationGrid({ products, currentStatus }: ModerationGridProps)
 
   if (products.length === 0) {
     return (
-      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-12 backdrop-blur-sm">
+      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-12 backdrop-blur-sm mt-10">
         <div className="text-center text-white/70">
           <div className="text-6xl mb-4">
             {currentStatus === 'pendente' && '⏳'}

@@ -59,7 +59,47 @@ export function useLocalFilters() {
 
   // Definir faixa de preço
   const setPriceRange = useCallback((range: string) => {
-    updateFilters({ priceRange: range, page: 1 });
+    // Converter faixa de preço em valores min/max
+    let minPrice: number | undefined;
+    let maxPrice: number | undefined;
+    
+    switch (range) {
+      case 'Até R$ 500':
+        minPrice = 0;
+        maxPrice = 500;
+        break;
+      case 'R$ 500 - R$ 1.000':
+        minPrice = 500;
+        maxPrice = 1000;
+        break;
+      case 'R$ 1.000 - R$ 2.500':
+        minPrice = 1000;
+        maxPrice = 2500;
+        break;
+      case 'R$ 2.500 - R$ 5.000':
+        minPrice = 2500;
+        maxPrice = 5000;
+        break;
+      case 'R$ 5.000 - R$ 10.000':
+        minPrice = 5000;
+        maxPrice = 10000;
+        break;
+      case 'Acima de R$ 10.000':
+        minPrice = 10000;
+        maxPrice = undefined;
+        break;
+      default:
+        minPrice = undefined;
+        maxPrice = undefined;
+        break;
+    }
+    
+    updateFilters({ 
+      priceRange: range, 
+      minPrice, 
+      maxPrice, 
+      page: 1 
+    });
   }, [updateFilters]);
 
   // Definir preço customizado

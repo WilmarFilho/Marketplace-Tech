@@ -158,18 +158,23 @@ export default function LocalFilters({
       {/* Data */}
       <FilterSection title="Data do anúncio" id="filters-date">
         <div className={styles.radioGroup}>
-          {['Última Semana', 'Último Mês', 'Último Trimestre'].map(item => (
+          {[
+            { label: 'Hoje', value: 'today' },
+            { label: 'Última Semana', value: 'week' },
+            { label: 'Último Mês', value: 'month' },
+            { label: 'Últimos 3 Meses', value: '3months' }
+          ].map(item => (
             <label 
-              key={item} 
+              key={item.value} 
               className={`${styles.radio} ${
-                filters.dateFilter === item ? styles.radioActive : ''
+                filters.dateFilter === item.value ? styles.radioActive : ''
               }`}
-              onClick={() => handleDateFilterChange(item)}
+              onClick={() => handleDateFilterChange(item.value)}
             >
-              <span>{item}</span>
+              <span>{item.label}</span>
               <Circle 
                 size={18} 
-                className={filters.dateFilter === item ? styles.circleActive : ''}
+                className={filters.dateFilter === item.value ? styles.circleActive : ''}
               />
             </label>
           ))}
