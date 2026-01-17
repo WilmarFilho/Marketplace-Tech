@@ -74,7 +74,7 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName }: Ed
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div className="space-y-4">
             {/* Nome (apenas exibição) */}
             <div className="space-y-2">

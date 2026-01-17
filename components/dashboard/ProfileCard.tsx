@@ -68,7 +68,7 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
 
   return (
     <>
-      <Card className="col-span-full md:col-span-1">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div>
             <CardTitle>Perfil</CardTitle>

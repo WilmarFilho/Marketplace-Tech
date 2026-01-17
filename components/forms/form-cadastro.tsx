@@ -13,8 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { useFormState } from "react-dom";
+import React, { useState } from "react";
 
 export function FormCadastro({
   className,
@@ -23,7 +22,7 @@ export function FormCadastro({
   const [role, setRole] = useState<"comprador" | "vendedor">("comprador");
   const [isPending, setIsPending] = useState(false);
   
-  const [state, formAction] = useFormState(async (prevState: { error: string | null }, formData: FormData) => {
+  const [state, formAction] = React.useActionState(async (prevState: { error: string | null }, formData: FormData) => {
     try {
       await signUp(formData);
       return { error: null };

@@ -12,6 +12,10 @@
     justify-content: space-between;
 }
 
+.strong {
+    display: none;
+}
+
 .containerBottom {
     display: flex;
     border-top: 1px solid #ffffff2c;
@@ -90,6 +94,14 @@
         padding: 48px 40px 20px 40px;
     }
 
+    .strong {
+        display: block;
+    }
+
+    .logoNkw {
+        display: none;
+    }
+
     .containerTop {
         flex-direction: column;
         align-items: center;
@@ -112,6 +124,8 @@
 
     .rightsSection {
         justify-content: center;
+        text-align: center;
+        text-wrap: balance;
     }
 
     .containerBottom {
@@ -194,11 +208,5 @@
     .containerBottom {
         gap: 8px;
         padding-top: 12px;
-    }
-
-    .rightsSection p {
-        text-align: left;
-        font-size: 12px;
-        width: 94%;
     }
 }

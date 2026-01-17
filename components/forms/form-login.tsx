@@ -67,7 +67,7 @@ export function FormLogin({
                   <Label htmlFor="password">Senha</Label>
                   <Link
                     href="/auth/esqueci-senha"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline hide-below-700"
                   >
                     Esqueceu sua senha?
                   </Link>
@@ -95,6 +95,14 @@ export function FormLogin({
                 className="underline underline-offset-4"
               >
                 Cadastre-se
+              </Link>
+            </div>
+            <div className="mt-2 text-center text-sm show-below-700">
+              <Link
+                href="/auth/esqueci-senha"
+                className="inline-block text-sm underline-offset-4 hover:underline"
+              >
+                Esqueceu sua senha?
               </Link>
             </div>
             <div className="mt-2 text-center text-sm">

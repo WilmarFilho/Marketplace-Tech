@@ -10,12 +10,14 @@ export default function ExplorarPage() {
 
       <main>
         <Suspense fallback={
-          <div className="mx-auto w-full max-w-[1800px] px-4 py-10 md:px-[44px]">
-            <div className="flex justify-center items-center min-h-[400px]">
+          <div className="w-full px-4">
+            <div className="mx-auto w-full max-w-[1744px] px-6 py-10 md:px-[40px]">
+              <div className="flex justify-center items-center min-h-[400px]">
               <div className="text-white text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
                 <p>Carregando produtos...</p>
               </div>
+            </div>
             </div>
           </div>
         }>

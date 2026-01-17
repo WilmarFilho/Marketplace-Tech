@@ -80,3 +80,42 @@ body {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+
+/* Utility to show/hide elements under a 700px breakpoint */
+.show-below-700 { display: none; }
+.hide-below-700 { display: inherit; }
+
+@media (max-width: 700px) {
+  .show-below-700 { display: block; }
+  .hide-below-700 { display: none; }
+}
+
+/* Dashboard grid: 1 column by default, 2 columns @670px, 3 columns @1024px */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem; /* match gap-6 */
+}
+
+@media (min-width: 670px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Make profile card span full row on 2-column layout and smaller; reset at >=1024px */
+.profile-card-span {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 1024px) {
+  .profile-card-span {
+    grid-column: auto;
+  }
+}

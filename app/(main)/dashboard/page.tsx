@@ -19,76 +19,76 @@ export default async function DashboardPage() {
   return (
     <>
       <Cabecalho />
-      <div className="mx-auto pb-60 py-10 px-4 px-[60px] w-full max-w-[1800px]">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* User Info Card */}
-          <ProfileCard 
-            user={user}
-            profile={profile}
-            isSeller={isSeller}
-          />
+      <div className="w-full px-2 sm:px-4">
+        <div className="mx-auto w-full max-w-[1744px] py-10 pb-60">
+          <div className="dashboard-grid px-2 sm:px-6 md:px-[40px]">
+          {/* Profile Card */}
+          <div className="profile-card-span">
+            <ProfileCard 
+              user={user}
+              profile={profile}
+              isSeller={isSeller}
+            />
+          </div>
 
-          {/* Actions */}
-          <div className="col-span-full md:col-span-1 lg:col-span-2 grid gap-6 sm:grid-cols-2">
-              
-              {/* Favorites */}
-              <Card className="hover:bg-muted/50 transition-colors flex flex-col justify-between">
+          {/* Favorites */}
+          <Card className="hover:bg-muted/50 transition-colors flex flex-col justify-between">
+              <CardHeader>
+                  <CardTitle>Favoritos</CardTitle>
+                  <CardDescription>Veja os produtos que você salvou</CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <Button asChild className="w-full" variant="secondary">
+                      <Link href="/dashboard/favoritos">Ver Favoritos</Link>
+                  </Button>
+              </CardContent>
+          </Card>
+
+          {/* Seller Actions */}
+          {isSeller && (
+            <>
+              <Card className="hover:bg-muted/50 transition-colors border-primary/20 flex flex-col justify-between">
                   <CardHeader>
-                      <CardTitle>Favoritos</CardTitle>
-                      <CardDescription>Veja os produtos que você salvou</CardDescription>
+                      <CardTitle>Anunciar</CardTitle>
+                      <CardDescription>Crie um novo anúncio de venda</CardDescription>
                   </CardHeader>
                   <CardContent>
-                      <Button asChild className="w-full" variant="secondary">
-                          <Link href="/dashboard/favoritos">Ver Favoritos</Link>
+                      <Button asChild className="w-full" variant="default">
+                          <Link href="/dashboard/anunciar">Criar Anúncio</Link>
                       </Button>
                   </CardContent>
               </Card>
 
-              {/* Seller Actions */}
-              {isSeller && (
-                  <>
-                      <Card className="hover:bg-muted/50 transition-colors border-primary/20 flex flex-col justify-between">
-                          <CardHeader>
-                              <CardTitle>Anunciar</CardTitle>
-                              <CardDescription>Crie um novo anúncio de venda</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                              <Button asChild className="w-full" variant="default">
-                                  <Link href="/dashboard/anunciar">Criar Anúncio</Link>
-                              </Button>
-                          </CardContent>
-                      </Card>
+              <Card className="hover:bg-muted/50 transition-colors flex flex-col justify-between">
+                  <CardHeader>
+                      <CardTitle>Meus Anúncios</CardTitle>
+                      <CardDescription>Gerencie seus produtos à venda</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                      <Button asChild className="w-full" variant="outline">
+                          <Link href="/dashboard/meus-anuncios">Ver Meus Anúncios</Link>
+                      </Button>
+                  </CardContent>
+              </Card>
+            </>
+          )}
 
-                      <Card className="hover:bg-muted/50 transition-colors flex flex-col justify-between">
-                          <CardHeader>
-                              <CardTitle>Meus Anúncios</CardTitle>
-                              <CardDescription>Gerencie seus produtos à venda</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                              <Button asChild className="w-full" variant="outline">
-                                  <Link href="/dashboard/meus-anuncios">Ver Meus Anúncios</Link>
-                              </Button>
-                          </CardContent>
-                      </Card>
-                  </>
-              )}
-               
-               {/* Admin Actions */}
-               {profile?.role === 'admin' && (
-                  <Card className="hover:bg-muted/50 transition-colors border-red-200 dark:border-red-900 flex flex-col justify-between">
-                      <CardHeader>
-                          <CardTitle>Moderação</CardTitle>
-                          <CardDescription>Gerenciar anúncios e usuários</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                          <Button asChild className="w-full" variant="destructive">
-                              <Link href="/admin/moderacao">Acessar Painel</Link>
-                          </Button>
-                      </CardContent>
-                  </Card>
-               )}
-          </div>
+          {/* Admin Actions */}
+          {profile?.role === 'admin' && (
+            <Card className="hover:bg-muted/50 transition-colors border-red-200 dark:border-red-900 flex flex-col justify-between">
+                <CardHeader>
+                    <CardTitle>Moderação</CardTitle>
+                    <CardDescription>Gerenciar anúncios e usuários</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Button asChild className="w-full" variant="destructive">
+                        <Link href="/admin/moderacao">Acessar Painel</Link>
+                    </Button>
+                </CardContent>
+            </Card>
+          )}
         </div>
+      </div>
       </div>
       <Rodape />
     </>

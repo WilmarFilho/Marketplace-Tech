@@ -189,7 +189,8 @@ function ProductGrid() {
 
 export default function ExplorarContent() {
   return (
-    <div className="mx-auto w-full max-w-[1800px] px-4 py-10 md:px-[44px]">
+    <div className="w-full px-4">
+      <div className="mx-auto w-full max-w-[1744px] px-6 py-10 md:px-[40px]">
       <FilterBar />
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
@@ -200,6 +201,7 @@ export default function ExplorarContent() {
         <div className="min-w-0 flex-1">
           <ProductGrid />
         </div>
+      </div>
       </div>
     </div>
   );
