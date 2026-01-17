@@ -33,6 +33,7 @@ function Rodape() {
                                 width={256}
                                 height={37}
                                 priority
+                                className={styles.logoNkw}
                             />
                         </Link >
                     </div>

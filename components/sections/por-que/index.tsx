@@ -12,11 +12,11 @@ export function SecaoPorQue() {
         alt=""
         width={1007}
         height={976}
-        className="pointer-events-none absolute right-[-140px] top-[26px] hidden opacity-50 md:block"
+        className="pointer-events-none absolute right-[-100px] top-20 w-[180px] opacity-50 md:right-[-140px] md:top-[26px] md:bottom-auto md:w-[1007px]"
         aria-hidden
       />
 
-      <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-[80px] px-4 py-[100px] pb-[120px] md:px-[44px]">
+      <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-[48px] px-4 py-12 pb-6 sm:px-6 md:gap-[80px] md:px-[44px] md:py-[100px] md:pb-[120px]">
         {/* Header */}
         <div className="flex w-full max-w-[1093px] flex-col justify-center gap-[13px]">
           <div className="w-fit">
@@ -37,7 +37,7 @@ export function SecaoPorQue() {
         <div className="relative flex w-full items-stretch gap-[57px]">
           <div
             className={cn(
-              "relative flex w-full flex-col gap-10 px-6 pb-6 pt-10 md:px-6",
+              "relative flex w-full flex-col gap-10 px-4 pb-6 pt-8 sm:px-6 md:px-6 md:pt-10",
               styles.greenPanel
             )}
           >
@@ -47,11 +47,14 @@ export function SecaoPorQue() {
               alt=""
               width={1225}
               height={891}
-              className="pointer-events-none absolute right-0 top-[-260px] hidden w-[1040px] max-w-none md:block"
+              className={cn(
+                "pointer-events-none absolute right-0 bottom-0 w-[220px] md:right-0 md:top-[-260px] md:bottom-auto md:w-[1040px] max-w-none",
+                styles.illustration
+              )}
               aria-hidden
             />
 
-            <div className="relative flex flex-col items-center gap-8 md:flex-row md:gap-[72px]">
+            <div className={cn("relative flex flex-col items-center gap-8 md:flex-row md:gap-[72px]", styles.content)}>
               {/* Glass cards */}
               <div className={cn("flex flex-col items-center justify-center p-10", styles.glassCard)}>
                 <Image src="/figma/icon-users-three.svg" alt="" width={81} height={81} aria-hidden />

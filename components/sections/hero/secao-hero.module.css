@@ -17,27 +17,31 @@
 /* Altura responsiva por breakpoints */
 @media (max-width: 1199px) {
   .hero {
-    min-height: 80vh;
+    min-height: 92vh;
   }
   
   .heroContainer {
-    min-height: 80vh;
+    min-height: 92vh;
+  }
+
+  .right {
+    padding-top: 0 !important;
   }
 }
 
 @media (max-width: 768px) {
-  .hero {
-    min-height: 70vh;
+  .hero, .heroContainer {
+    min-height: 90vh;
   }
 }
 
 @media (max-width: 480px) {
-  .hero {
-    min-height: 65vh;
+
+  .right {
+    padding-top: 5rem !important;
   }
   
   .heroContainer {
-    min-height: 65vh;
     padding: 0 40px;
   }
 }
@@ -124,20 +128,20 @@
 
 @media (max-width: 900px) {
   .title {
-    font-size: clamp(20px, 6vw, 34px);
+    font-size: 28px;
   }
 }
 
 @media (max-width: 620px) {
   .title {
-    font-size: clamp(20px, 6vw, 30px);
+    font-size: 24px;
   }
 }
 
 @media (max-width: 480px) {
   .title {
     font-size: 26px;
-    top: 140px;
+    top: 110px;
     position: absolute;
   }
 
@@ -160,7 +164,7 @@
   
   .secondaryTitle {
     font-size: 26px;
-    top: 300px;
+    top: 220px;
     position: absolute;
   }
 }

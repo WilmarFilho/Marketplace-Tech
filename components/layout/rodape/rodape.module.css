@@ -30,6 +30,10 @@
     height: 66px;
 }
 
+.rightsSection p {
+    font-size: 16px;
+}
+
 .logo {
     width: 100%;
 }
@@ -54,7 +58,7 @@
 
 .newsletterForm {
     display: flex;
-    gap: 8px;   
+    gap: 8px;
     justify-content: end;
 }
 
@@ -73,9 +77,128 @@
     font-weight: bold;
     text-transform: uppercase;
     cursor: pointer;
-}   
+}
 
 .nav {
     display: flex;
     gap: 12px;
+}
+
+/* Responsive footer rules */
+@media (max-width: 1024px) {
+    .footer {
+        padding: 48px 40px 20px 40px;
+    }
+
+    .containerTop {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .newsletterSection {
+        align-items: center;
+        width: 100%;
+        gap: 32px;
+    }
+
+    .newsletter h4 {
+        font-size: 28px;
+    }
+
+    .newsletterForm {
+        justify-content: center;
+    }
+
+    .rightsSection {
+        justify-content: center;
+    }
+
+    .containerBottom {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 36px 24px 16px 24px;
+    }
+
+    .newsletter h4 {
+        font-size: 24px;
+    }
+
+    .newsletterForm {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .newsletterForm input {
+        width: 100%;
+        max-width: 420px;
+        padding: 8px 12px;
+        text-align: left;
+    }
+
+    .newsletterForm button {
+        width: 100%;
+        max-width: 240px;
+    }
+
+    .nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .rightsSection p {
+        font-size: 14px;
+        width: 62%;
+    }
+
+    .newsletterSection {
+        gap: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 24px 12px 12px 12px;
+        gap: 20px;
+    }
+
+    
+
+    .newsletter h4 {
+        font-size: 20px;
+    }
+
+    .logoSection {
+        align-items: center;
+        text-align: center;
+    }
+
+    .rightsSection {
+        gap: 2px;
+    }
+
+    .newsletterForm input {
+        font-size: 14px;
+    }
+
+    .newsletterForm button {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    .containerBottom {
+        gap: 8px;
+        padding-top: 12px;
+    }
+
+    .rightsSection p {
+        text-align: left;
+        font-size: 12px;
+        width: 94%;
+    }
 }

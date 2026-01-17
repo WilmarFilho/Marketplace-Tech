@@ -138,7 +138,10 @@ export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncio
       <Link
         href={`/anuncio/${product.id}`}
         style={backgroundStyle}
-        className="group relative h-[395px] w-full max-w-[478px] overflow-hidden rounded-[20px] bg-cover bg-center p-[10px]"
+        className={cn(
+          "group relative w-full overflow-hidden rounded-[20px] bg-cover bg-center p-[10px]",
+          styles.cardRoot
+        )}
       >
         {!imageSrc && <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600" />}
 

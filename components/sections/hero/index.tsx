@@ -15,7 +15,7 @@ export function SecaoHero() {
               styles.title
             )}
           >
-            O marketplace C <br />
+            O marketplace<br />
             onde <span className={styles.highlight}>tecnologia</span>
           </h1>
 
@@ -55,7 +55,7 @@ export function SecaoHero() {
         </div>
 
         {/* Right column */}
-        <div className="flex flex-1 items-center justify-end pt-20">
+        <div className={cn("flex flex-1 items-center justify-end pt-20", styles.right)}>
           <h2 className={cn("text-white font-medium tracking-tight", styles.secondaryTitle)}>
             vira oportunidade <br />
             de <span className={styles.highlight}>negócio</span>

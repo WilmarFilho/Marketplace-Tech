@@ -21,6 +21,7 @@
   max-width: 882px;
   font-size: 56px;
   line-height: 1.0714285714em;
+  text-wrap: balance;
 }
 
 .subtitle {
@@ -72,4 +73,59 @@
   .tickerTrack {
     animation: none;
   }
+}
+
+@media (max-width: 1524px) {
+  .kicker {
+    font-size: 20px;
+    padding: 6px 40px;
+  }
+
+  .title { font-size: 40px; }
+  .subtitle { font-size: 22px; }
+
+  .tickerWrap { padding-bottom: 100px; }
+
+  .tickerTrack { gap: 26px; }
+  .tickerGroup { gap: 26px; }
+
+  .tickerItem { width: min(360px, 92vw); }
+}
+
+@media (max-width: 1224px) {
+  .kicker {
+    font-size: 18px;
+    padding: 6px 40px;
+  }
+
+  .title { font-size: 32px; }
+  .subtitle { font-size: 20px; }
+
+  .tickerItem { width: min(320px, 92vw); }
+}
+
+@media (max-width: 768px) {
+  .kicker {
+    font-size: 16px;
+    padding: 6px 28px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .title { font-size: 28px; text-align: center; }
+  .subtitle { font-size: 20px; text-align: center; }
+
+  .tickerWrap { padding-bottom: 80px; }
+
+}
+
+@media (max-width: 480px) {
+  .kicker {
+    font-size: 14px;
+    padding: 6px 18px;
+  }
+
+  .title { font-size: 20px; }
+  .subtitle { font-size: 16px; }
+
 }

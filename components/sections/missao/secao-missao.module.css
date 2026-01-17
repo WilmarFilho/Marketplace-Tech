@@ -29,13 +29,14 @@
 
 .productMock {
     position: absolute;
-    left: 0;
+    left: -100px;
     top: 0;
     width: 900px;
     height: 900px;
     aspect-ratio: 1 / 1;
     border-radius: 28px;
     background-size: contain;
+    background-repeat: no-repeat;
     background-image:
         url("/figma/pc.png");
 }
@@ -73,6 +74,7 @@
     font-weight: 600;
     color: #0f0f0f;
     text-align: end;
+    text-wrap: balance;
 }
 
 .subtitle {
@@ -81,6 +83,7 @@
     line-height: 1.5em;
     color: rgba(15, 15, 15, 0.8);
     max-width: 560px;
+    text-wrap: balance;
 }
 
 .cta {
@@ -180,56 +183,172 @@
     transform: rotate(-10deg);
 }
 
-@media (max-width: 1024px) {
+
+/* Responsive rules matching por-que sizes */
+@media (max-width: 1420px) {
+
+    .right {
+        max-width: 1024px;
+    }
+
+    .kicker {
+        font-size: 18px;
+        display: flex;
+        justify-content: end;
+        padding: 6px 40px;
+    }
+
+    .title {
+        font-size: 48px;
+    }
+
+    .subtitle {
+        font-size: 24px;
+    }
+
+    .section {
+        height: auto;
+        padding: 0 48px;
+    }
+
+    .inner {
+        padding: 48px 0;
+    }
+}
+
+@media (max-width: 1224px) {
+
+    .right {
+        max-width: 1024px;
+    }
+
     .grid {
         grid-template-columns: 1fr;
     }
 
     .left {
-        min-height: 420px;
+        display: none;
     }
 
-    .productMock {
-        height: 420px;
-        width: 100%;
+    .kicker {
+        font-size: 18px;
+        display: flex;
+        justify-content: end;
+        padding: 6px 40px;
     }
 
-    .floatingCards {
-        height: 280px;
+    .title {
+        font-size: 48px;
     }
 
-    .cardB {
-        left: 200px;
+    .subtitle {
+        font-size: 24px;
     }
 
-    .cardC {
-        left: 290px;
+    .section {
+        height: auto;
+        padding: 0 48px;
+    }
+
+    .inner {
+        padding: 48px 0;
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+
+    .kicker {
+        font-size: 16px;
+        padding: 6px 28px;
+    }
+
     .title {
-        font-size: 40px;
+        font-size: 36px;
+    }
+
+    .subtitle {
+        font-size: 20px;
     }
 
     .floatingCards {
-        height: 330px;
+        height: 300px;
+    }
+
+    .cardA {
+        left: 100px;
+        top: 0;
+        bottom: auto;
+    }
+
+    .cardB {
+        left: auto;
+        right: 0;
+        top: 0;
+    }
+
+    .cardC {
+        left: auto;
+        right: 100px;
+        top: 110px;
+        bottom: auto;
+    }
+
+    .section {
+        padding: 0 24px;
+    }
+
+    .right {
+        padding-top: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .kicker {
+        font-size: 14px;
+        padding: 6px 18px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+    }
+
+    .floatingCards {
+        height: 260px;
     }
 
     .card {
-        width: 220px;
+        width: 200px;
+        padding: 12px;
+    }
+
+    .section {
+        padding: 0 12px;
+    }
+
+    .inner {
+        padding: 24px 0;
     }
 
     .cardA {
         left: 0;
+        top: 0;
+        bottom: auto;
     }
 
     .cardB {
-        left: 120px;
+        left: auto;
+        right: 0;
+        top: 0;
     }
 
     .cardC {
-        left: 20px;
-        bottom: -90px;
+        left: auto;
+        right: 60px;
+        top: 80px;
+        bottom: auto;
     }
 }
