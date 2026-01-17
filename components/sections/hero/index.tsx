@@ -15,7 +15,7 @@ export function SecaoHero() {
               styles.title
             )}
           >
-            O marketplace <br />
+            O marketplace C <br />
             onde <span className={styles.highlight}>tecnologia</span>
           </h1>
 
