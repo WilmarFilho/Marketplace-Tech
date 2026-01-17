@@ -85,7 +85,7 @@
 }
 
 /* Responsive footer rules */
-@media (max-width: 1024px) {
+@media (max-width: 1324px) {
     .footer {
         padding: 48px 40px 20px 40px;
     }
@@ -163,7 +163,7 @@
 
 @media (max-width: 480px) {
     .footer {
-        padding: 24px 12px 12px 12px;
+        padding: 64px 12px 44px 12px;
         gap: 20px;
     }
 

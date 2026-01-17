@@ -55,3 +55,28 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom breakpoint: enable 3-column grid only on screens >= 1360px */
+@media (min-width: 1360px) {
+  .cols-3-1360 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Explicit grid for explorar content: 1col default, 2col @640px, 3col @1360px */
+.explore-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .explore-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1360px) {
+  .explore-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

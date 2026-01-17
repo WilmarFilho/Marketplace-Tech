@@ -66,3 +66,15 @@
 .searchButton svg {
   color: #000000;
 }
+
+@media (max-width: 960px) {
+  .tags {
+    display: none;
+  }
+
+  .container {
+    margin-bottom: 24px;
+  }
+
+  .searchInput { padding: 12px 16px; }
+}

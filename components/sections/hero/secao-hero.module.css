@@ -141,13 +141,13 @@
 @media (max-width: 480px) {
   .title {
     font-size: 26px;
-    top: 110px;
+    top: 140px;
     position: absolute;
   }
 
   .subtitleContainer {
     position: absolute;
-    bottom: 0;
+    bottom: 30px;
     width: 75%;
   }
   
@@ -164,7 +164,7 @@
   
   .secondaryTitle {
     font-size: 26px;
-    top: 220px;
+    top: 250px;
     position: absolute;
   }
 }

@@ -83,7 +83,7 @@
   .glassCard { width: 260px; height: 260px; }
   .glassTitle { font-size: 30px; }
 
-  .cta { width: 600px; height: 72px; font-size: 24px; }
+  .cta { width: 100%; height: 72px; font-size: 24px; }
 
   .illustration {
     width: 800px;
@@ -105,7 +105,7 @@
   .glassCard { width: 260px; height: 260px; }
   .glassTitle { font-size: 30px; }
 
-  .cta { width: 600px; height: 72px; font-size: 24px; }
+  .cta { width: 100%; height: 72px; font-size: 24px; }
 
   .illustration {
     display: none;

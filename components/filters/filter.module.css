@@ -125,6 +125,8 @@
   gap: 10px;
 }
 
+.hideOnSmall { display: block; }
+
 .tags button {
   padding: 10px 18px;
   border-radius: 999px;
@@ -184,3 +186,67 @@
   accent-color: #d6ff00;
   transform: scale(1.2);
 }
+
+/* Horizontal compact filters for small screens */
+@media (max-width: 1024px) {
+  .container {
+    max-width: none;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 12px;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .title { display: none; }
+
+  .section {
+    margin: 0;
+    min-width: 180px;
+    flex: 0 0 auto;
+    background: transparent;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sectionHeader {
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 14px;
+    padding: 6px 10px;
+    height: 36px;
+    box-sizing: border-box;
+  }
+
+  .sectionHeader h3 { margin: 0; font-size: 14px; }
+
+  .sectionContent {
+    transition: max-height 0.25s ease, opacity 0.2s ease;
+    width: 80%;
+    margin-top: 6px;
+  }
+
+  .hideOnSmall { display: none !important; }
+
+  .tags, .label { display: none !important; }
+
+  .priceRange { flex-direction: column; gap: 6px; }
+
+  .priceRange input { height: 46px; padding: 8px 12px; width: 100%;}
+
+
+  .arrow {
+    display: none;
+  }
+
+
+  .newsletterForm { justify-content: center; }
+
+
+}
+

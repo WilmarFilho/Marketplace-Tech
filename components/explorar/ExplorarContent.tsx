@@ -144,7 +144,7 @@ function ProductGrid() {
       />
 
       {isLoading && allProducts.length === 0 ? (
-        <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="explore-grid justify-items-center gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-[395px] w-full max-w-[478px] bg-gray-200 animate-pulse rounded-[20px]"></div>
           ))}
@@ -159,7 +159,7 @@ function ProductGrid() {
         </div>
       ) : (
         <>
-          <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="explore-grid justify-items-center gap-6">
             {allProducts.map((product: ProductRow, index: number) => (
               <div
                 key={`${product.id}-${index}`}
@@ -173,8 +173,8 @@ function ProductGrid() {
           
           {/* Loading indicator para scroll infinito */}
           {isLoadingMore && (
-            <div className="mt-8 flex justify-center">
-              <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              <div className="mt-8 flex justify-center">
+              <div className="explore-grid justify-items-center gap-6">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="h-[395px] w-full max-w-[478px] bg-gray-200 animate-pulse rounded-[20px]"></div>
                 ))}

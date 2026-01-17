@@ -153,7 +153,7 @@ export default function Filters() {
       </FilterSection>
 
       {/* Data */}
-      <FilterSection title="Data do anúncio" id="filters-date">
+      <FilterSection title="Data do anúncio" id="filters-date" className={styles.hideOnSmall}>
         <div className={styles.radioGroup}>
           {['Última Semana', 'Último Mês', 'Último Trimestre'].map(item => (
             <label 
@@ -174,7 +174,7 @@ export default function Filters() {
       </FilterSection>
 
       {/* Categoria */}
-      <FilterSection title="Categoria do produto" id="filters-category">
+      <FilterSection title="Categoria do produto" id="filters-category" className={styles.hideOnSmall}>
         <div className={styles.tags}>
           {categories.map(cat => (
             <button 
