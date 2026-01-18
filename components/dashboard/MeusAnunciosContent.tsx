@@ -179,7 +179,7 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
       />
 
       {isLoading ? (
-        <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="explore-grid justify-items-center gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-[395px] w-full max-w-[478px] bg-gray-200 animate-pulse rounded-[20px]"></div>
           ))}
@@ -210,7 +210,7 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
           )}
         </div>
       ) : (
-        <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="explore-grid justify-items-center gap-6">
           {filteredProducts.map((product: ProductRow) => (
             <div key={product.id} className="w-full">
               <CardAnuncio product={product} showFavoriteButton={false} />
@@ -236,20 +236,21 @@ export default function MeusAnunciosContent() {
   } = useLocalFilters();
 
   return (
-    <div className="mx-auto w-full max-w-[1800px] px-[60px] py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Meus Anúncios</h1>
-          <p className="text-gray-400">Gerencie seus produtos anunciados</p>
+    <div className="w-full px-4">
+      <div className="mx-auto w-full max-w-[1744px] px-6 py-10 md:px-[40px]">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between lg:flex-row lg:items-center lg:justify-between max-[599px]:flex-col max-[599px]:items-start max-[599px]:gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Meus Anúncios</h1>
+            <p className="text-gray-400">Gerencie seus produtos anunciados</p>
+          </div>
+          <Link 
+            href="/dashboard/anunciar"
+            className="inline-flex items-center gap-2 bg-[#ecf230] hover:bg-[#ecf230]/90 text-black font-medium px-6 py-3 rounded-lg transition-colors self-start sm:self-auto lg:self-auto max-[599px]:self-start max-[599px]:mt-2"
+          >
+            <Plus className="h-5 w-5" />
+            Novo Anúncio
+          </Link>
         </div>
-        <Link 
-          href="/dashboard/anunciar"
-          className="inline-flex items-center gap-2 bg-[#ecf230] hover:bg-[#ecf230]/90 text-black font-medium px-6 py-3 rounded-lg transition-colors"
-        >
-          <Plus className="h-5 w-5" />
-          Novo Anúncio
-        </Link>
-      </div>
 
       <LocalFilterBar 
         filters={filters}
@@ -280,6 +281,7 @@ export default function MeusAnunciosContent() {
         <div className="min-w-0 flex-1">
           <MeusAnunciosGrid filters={filters} />
         </div>
+      </div>
       </div>
     </div>
   );

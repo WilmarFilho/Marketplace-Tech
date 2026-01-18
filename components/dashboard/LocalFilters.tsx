@@ -154,48 +154,6 @@ export default function LocalFilters({
           onChange={handleCityChange}
         />
       </FilterSection>
-
-      {/* Data */}
-      <FilterSection title="Data do anúncio" id="filters-date">
-        <div className={styles.radioGroup}>
-          {[
-            { label: 'Hoje', value: 'today' },
-            { label: 'Última Semana', value: 'week' },
-            { label: 'Último Mês', value: 'month' },
-            { label: 'Últimos 3 Meses', value: '3months' }
-          ].map(item => (
-            <label 
-              key={item.value} 
-              className={`${styles.radio} ${
-                filters.dateFilter === item.value ? styles.radioActive : ''
-              }`}
-              onClick={() => handleDateFilterChange(item.value)}
-            >
-              <span>{item.label}</span>
-              <Circle 
-                size={18} 
-                className={filters.dateFilter === item.value ? styles.circleActive : ''}
-              />
-            </label>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Categoria */}
-      <FilterSection title="Categoria do produto" id="filters-category">
-        <div className={styles.tags}>
-          {categories.map(cat => (
-            <button 
-              key={cat} 
-              type="button"
-              className={filters.categories && filters.categories.includes(cat) ? styles.tagActive : ''}
-              onClick={() => toggleCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </FilterSection>
     </aside>
   );
 }

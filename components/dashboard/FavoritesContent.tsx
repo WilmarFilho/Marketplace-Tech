@@ -221,7 +221,7 @@ function FavoritesGrid({ filters }: { filters: FilterParams }) {
       />
 
       {isLoading ? (
-        <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="explore-grid justify-items-center gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-[395px] w-full max-w-[478px] bg-gray-200 animate-pulse rounded-[20px]"></div>
           ))}
@@ -243,7 +243,7 @@ function FavoritesGrid({ filters }: { filters: FilterParams }) {
           </p>
         </div>
       ) : (
-        <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="explore-grid justify-items-center gap-6">
           {filteredProducts.map((product: ProductRow) => (
             <div key={product.id} className="w-full">
               <CardAnuncio product={product} showFavoriteButton={true} />
@@ -269,40 +269,42 @@ export default function FavoritesContent() {
   } = useLocalFilters();
 
   return (
-    <div className="mx-auto w-full max-w-[1800px] px-[60px] py-10 ">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Meus Favoritos</h1>
-        <p className="text-gray-400">Gerencie seus produtos favoritos</p>
-      </div>
-
-      <LocalFilterBar 
-        filters={filters}
-        searchDebounce={searchDebounce}
-        updateSearch={updateSearch}
-        toggleTag={toggleTag}
-      />
-
-      <ActiveFilters 
-        filters={filters}
-        clearFilters={clearFilters}
-        toggleTag={toggleTag}
-        toggleCategory={toggleCategory}
-        updateFilters={updateFilters}
-      />
-
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <div className="w-full lg:w-[380px] shrink-0">
-          <LocalFilters 
-            filters={filters}
-            updateFilters={updateFilters}
-            toggleCategory={toggleCategory}
-            setPriceRange={setPriceRange}
-            setCustomPrice={setCustomPrice}
-          />
+    <div className="w-full px-4">
+      <div className="mx-auto w-full max-w-[1744px] px-6 py-10 md:px-[40px]">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Meus Favoritos</h1>
+          <p className="text-gray-400">Gerencie seus produtos favoritos</p>
         </div>
 
-        <div className="min-w-0 flex-1">
-          <FavoritesGrid filters={filters} />
+        <LocalFilterBar 
+          filters={filters}
+          searchDebounce={searchDebounce}
+          updateSearch={updateSearch}
+          toggleTag={toggleTag}
+        />
+
+        <ActiveFilters 
+          filters={filters}
+          clearFilters={clearFilters}
+          toggleTag={toggleTag}
+          toggleCategory={toggleCategory}
+          updateFilters={updateFilters}
+        />
+
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+          <div className="w-full lg:w-[380px] shrink-0">
+            <LocalFilters 
+              filters={filters}
+              updateFilters={updateFilters}
+              toggleCategory={toggleCategory}
+              setPriceRange={setPriceRange}
+              setCustomPrice={setCustomPrice}
+            />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <FavoritesGrid filters={filters} />
+          </div>
         </div>
       </div>
     </div>
