@@ -53,11 +53,11 @@ export function ModerationContent({ products, currentStatus }: ModerationContent
   return (
     <div>
       {/* Filtros */}
-      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-6 backdrop-blur-sm">
+      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-4 md:p-6 backdrop-blur-sm">
         <div className="flex flex-col space-y-4">
           <h2 className="text-lg font-semibold text-white">Filtros</h2>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2">
             {[
               { value: 'pendente', label: 'Pendentes' },
               { value: 'aprovado', label: 'Aprovados' },
@@ -68,16 +68,16 @@ export function ModerationContent({ products, currentStatus }: ModerationContent
               <button
                 key={item.value}
                 onClick={() => handleStatusChange(item.value)}
-                className={`px-4 py-2 rounded-lg transition-colors backdrop-blur-sm ${
+                className={`px-3 md:px-4 py-2 rounded-lg transition-colors backdrop-blur-sm text-sm md:text-base ${
                   currentStatus === item.value
                     ? 'bg-white/20 text-white border border-white/30'
                     : 'bg-black/20 text-white/70 hover:bg-white/10 border border-white/10 hover:text-white'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  <span>{item.label}</span>
+                <div className="flex items-center gap-1 md:gap-2">
+                  <span className="truncate">{item.label}</span>
                   {currentStatus === item.value && (
-                    <Badge variant="secondary" className="bg-white/10 text-white/80 border-white/20 text-xs">
+                    <Badge variant="secondary" className="bg-white/10 text-white/80 border-white/20 text-xs hidden sm:inline-flex">
                       {getStatusCount(item.value as ProductStatus)}
                     </Badge>
                   )}
@@ -89,12 +89,12 @@ export function ModerationContent({ products, currentStatus }: ModerationContent
       </div>
 
       {/* Status Badge e Contagem */}
-      <div className="flex items-center justify-between mt-10">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 md:mt-10">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <Badge className={getStatusConfig(currentStatus).color}>
             {getStatusConfig(currentStatus).label}
           </Badge>
-          <span className="text-white/70">
+          <span className="text-white/70 text-sm md:text-base">
             {products.length} {products.length === 1 ? 'anúncio' : 'anúncios'} encontrado{products.length === 1 ? '' : 's'}
           </span>
         </div>

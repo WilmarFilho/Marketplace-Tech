@@ -105,21 +105,22 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 mt-0 ">
-      <div className="bg-black/40 backdrop-blur-xl rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl border border-white/10">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 mt-0 max-[1100px]:p-4 max-[930px]:p-6 max-[768px]:p-4 max-[480px]:p-2">
+      <div className="bg-black/40 backdrop-blur-xl rounded-2xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl border border-white/10 
+                      max-[1100px]:max-w-4xl max-[930px]:max-w-3xl max-[930px]:max-h-[85vh] max-[768px]:max-w-2xl max-[768px]:rounded-xl max-[480px]:max-w-full max-[480px]:rounded-lg max-[480px]:max-h-[90vh]">
         {/* Header com design melhorado */}
         <div className="relative bg-black/30 backdrop-blur-md text-white border-b border-white/10">
-          <div className="relative p-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Eye className="h-6 w-6 text-white" />
+          <div className="relative p-6 flex items-center justify-between max-[930px]:p-5 max-[768px]:p-4 max-[480px]:p-3">
+            <div className="flex items-center gap-4 max-[480px]:gap-3">
+              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm max-[768px]:w-10 max-[768px]:h-10">
+                <Eye className="h-6 w-6 text-white max-[768px]:h-5 max-[768px]:w-5" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white">Prévia do Anúncio</h3>
-                <p className="text-white/60 text-sm">Análise detalhada para moderação</p>
+                <h3 className="text-xl font-bold text-white max-[768px]:text-lg max-[480px]:text-base">Prévia do Anúncio</h3>
+                <p className="text-white/60 text-sm max-[480px]:text-xs max-[480px]:hidden">Análise detalhada para moderação</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 max-[480px]:gap-2">
               <Badge 
                 className={`${
                   product.status === 'pendente' 
@@ -127,7 +128,7 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                     : product.status === 'aprovado'
                     ? 'bg-green-600/20 text-green-300 border-green-500/30'
                     : 'bg-red-600/20 text-red-300 border-red-500/30'
-                } font-medium backdrop-blur-sm`}
+                } font-medium backdrop-blur-sm max-[480px]:text-xs`}
               >
                 {product.status === 'pendente' ? 'Pendente' : 
                  product.status === 'aprovado' ? 'Aprovado' : 'Rejeitado'}
@@ -135,30 +136,30 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
               <Button 
                 variant="ghost" 
                 onClick={onClose} 
-                className="h-8 w-8 p-0 text-white hover:bg-white/20 rounded-full"
+                className="h-8 w-8 p-0 text-white hover:bg-white/20 rounded-full max-[480px]:h-7 max-[480px]:w-7"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 max-[480px]:h-4 max-[480px]:w-4" />
               </Button>
             </div>
           </div>
         </div>
 
         {/* Content com scroll melhorado */}
-        <div className="max-h-[calc(90vh-180px)] overflow-y-auto bg-black/20 backdrop-blur-md">
-          <div className="p-8 space-y-8">
+        <div className="max-h-[calc(85vh-200px)] max-[930px]:max-h-[calc(80vh-180px)] max-[480px]:max-h-[calc(90vh-250px)] overflow-y-auto bg-black/20 backdrop-blur-md">
+          <div className="p-8 space-y-8 max-[930px]:p-6 max-[930px]:space-y-6 max-[768px]:p-5 max-[768px]:space-y-5 max-[480px]:p-4 max-[480px]:space-y-4">
             {/* Galeria de Imagens com design moderno */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                  <ImageIcon className="h-5 w-5 text-white/80" />
+            <div className="space-y-6 max-[768px]:space-y-4">
+              <div className="flex items-center gap-3 max-[480px]:gap-2">
+                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm max-[768px]:w-7 max-[768px]:h-7">
+                  <ImageIcon className="h-5 w-5 text-white/80 max-[768px]:h-4 max-[768px]:w-4" />
                 </div>
-                <h4 className="text-xl font-bold text-white">Galeria de Imagens</h4>
+                <h4 className="text-xl font-bold text-white max-[768px]:text-lg max-[480px]:text-base">Galeria de Imagens</h4>
               </div>
               
               {hasImages ? (
-                <div className="space-y-6">
+                <div className="space-y-6 max-[768px]:space-y-4">
                   {/* Imagem Principal com design elegante */}
-                  <div className="relative aspect-video bg-black/30 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/10">
+                  <div className="relative aspect-video bg-black/30 backdrop-blur-md rounded-2xl overflow-hidden shadow-lg border border-white/10 max-[768px]:rounded-xl max-[480px]:rounded-lg">
                     <Image
                       src={images[currentImageIndex]}
                       alt={`${product.title} - Imagem ${currentImageIndex + 1}`}
@@ -174,22 +175,22 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 hover:bg-white shadow-lg rounded-full h-10 w-10 p-0"
+                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 hover:bg-white shadow-lg rounded-full h-10 w-10 p-0 max-[480px]:left-2 max-[480px]:h-8 max-[480px]:w-8"
                           onClick={prevImage}
                         >
-                          <ChevronLeft className="h-5 w-5" />
+                          <ChevronLeft className="h-5 w-5 max-[480px]:h-4 max-[480px]:w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 hover:bg-white shadow-lg rounded-full h-10 w-10 p-0"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm text-gray-800 hover:bg-white shadow-lg rounded-full h-10 w-10 p-0 max-[480px]:right-2 max-[480px]:h-8 max-[480px]:w-8"
                           onClick={nextImage}
                         >
-                          <ChevronRight className="h-5 w-5" />
+                          <ChevronRight className="h-5 w-5 max-[480px]:h-4 max-[480px]:w-4" />
                         </Button>
                         
                         {/* Contador elegante */}
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm text-white text-sm px-4 py-2 rounded-full font-medium">
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm text-white text-sm px-4 py-2 rounded-full font-medium max-[480px]:bottom-2 max-[480px]:text-xs max-[480px]:px-3 max-[480px]:py-1">
                           {currentImageIndex + 1} de {images.length}
                         </div>
                       </>
@@ -198,12 +199,12 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
 
                   {/* Miniaturas com design melhorado */}
                   {images.length > 1 && (
-                    <div className="flex gap-3 overflow-x-auto pb-2">
+                    <div className="flex gap-3 overflow-x-auto pb-2 max-[768px]:gap-2">
                       {images.map((image, index) => (
                         <button
                           key={index}
                           onClick={() => setCurrentImageIndex(index)}
-                          className={`relative w-20 h-20 rounded-xl border-3 transition-all duration-200 flex-shrink-0 overflow-hidden ${
+                          className={`relative w-20 h-20 rounded-xl border-3 transition-all duration-200 flex-shrink-0 overflow-hidden max-[768px]:w-16 max-[768px]:h-16 max-[768px]:rounded-lg max-[480px]:w-14 max-[480px]:h-14 ${
                             index === currentImageIndex 
                               ? 'border-blue-500 shadow-lg scale-105' 
                               : 'border-gray-200 hover:border-gray-300 hover:scale-102'
@@ -224,38 +225,38 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                   )}
                 </div>
               ) : (
-                <div className="aspect-video bg-black/20 backdrop-blur-md rounded-2xl flex items-center justify-center border-2 border-dashed border-white/20">
+                <div className="aspect-video bg-black/20 backdrop-blur-md rounded-2xl flex items-center justify-center border-2 border-dashed border-white/20 max-[768px]:rounded-xl max-[480px]:rounded-lg">
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                      <ImageIcon className="h-8 w-8 text-white/60" />
+                    <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm max-[768px]:w-12 max-[768px]:h-12 max-[480px]:w-10 max-[480px]:h-10">
+                      <ImageIcon className="h-8 w-8 text-white/60 max-[768px]:h-6 max-[768px]:w-6 max-[480px]:h-5 max-[480px]:w-5" />
                     </div>
-                    <p className="text-lg font-medium text-white">Nenhuma imagem disponível</p>
-                    <p className="text-sm text-white/70 mt-1">Este anúncio não possui imagens</p>
+                    <p className="text-lg font-medium text-white max-[768px]:text-base max-[480px]:text-sm">Nenhuma imagem disponível</p>
+                    <p className="text-sm text-white/70 mt-1 max-[480px]:text-xs">Este anúncio não possui imagens</p>
                   </div>
                 </div>
               )}
             </div>
 
             {/* Informações do Produto com cards elegantes */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                  <Phone className="h-5 w-5 text-white/80" />
+            <div className="space-y-6 max-[768px]:space-y-4">
+              <div className="flex items-center gap-3 max-[480px]:gap-2">
+                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm max-[768px]:w-7 max-[768px]:h-7">
+                  <Phone className="h-5 w-5 text-white/80 max-[768px]:h-4 max-[768px]:w-4" />
                 </div>
-                <h4 className="text-xl font-bold text-white">Informações do Produto</h4>
+                <h4 className="text-xl font-bold text-white max-[768px]:text-lg max-[480px]:text-base">Informações do Produto</h4>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-[768px]:gap-4 max-[1100px]:grid-cols-1">
                 {/* Coluna esquerda */}
-                <div className="space-y-4">
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide">Título</h5>
-                    <p className="text-lg font-bold text-white">{product.title}</p>
+                <div className="space-y-4 max-[768px]:space-y-3">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide max-[480px]:text-xs">Título</h5>
+                    <p className="text-lg font-bold text-white max-[768px]:text-base max-[480px]:text-sm">{product.title}</p>
                   </div>
                   
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide">Preço</h5>
-                    <p className="text-2xl font-bold text-white">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide max-[480px]:text-xs">Preço</h5>
+                    <p className="text-2xl font-bold text-white max-[768px]:text-xl max-[480px]:text-lg">
                       {new Intl.NumberFormat("pt-BR", {
                         style: "currency",
                         currency: "BRL",
@@ -263,17 +264,17 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                     </p>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide">Categoria</h5>
-                    <p className="text-white font-medium">{product.category || 'Não informada'}</p>
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide max-[480px]:text-xs">Categoria</h5>
+                    <p className="text-white font-medium max-[768px]:text-sm">{product.category || 'Não informada'}</p>
                   </div>
 
                   {product.tags && product.tags.length > 0 && (
-                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                      <h5 className="text-sm font-semibold text-white/80 mb-3 uppercase tracking-wide">Tags</h5>
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                      <h5 className="text-sm font-semibold text-white/80 mb-3 uppercase tracking-wide max-[480px]:text-xs">Tags</h5>
                       <div className="flex flex-wrap gap-2">
                         {product.tags.map((tag, index) => (
-                          <Badge key={index} className="bg-black/30 text-white border-white/20 font-medium backdrop-blur-sm">
+                          <Badge key={index} className="bg-black/30 text-white border-white/20 font-medium backdrop-blur-sm max-[480px]:text-xs">
                             #{tag.name}
                           </Badge>
                         ))}
@@ -283,52 +284,52 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                 </div>
 
                 {/* Coluna direita */}
-                <div className="space-y-4">
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                <div className="space-y-4 max-[768px]:space-y-3">
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2 max-[480px]:text-xs">
+                      <MapPin className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
                       Localização
                     </h5>
-                    <p className="text-white font-medium">{formatLocation()}</p>
+                    <p className="text-white font-medium max-[768px]:text-sm">{formatLocation()}</p>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2 max-[480px]:text-xs">
+                      <Phone className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
                       Contato
                     </h5>
-                    <p className="text-white font-medium">{product.contact_phone || 'Não informado'}</p>
+                    <p className="text-white font-medium max-[768px]:text-sm">{product.contact_phone || 'Não informado'}</p>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <User className="h-4 w-4" />
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2 max-[480px]:text-xs">
+                      <User className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
                       Vendedor
                     </h5>
-                    <p className="text-white font-medium">ID: {product.seller_id}</p>
+                    <p className="text-white font-medium max-[768px]:text-sm">ID: {product.seller_id}</p>
                   </div>
 
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                  <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
+                    <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide flex items-center gap-2 max-[480px]:text-xs">
+                      <Calendar className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
                       Data de Criação
                     </h5>
-                    <p className="text-white font-medium">{product.created_at ? formatDate(product.created_at) : 'Data não disponível'}</p>
+                    <p className="text-white font-medium max-[768px]:text-sm">{product.created_at ? formatDate(product.created_at) : 'Data não disponível'}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Descrição com design melhorado */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
-                  <Eye className="h-5 w-5 text-white/80" />
+            <div className="space-y-4 max-[768px]:space-y-3">
+              <div className="flex items-center gap-3 max-[480px]:gap-2">
+                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm max-[768px]:w-7 max-[768px]:h-7">
+                  <Eye className="h-5 w-5 text-white/80 max-[768px]:h-4 max-[768px]:w-4" />
                 </div>
-                <h5 className="text-xl font-bold text-white">Descrição</h5>
+                <h5 className="text-xl font-bold text-white max-[768px]:text-lg max-[480px]:text-base">Descrição</h5>
               </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20">
-                <p className="text-white whitespace-pre-wrap leading-relaxed text-base">
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20 max-[768px]:p-6 max-[768px]:rounded-lg max-[480px]:p-4">
+                <p className="text-white whitespace-pre-wrap leading-relaxed text-base max-[768px]:text-sm max-[480px]:text-xs" style={{ wordWrap: 'break-word', overflowWrap: 'break-word', hyphens: 'auto', lineHeight: '1.5' }}>
                   {product.description || (
                     <span className="italic text-white/70">
                       Nenhuma descrição foi fornecida para este produto.
@@ -341,23 +342,23 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
         </div>
 
         {/* Footer com design moderno */}
-        <div className="bg-black/30 backdrop-blur-md border-t border-white/10 p-6">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Eye className="h-5 w-5 text-white/80" />
+        <div className="bg-black/30 backdrop-blur-md border-t border-white/10 p-6 max-[930px]:p-5 max-[768px]:p-4 max-[480px]:p-3">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 max-[768px]:gap-3">
+            <div className="flex items-center gap-3 max-[480px]:gap-2 max-[480px]:hidden">
+              <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm max-[768px]:w-8 max-[768px]:h-8">
+                <Eye className="h-5 w-5 text-white/80 max-[768px]:h-4 max-[768px]:w-4" />
               </div>
               <div>
-                <p className="font-semibold text-white">Ações de Moderação</p>
-                <p className="text-sm text-white/60">Escolha uma ação para este anúncio</p>
+                <p className="font-semibold text-white max-[768px]:text-sm max-[480px]:hidden">Ações de Moderação</p>
+                <p className="text-sm text-white/60 max-[480px]:text-xs max-[480px]:hidden">Escolha uma ação para este anúncio</p>
               </div>
             </div>
             
-            <div className="flex gap-3">
+            <div className="flex gap-3 max-[768px]:gap-2 max-[480px]:flex-col max-[480px]:w-full">
               <Button 
                 variant="outline" 
                 onClick={onClose}
-                className="px-6 py-2 border-white/20 hover:bg-white/10 text-white/80 hover:text-white backdrop-blur-sm"
+                className="px-6 py-2 border-white/20 hover:bg-white/10 text-white/80 hover:text-white backdrop-blur-sm max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[480px]:w-full"
               >
                 Fechar
               </Button>
@@ -368,17 +369,17 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                   <Button
                     onClick={handleReject}
                     disabled={isLoading}
-                    className="bg-black/30 hover:bg-black/50 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm"
+                    className="bg-black/30 hover:bg-black/50 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                   >
-                    <X className="h-4 w-4 mr-2" />
+                    <X className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                     {isLoading ? 'Rejeitando...' : 'Rejeitar'}
                   </Button>
                   <Button
                     onClick={handleDelete}
                     disabled={isLoading}
-                    className="bg-red-600/80 hover:bg-red-700/80 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm"
+                    className="bg-red-600/80 hover:bg-red-700/80 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                     {isLoading ? 'Deletando...' : 'Deletar'}
                   </Button>
                 </>
@@ -389,17 +390,17 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                   <Button
                     onClick={handleApprove}
                     disabled={isLoading}
-                    className="bg-[#ECF230] hover:bg-[#dae029] text-black px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50"
+                    className="bg-[#ECF230] hover:bg-[#dae029] text-black px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                   >
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                     {isLoading ? 'Aprovando...' : 'Aprovar'}
                   </Button>
                   <Button
                     onClick={handleDelete}
                     disabled={isLoading}
-                    className="bg-red-600/80 hover:bg-red-700/80 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm"
+                    className="bg-red-600/80 hover:bg-red-700/80 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                     {isLoading ? 'Deletando...' : 'Deletar'}
                   </Button>
                 </>
@@ -410,17 +411,17 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                   <Button
                     onClick={handleApprove}
                     disabled={isLoading}
-                    className="bg-[#ECF230] hover:bg-[#dae029] text-black px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50"
+                    className="bg-[#ECF230] hover:bg-[#dae029] text-black px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                   >
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                     {isLoading ? 'Aprovando...' : 'Aprovar'}
                   </Button>
                   <Button
                     onClick={handleReject}
                     disabled={isLoading}
-                    className="bg-black/30 hover:bg-black/50 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm"
+                    className="bg-black/30 hover:bg-black/50 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                   >
-                    <X className="h-4 w-4 mr-2" />
+                    <X className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                     {isLoading ? 'Rejeitando...' : 'Rejeitar'}
                   </Button>
                 </>
@@ -430,9 +431,9 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
                 <Button
                   onClick={handleDelete}
                   disabled={isLoading}
-                  className="bg-red-600/80 hover:bg-red-700/80 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm"
+                  className="bg-red-600/80 hover:bg-red-700/80 text-white px-6 py-2 shadow-lg transition-all duration-200 min-w-[120px] disabled:opacity-50 border border-white/20 backdrop-blur-sm max-[768px]:px-4 max-[768px]:py-2 max-[768px]:text-sm max-[768px]:min-w-[100px] max-[480px]:w-full max-[480px]:min-w-full"
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
+                  <Trash2 className="h-4 w-4 mr-2 max-[768px]:h-3 max-[768px]:w-3 max-[480px]:mr-1" />
                   {isLoading ? 'Deletando...' : 'Deletar'}
                 </Button>
               )}

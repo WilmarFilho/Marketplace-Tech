@@ -21,19 +21,19 @@ export function ModerationGrid({ products, currentStatus }: ModerationGridProps)
 
   if (products.length === 0) {
     return (
-      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-12 backdrop-blur-sm mt-10">
+      <div className="bg-white/5 rounded-xl shadow-sm border border-white/10 p-8 md:p-12 backdrop-blur-sm mt-6 md:mt-10">
         <div className="text-center text-white/70">
-          <div className="text-6xl mb-4">
+          <div className="text-4xl md:text-6xl mb-4">
             {currentStatus === 'pendente' && '⏳'}
             {currentStatus === 'aprovado' && '✅'}
             {currentStatus === 'reprovado' && '❌'}
             {currentStatus === 'vendido' && '💰'}
             {currentStatus === 'all' && '📋'}
           </div>
-          <h3 className="text-xl font-medium mb-2 text-white">
+          <h3 className="text-lg md:text-xl font-medium mb-2 text-white">
             Nenhum anúncio encontrado
           </h3>
-          <p className="text-white/60">
+          <p className="text-sm md:text-base text-white/60">
             {currentStatus === 'pendente' && 'Não há anúncios pendentes de moderação.'}
             {currentStatus === 'aprovado' && 'Não há anúncios aprovados.'}
             {currentStatus === 'reprovado' && 'Não há anúncios reprovados.'}
@@ -47,7 +47,7 @@ export function ModerationGrid({ products, currentStatus }: ModerationGridProps)
 
   return (
     <>
-      <div className="grid justify-items-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-10">
+      <div className="explore-grid justify-items-center gap-6 mt-6 md:mt-10">
         {products.map((product) => (
           <div key={product.id} className="w-full">
             <ModerationCard 

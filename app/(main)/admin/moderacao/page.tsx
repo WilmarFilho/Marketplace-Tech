@@ -24,17 +24,19 @@ export default async function ModeracaoPage({ searchParams }: ModeracaoPageProps
     <>
       <Cabecalho />
       <div className="min-h-screen" style={{ backgroundColor: '#0f0f0f' }}>
-        <div className="mx-auto w-full max-w-[1800px] px-[70px] py-10 pb-60">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r bg-clip-text text-white">
-              Moderação de Anúncios
-            </h1>
-            <p className="text-gray-300 text-lg">
-              Gerencie e modere os anúncios da plataforma
-            </p>
-          </div>
+        <div className="w-full px-4">
+          <div className="mx-auto w-full max-w-[1744px] px-6 py-10 pb-60 md:px-[40px]">
+            <div className="mb-8">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 bg-gradient-to-r bg-clip-text text-white">
+                Moderação de Anúncios
+              </h1>
+              <p className="text-gray-300 text-base md:text-lg">
+                Gerencie e modere os anúncios da plataforma
+              </p>
+            </div>
 
-          <ModerationContent products={products || []} currentStatus={status} />
+            <ModerationContent products={products || []} currentStatus={status} />
+          </div>
         </div>
       </div>
       <Rodape />

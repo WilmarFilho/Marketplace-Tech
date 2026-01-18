@@ -174,8 +174,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
                   onClick={onViewDetails}
                   className="flex-1 h-8 text-xs bg-white/10 border-white/20 text-white/80 hover:bg-white/20 hover:text-white backdrop-blur-sm"
                 >
-                  <Eye className="h-3 w-3 mr-1" />
-                  Ver
+                  <Eye className="h-3 w-3 mr-1 max-[440px]:mr-0" />
+                  <span className="max-[440px]:hidden">Ver</span>
                 </Button>
 
                 {/* Mostrar botões de ação baseados no status */}
@@ -187,8 +187,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
                       disabled={isLoading}
                       className="flex-1 h-8 text-xs bg-[#ECF230] hover:bg-[#dae029] text-black"
                     >
-                      <Check className="h-3 w-3 mr-1" />
-                      {isLoading ? '...' : 'Aprovar'}
+                      <Check className="h-3 w-3 mr-1 max-[440px]:mr-0" />
+                      <span className="max-[440px]:hidden">{isLoading ? '...' : 'Aprovar'}</span>
                     </Button>
                     <Button
                       size="sm"
@@ -197,8 +197,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
                       disabled={isLoading}
                       className="flex-1 h-8 text-xs bg-gray-700 hover:bg-gray-600 text-white"
                     >
-                      <X className="h-3 w-3 mr-1" />
-                      {isLoading ? '...' : 'Rejeitar'}
+                      <X className="h-3 w-3 mr-1 max-[440px]:mr-0" />
+                      <span className="max-[440px]:hidden">{isLoading ? '...' : 'Rejeitar'}</span>
                     </Button>
                   </>
                 ) : currentStatus === 'aprovado' ? (
@@ -210,8 +210,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
                       disabled={isLoading}
                       className="flex-1 h-8 text-xs bg-black/30 hover:bg-black/50 text-white border-white/20 backdrop-blur-sm"
                     >
-                      <Trash2 className="h-3 w-3 mr-1" />
-                      {isLoading ? '...' : 'Deletar'}
+                      <Trash2 className="h-3 w-3 mr-1 max-[440px]:mr-0" />
+                      <span className="max-[440px]:hidden">{isLoading ? '...' : 'Deletar'}</span>
                     </Button>
                     <Button
                       size="sm"
@@ -220,8 +220,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
                       disabled={isLoading}
                       className="flex-1 h-8 text-xs bg-gray-700 hover:bg-gray-600 text-white"
                     >
-                      <X className="h-3 w-3 mr-1" />
-                      {isLoading ? '...' : 'Rejeitar'}
+                      <X className="h-3 w-3 mr-1 max-[440px]:mr-0" />
+                      <span className="max-[440px]:hidden">{isLoading ? '...' : 'Rejeitar'}</span>
                     </Button>
                   </>
 
@@ -232,8 +232,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
                     disabled={isLoading}
                     className="flex-1 h-8 text-xs bg-[#ECF230] hover:bg-[#dae029] text-black"
                   >
-                    <Check className="h-3 w-3 mr-1" />
-                    {isLoading ? '...' : 'Aprovar'}
+                    <Check className="h-3 w-3 mr-1 max-[440px]:mr-0" />
+                    <span className="max-[440px]:hidden">{isLoading ? '...' : 'Aprovar'}</span>
                   </Button>
                 ) : currentStatus === 'vendido' ? (
                   <></>
@@ -248,9 +248,8 @@ export function ModerationCard({ product, currentStatus, onViewDetails }: Modera
           </div>
         </div>
       </div>
-
       {/* Informação do vendedor */}
-      <div className="mt-2 text-xs text-white/50 text-center">
+      <div className="mt-2 text-xs text-white/50 text-center max-[800px]:text-left">
         Vendedor ID: {product.seller_id}
       </div>
     </div>

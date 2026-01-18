@@ -63,7 +63,7 @@ body {
   }
 }
 
-/* Explicit grid for explorar content: 1col default, 2col @640px, 3col @1360px */
+/* Explicit grid for explorar content: 1col default, 2col @800px, 3col @1360px */
 .explore-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -77,7 +77,7 @@ body {
   }
 }
 
-@media (min-width: 640px) {
+@media (min-width: 800px) {
   .explore-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
