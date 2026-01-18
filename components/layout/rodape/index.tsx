@@ -25,7 +25,7 @@ function Rodape() {
                         />
                     </Link >
                     <div className={styles.rightsSection}>
-                        <p>2025. Todos os direitos reservados para NKW TECNOLOGIA. Desenvolvido por <Link href="https://www.nkwclub.com" target="_blank" aria-label="Página inicial" ><strong className={styles.strong} >NKW TECNOLOGIA</strong></Link> </p>
+                        <p>2025. Todos os direitos reservados. Desenvolvido por <Link href="https://www.nkwclub.com" target="_blank" aria-label="Página inicial" ><strong className={styles.strong} >NKW TECNOLOGIA</strong></Link> </p>
                         <Link href="https://www.nkwclub.com" target="_blank" aria-label="Página inicial" >
                             <Image
                                 src="/logo-nkw.svg"

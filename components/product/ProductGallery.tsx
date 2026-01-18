@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight} from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './product.module.css';
 import type { Tables } from '@/src/types/supabase';
 
@@ -23,8 +23,25 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxImage, setLightboxImage] = useState<number | null>(null);
-  const imagesPerView = Math.min(3, images.length);
+  const [imagesPerView, setImagesPerView] = useState(3);
   const maxIndex = Math.max(0, images.length - imagesPerView);
+
+  useEffect(() => {
+    const updateImagesPerView = () => {
+      const width = window.innerWidth;
+      if (width < 400) {
+        setImagesPerView(Math.min(1, images.length));
+      } else if (width < 650) {
+        setImagesPerView(Math.min(2, images.length));
+      } else {
+        setImagesPerView(Math.min(3, images.length));
+      }
+    };
+
+    updateImagesPerView();
+    window.addEventListener('resize', updateImagesPerView);
+    return () => window.removeEventListener('resize', updateImagesPerView);
+  }, [images.length]);
 
   const handlePrevious = () => {
     setCurrentIndex(prev => Math.max(0, prev - 1));

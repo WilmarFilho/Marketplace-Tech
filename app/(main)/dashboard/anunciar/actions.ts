@@ -123,10 +123,11 @@ export async function createAdWithDetails(formData: AdFormData) {
       }
     }
 
-    redirect("/dashboard/meus-anuncios");
-
   } catch (error) {
     console.error("Erro ao criar anúncio:", error);
     throw error;
   }
+
+  // Redirect fora do try/catch para evitar erro NEXT_REDIRECT
+  redirect("/dashboard/meus-anuncios");
 }
