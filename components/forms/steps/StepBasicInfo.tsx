@@ -22,7 +22,7 @@ export function StepBasicInfo({ formData, updateFormData, errors }: StepBasicInf
           Vamos começar com as informações principais do seu produto
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 max-[480px]:space-y-4 max-[480px]:p-4">
         {/* Título */}
         <div className="space-y-2">
           <Label htmlFor="title">Título do Produto *</Label>

@@ -107,7 +107,7 @@ export function StepCategoryTags({ formData, updateFormData, errors }: StepCateg
           Escolha a categoria e adicione tags para facilitar a busca
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-8 max-[480px]:space-y-6 max-[480px]:p-4">
         {/* Categoria */}
         <div className="space-y-4">
           <div>

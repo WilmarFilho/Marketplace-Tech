@@ -179,7 +179,7 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
           Adicione pelo menos {minRequired} fotos de boa qualidade. A primeira será a foto principal.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 max-[480px]:space-y-4 max-[480px]:p-4">
         {/* Upload Area */}
         <div
           className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${

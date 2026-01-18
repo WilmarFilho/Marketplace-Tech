@@ -74,7 +74,7 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
           Adicione informações de contato e localização, depois revise tudo antes de publicar
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-8">
+      <CardContent className="space-y-8 max-[480px]:space-y-6 max-[480px]:p-4">
         {/* Contato */}
         <div className="space-y-4">
           <div className="flex items-center gap-2">
