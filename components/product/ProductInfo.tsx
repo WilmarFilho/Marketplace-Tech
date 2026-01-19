@@ -4,7 +4,8 @@ import {
   Heart,
   Calendar,
   MapPin,
-  Trash2
+  Trash2,
+  Edit3
 } from 'lucide-react';
 import styles from './product.module.css';
 import type { Tables } from '@/src/types/supabase';
@@ -80,6 +81,14 @@ export default function ProductInfo({ product, isFavorite, currentUserId, userRo
     }
   };
 
+  const handleEditProduct = () => {
+    if (!currentUserId || product.seller_id !== currentUserId) return;
+    
+    // Redirecionar para a tela de edição com os dados do produto
+    const editUrl = `/dashboard/anunciar?edit=${product.id}`;
+    router.push(editUrl);
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'Data não disponível';
     return new Date(dateString).toLocaleDateString('pt-BR');
@@ -110,19 +119,43 @@ export default function ProductInfo({ product, isFavorite, currentUserId, userRo
 
         {currentUserId && (
           <div className={styles.actionButtons}>
-            <button 
-              className={styles.favorite}
-              onClick={handleToggleFavorite}
-              disabled={isPending}
-              style={{
-                color: isCurrentlyFavorite ? '#ef4444' : '#6b7280'
-              }}
-            >
-              <Heart fill={isCurrentlyFavorite ? 'currentColor' : 'none'} />
-            </button>
+            {/* Botão de favoritar - apenas se NÃO for o dono do anúncio */}
+            {product.seller_id !== currentUserId && (
+              <button 
+                className={styles.favorite}
+                onClick={handleToggleFavorite}
+                disabled={isPending}
+                style={{
+                  color: isCurrentlyFavorite ? '#ef4444' : '#6b7280'
+                }}
+              >
+                <Heart fill={isCurrentlyFavorite ? 'currentColor' : 'none'} />
+              </button>
+            )}
             
-            {/* Botão de deletar - apenas para o dono ou admin */}
-            {((product.seller_id === currentUserId) || (userRole === 'admin')) && (
+            {/* Botões para o dono do anúncio */}
+            {product.seller_id === currentUserId && (
+              <>
+                <button
+                  className={styles.editButton}
+                  onClick={handleEditProduct}
+                  title="Editar anúncio"
+                >
+                  <Edit3 size={20} />
+                </button>
+                <button
+                  className={styles.deleteButton}
+                  onClick={handleDeleteProduct}
+                  disabled={isDeleting}
+                  title="Deletar anúncio"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </>
+            )}
+            
+            {/* Botão de deletar para admin (se não for o dono) */}
+            {(userRole === 'admin' && product.seller_id !== currentUserId) && (
               <button
                 className={styles.deleteButton}
                 onClick={handleDeleteProduct}

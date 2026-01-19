@@ -13,12 +13,8 @@ export default async function ModeracaoPage({ searchParams }: ModeracaoPageProps
   const params = await searchParams;
   const status = (params.status as ProductStatus) || 'pendente';
   
-  console.log('Page received searchParams:', params);
-  console.log('Status resolved to:', status);
-  
   const { products } = await getModerationPageData(status);
   
-  console.log('Page got products:', products?.length || 0);
 
   return (
     <>

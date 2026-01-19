@@ -16,7 +16,7 @@ export async function getDashboardData() {
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   return { user, profile };
 }
@@ -51,7 +51,7 @@ export async function uploadProfilePicture(formData: FormData) {
       .from("profiles")
       .select("avatar_url")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profile?.avatar_url) {
       // Extrair nome do arquivo da URL
@@ -118,7 +118,7 @@ export async function deleteProfilePicture() {
       .from("profiles")
       .select("avatar_url")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profile?.avatar_url) {
       // Extrair nome do arquivo da URL
@@ -248,8 +248,6 @@ export async function testMessagesAccess(userId: string) {
     throw new Error("Usuário não autenticado");
   }
 
-  console.log('=== TESTE DE ACESSO À TABELA MESSAGES ===');
-  
   // Testar seleção
   const { data: selectData, error: selectError } = await supabase
     .from("messages")
@@ -257,11 +255,8 @@ export async function testMessagesAccess(userId: string) {
     .eq("vendor_id", userId)
     .limit(1);
 
-  console.log('Resultado select:', { selectData, selectError });
-
   if (selectData && selectData.length > 0) {
     const messageId = selectData[0].id;
-    console.log('Testando update na mensagem:', messageId);
     
     // Testar UPDATE com RLS check
     const { data: updateData, error: updateError } = await supabase
@@ -271,16 +266,12 @@ export async function testMessagesAccess(userId: string) {
       .eq("vendor_id", userId)
       .select();
 
-    console.log('Resultado update:', { updateData, updateError });
-
     // Verificar se o update funcionou
     const { data: verifyData, error: verifyError } = await supabase
       .from("messages")
       .select("read")
       .eq("id", messageId)
       .single();
-
-    console.log('Verificação pós-update:', verifyData);
   }
 
   return { selectData, selectError };
@@ -292,14 +283,10 @@ export async function markMessageAsReadDirect(messageId: string) {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     
     if (userError || !userData.user) {
-      console.log('❌ Usuário não autenticado:', userError);
       throw new Error('Usuário não autenticado');
     }
     
     const userId = userData.user.id;
-    console.log('=== TESTE DIRETO COM NOVA FUNÇÃO ===');
-    console.log('Message ID:', messageId);
-    console.log('User ID:', userId);
 
     // 1. Tentar usar a nova função RPC
     try {
@@ -309,26 +296,18 @@ export async function markMessageAsReadDirect(messageId: string) {
           user_id: userId 
         });
         
-      console.log('RPC Result:', { rpcData, rpcError });
-      
       if (!rpcError && rpcData === true) {
-        console.log('✅ RPC funcionou! Mensagem marcada como lida');
         revalidatePath("/dashboard");
         return { success: true, method: 'rpc', updated: true };
       }
       
       if (!rpcError && rpcData === false) {
-        console.log('❌ RPC executou mas retornou false (mensagem não encontrada ou não autorizada)');
         throw new Error('Mensagem não encontrada ou você não tem permissão');
       }
-      
-      console.log('RPC falhou:', rpcError);
     } catch (rpcErr) {
-      console.log('RPC exception:', rpcErr);
     }
 
     // 2. Fallback: tentar update direto com auth bypass
-    console.log('Tentando update direto...');
     
     const { data: updateData, error: updateError } = await supabase
       .from('messages')
@@ -340,15 +319,11 @@ export async function markMessageAsReadDirect(messageId: string) {
       .eq('vendor_id', userId)
       .select();
 
-    console.log('Update direto resultado:', { updateData, updateError });
-
     if (updateError) {
-      console.log('❌ Erro no update direto:', updateError);
       throw updateError;
     }
 
     if (updateData && updateData.length > 0) {
-      console.log('✅ Update direto funcionou!');
       revalidatePath("/dashboard");
       return { success: true, method: 'direct', updated: true };
     }
@@ -370,10 +345,6 @@ export async function markMessageAsRead(messageId: string) {
     throw new Error("Usuário não autenticado");
   }
 
-  console.log('=== DEBUG MARK AS READ ===');
-  console.log('Message ID:', messageId);
-  console.log('User ID:', user.id);
-
   // Primeiro, vamos buscar a mensagem para verificar o estado atual
   const { data: currentMessage, error: fetchError } = await supabase
     .from("messages")
@@ -390,11 +361,6 @@ export async function markMessageAsRead(messageId: string) {
     throw new Error("Mensagem não encontrada");
   }
 
-  console.log('Mensagem atual:', currentMessage);
-  console.log('Vendor ID da mensagem:', currentMessage.vendor_id);
-  console.log('User ID atual:', user.id);
-  console.log('Status atual read:', currentMessage.read);
-
   // Verificar se a mensagem pertence ao usuário
   if (currentMessage.vendor_id !== user.id) {
     throw new Error("Não autorizado");
@@ -402,12 +368,10 @@ export async function markMessageAsRead(messageId: string) {
 
   // Se já está marcada como lida, não precisa atualizar
   if (currentMessage.read === true) {
-    console.log('Mensagem já está marcada como lida');
     return { success: true, alreadyRead: true, data: currentMessage };
   }
 
   // Tentar atualizar com diferentes abordagens
-  console.log('Tentando atualizar para read: true...');
 
   // Primeira tentativa - update normal
   const { data: updateData, error: updateError } = await supabase
@@ -433,7 +397,6 @@ export async function markMessageAsRead(messageId: string) {
         throw new Error(`Erro ao atualizar mensagem: ${updateError.message} / ${simpleError.message}`);
       }
 
-      console.log('Update simples funcionou:', simpleUpdate);
       revalidatePath("/dashboard");
       return { success: true, data: simpleUpdate };
       
@@ -443,16 +406,12 @@ export async function markMessageAsRead(messageId: string) {
     }
   }
 
-  console.log('Update normal funcionou:', updateData);
-
   // Verificar se realmente foi atualizado
   const { data: verificationData } = await supabase
     .from("messages")
     .select("read")
     .eq("id", messageId)
     .single();
-
-  console.log('Verificação pós-update:', verificationData);
 
   revalidatePath("/dashboard");
   return { success: true, data: updateData, verification: verificationData };

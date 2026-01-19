@@ -132,7 +132,6 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
               {/* Hamburger Menu Button */}
               <button
                 onClick={() => {
-                  console.log('Menu toggled:', !isMenuOpen);
                   setIsMenuOpen(!isMenuOpen);
                 }}
                 className={cn("focus:outline-none", styles.hamburgerButton)}

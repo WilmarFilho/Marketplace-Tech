@@ -34,7 +34,7 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
           .from('categories')
           .select('name')
           .eq('id', formData.category_id)
-          .single();
+          .maybeSingle();
         setCategoryName(category?.name || "");
       }
 

@@ -106,7 +106,7 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
 
     // Filtro por data
     if (filters.dateFilter) {
-      console.log('🗓️ Aplicando filtro de data:', filters.dateFilter);
+      // Aplicar filtro de data se fornecido
       const now = new Date();
       let filterDate: Date | null = new Date();
       
@@ -132,17 +132,14 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
       }
       
       if (filterDate) {
-        console.log('📅 Data limite:', filterDate.toISOString());
+        // Filtrar produtos pela data
         const beforeFilter = filtered.length;
         filtered = filtered.filter(product => {
           const productDate = product.created_at ? new Date(product.created_at) : null;
           const isValid = productDate && productDate >= filterDate;
-          if (productDate) {
-            console.log(`📊 Produto: ${product.title} - Data: ${productDate.toISOString()} - Válido: ${isValid}`);
-          }
           return isValid;
         });
-        console.log(`✅ Filtro de data: ${beforeFilter} → ${filtered.length} produtos`);
+        
       }
     }
 

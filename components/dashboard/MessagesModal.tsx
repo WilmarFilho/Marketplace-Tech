@@ -55,10 +55,8 @@ export function MessagesModal({ isOpen, onClose, userId }: MessagesModalProps) {
   const handleMarkAsRead = async (messageId: string) => {
     try {
       setMarkingRead(messageId);
-      console.log('Marcando mensagem como lida:', messageId);
       
       const result = await markMessageAsRead(messageId);
-      console.log('Resultado da operação:', result);
       
       // Atualizar o estado local
       setMessages(prev => prev.map(msg => 

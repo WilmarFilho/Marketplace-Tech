@@ -22,8 +22,6 @@ export async function getModerationPageData(status: ProductStatus = 'pendente') 
     redirect("/");
   }
 
-  console.log("Filtering by status:", status);
-
   let query = supabase
     .from("products")
     .select(`
@@ -33,20 +31,10 @@ export async function getModerationPageData(status: ProductStatus = 'pendente') 
     .order('created_at', { ascending: false });
 
   if (status !== 'all') {
-    console.log("Adding status filter:", status);
     query = query.eq("status", status);
-  } else {
-    console.log("Fetching all products (no status filter)");
   }
 
   const { data: products, error } = await query;
-
-  console.log("Query result:", { 
-    productsCount: products?.length || 0, 
-    error,
-    firstProductStatus: products?.[0]?.status,
-    statusFilter: status
-  });
 
   if (error) {
     console.error('Error fetching products:', error);

@@ -15,7 +15,7 @@ export async function toggleFavorite(productId: string) {
     .select("id")
     .eq("user_id", user.id)
     .eq("product_id", productId)
-    .single();
+    .maybeSingle();
 
   if (existingFavorite) {
     // Remove favorite
@@ -71,7 +71,7 @@ export async function getProductDetails(id: string) {
       .select("id")
       .eq("user_id", user.id)
       .eq("product_id", id)
-      .single();
+      .maybeSingle();
     isFavorite = !!favorite;
     
     // Buscar role do usuário
@@ -79,7 +79,7 @@ export async function getProductDetails(id: string) {
       .from("profiles")
       .select("role")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
     userRole = profile?.role;
   }
 

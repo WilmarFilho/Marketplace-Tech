@@ -20,7 +20,6 @@ export function ModerationContent({ products, currentStatus }: ModerationContent
 
   const handleStatusChange = (value: string) => {
     const status = value as ProductStatus;
-    console.log('Changing status to:', status);
     
     // Forçar refresh da página para evitar problemas de estado
     if (status === 'pendente') {

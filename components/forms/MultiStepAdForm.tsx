@@ -9,7 +9,7 @@ import { StepBasicInfo } from "@/components/forms/steps/StepBasicInfo";
 import { StepCategoryTags } from "@/components/forms/steps/StepCategoryTags";
 import { StepPhotos } from "@/components/forms/steps/StepPhotos";
 import { StepContactReview } from "@/components/forms/steps/StepContactReview";
-import { createAdWithDetails } from "@/app/(main)/dashboard/anunciar/actions";
+import { createAdWithDetails, updateAdWithDetails } from "@/app/(main)/dashboard/anunciar/actions";
 
 export interface AdFormData {
   title: string;
@@ -30,20 +30,66 @@ interface FormError {
   message: string;
 }
 
-export function MultiStepAdForm() {
+interface ExistingProduct {
+  id: string;
+  title?: string;
+  price?: number;
+  description?: string;
+  contact_phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  products_categories?: Array<{
+    category: {
+      id: string;
+    };
+  }>;
+  products_tags?: Array<{
+    tag: {
+      id: string;
+    };
+  }>;
+  images_urls?: string[];
+}
+
+interface MultiStepAdFormProps {
+  existingProduct?: ExistingProduct;
+  isEditing?: boolean;
+}
+
+export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiStepAdFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<AdFormData>({
-    title: "",
-    price: 0,
-    description: "",
-    contact_phone: "",
-    address: "",
-    city: "",
-    state: "",
-    category_id: "",
-    tag_ids: [],
-    images: [],
-    imageUrls: []
+  
+  // Inicializar formData com dados existentes se estiver editando
+  const [formData, setFormData] = useState<AdFormData>(() => {
+    if (isEditing && existingProduct) {
+      return {
+        title: existingProduct.title || "",
+        price: existingProduct.price || 0,
+        description: existingProduct.description || "",
+        contact_phone: existingProduct.contact_phone || "",
+        address: existingProduct.address || "",
+        city: existingProduct.city || "",
+        state: existingProduct.state || "",
+        category_id: existingProduct.products_categories?.[0]?.category?.id || "",
+        tag_ids: existingProduct.products_tags?.map((pt: { tag: { id: string } }) => pt.tag.id) || [],
+        images: [],
+        imageUrls: existingProduct.images_urls || []
+      };
+    }
+    return {
+      title: "",
+      price: 0,
+      description: "",
+      contact_phone: "",
+      address: "",
+      city: "",
+      state: "",
+      category_id: "",
+      tag_ids: [],
+      images: [],
+      imageUrls: []
+    };
   });
   const [errors, setErrors] = useState<FormError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +126,8 @@ export function MultiStepAdForm() {
         break;
 
       case 2: // Fotos
-        if (formData.images.length < 3) {
+        const totalImages = formData.images.length + formData.imageUrls.length;
+        if (totalImages < 3) {
           stepErrors.push({ field: "images", message: "Mínimo de 3 fotos é obrigatório" });
         }
         break;
@@ -131,10 +178,14 @@ export function MultiStepAdForm() {
 
     setIsLoading(true);
     try {
-      await createAdWithDetails(formData);
+      if (isEditing && existingProduct) {
+        await updateAdWithDetails(existingProduct.id, formData);
+      } else {
+        await createAdWithDetails(formData);
+      }
     } catch (error) {
-      console.error("Erro ao criar anúncio:", error);
-      setErrors([{ field: "general", message: "Erro ao criar anúncio. Tente novamente." }]);
+      console.error(`Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio:`, error);
+      setErrors([{ field: "general", message: `Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio. Tente novamente.` }]);
     } finally {
       setIsLoading(false);
     }
@@ -239,7 +290,10 @@ export function MultiStepAdForm() {
             disabled={isLoading}
             className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
           >
-            {isLoading ? "Publicando..." : "Publicar Anúncio"}
+            {isLoading 
+              ? (isEditing ? "Atualizando..." : "Publicando...")
+              : (isEditing ? "Atualizar Anúncio" : "Publicar Anúncio")
+            }
           </Button>
         )}
       </div>

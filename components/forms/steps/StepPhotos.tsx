@@ -47,11 +47,13 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
     }
 
     const currentImages = formData.images || [];
+    const currentUrls = formData.imageUrls || [];
+    const totalCurrentImages = currentUrls.length;
     const newImages = [...currentImages];
-    const newImageUrls = [...(formData.imageUrls || [])];
+    const newImageUrls = [...currentUrls];
 
     for (const file of validFiles) {
-      if (newImages.length >= maxFiles) {
+      if (newImageUrls.length >= maxFiles) {
         alert(`Máximo de ${maxFiles} fotos permitidas`);
         break;
       }
@@ -73,13 +75,18 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
     const newImages = [...(formData.images || [])];
     const newImageUrls = [...(formData.imageUrls || [])];
 
-    // Revogar URL para liberar memória
-    if (newImageUrls[index]) {
+    // Se for uma URL blob, revogar para liberar memória
+    if (newImageUrls[index] && newImageUrls[index].startsWith('blob:')) {
       URL.revokeObjectURL(newImageUrls[index]);
     }
 
-    newImages.splice(index, 1);
-    newImageUrls.splice(index, 1);
+    // Remover da posição correspondente em ambas as arrays
+    if (index < newImageUrls.length) {
+      newImageUrls.splice(index, 1);
+    }
+    if (index < newImages.length) {
+      newImages.splice(index, 1);
+    }
 
     updateFormData({
       images: newImages,
@@ -91,12 +98,17 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
     const newImages = [...(formData.images || [])];
     const newImageUrls = [...(formData.imageUrls || [])];
 
-    // Mover o item
-    const [movedImage] = newImages.splice(fromIndex, 1);
-    const [movedUrl] = newImageUrls.splice(fromIndex, 1);
+    // Mover URLs
+    if (fromIndex < newImageUrls.length && toIndex < newImageUrls.length) {
+      const [movedUrl] = newImageUrls.splice(fromIndex, 1);
+      newImageUrls.splice(toIndex, 0, movedUrl);
+    }
     
-    newImages.splice(toIndex, 0, movedImage);
-    newImageUrls.splice(toIndex, 0, movedUrl);
+    // Mover arquivos (se existirem)
+    if (fromIndex < newImages.length && toIndex < newImages.length) {
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+    }
 
     updateFormData({
       images: newImages,
@@ -170,6 +182,17 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
   const images = formData.images || [];
   const imageUrls = formData.imageUrls || [];
   const minRequired = 3;
+  
+  // Combinar imagens existentes (URLs) e novas imagens (Files) para visualização
+  const allImages = imageUrls.map((url, index) => ({
+    type: 'url',
+    src: url,
+    name: `Imagem ${index + 1}`,
+    file: images[index] || null
+  }));
+  
+  // Total de imagens para validação
+  const totalImages = allImages.length;
 
   return (
     <Card className="w-full">
@@ -230,20 +253,20 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-between text-sm">
-          <span className={images.length >= minRequired ? 'text-green-600' : 'text-muted-foreground'}>
-            {images.length} de {minRequired} fotos obrigatórias
+          <span className={totalImages >= minRequired ? 'text-green-600' : 'text-muted-foreground'}>
+            {totalImages} de {minRequired} fotos obrigatórias
           </span>
           <span className="text-muted-foreground">
-            {images.length}/8 fotos
+            {totalImages}/8 fotos
           </span>
         </div>
 
         {/* Image Preview Grid */}
-        {images.length > 0 && (
+        {totalImages > 0 && (
           <div className="space-y-4">
             <Label>Prévia das Fotos</Label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {images.map((file, index) => (
+              {allImages.map((image, index) => (
                 <div 
                   key={index} 
                   className={`relative group cursor-move ${
@@ -260,7 +283,7 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
                 >
                   <div className="aspect-square rounded-lg border-2 border-gray-200 overflow-hidden bg-gray-50">
                     <Image
-                      src={imageUrls[index] || URL.createObjectURL(file)}
+                      src={image.src}
                       alt={`Preview ${index + 1}`}
                       className="w-full h-full object-cover"
                       width={200}
@@ -292,13 +315,13 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
 
                   {/* File Info */}
                   <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 rounded-b-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                    {file.name}
+                    {image.name}
                   </div>
                 </div>
               ))}
             </div>
             
-            {images.length > 0 && (
+            {totalImages > 0 && (
               <p className="text-xs text-muted-foreground">
                 🐆 Dica: Arraste as fotos para reordenar. A primeira foto será a principal.
               </p>
