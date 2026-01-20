@@ -13,23 +13,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { useFormState } from "react-dom";
+import { useState, useActionState } from "react";
+import { useRouter } from "next/navigation";
 
 export function FormLogin({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [state, formAction] = useFormState(async (prevState: { error: string | null }, formData: FormData) => {
-    try {
-      await signIn(formData);
-      return { error: null };
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
-    }
-  }, { error: null });
-  
+  const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  const [state, formAction] = useActionState(
+    async (prevState: { error: string | null }, formData: FormData) => {
+      try {
+        const result = await signIn(formData);
+        if (result && result.success) {
+          // Redireciona no cliente após login
+          router.replace("/");
+        }
+        return { error: null };
+      } catch (error: any) {
+        return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
+      }
+    },
+    { error: null }
+  );
+
+  // Reset isPending quando houver erro
+  if (isPending && state.error) {
+    setIsPending(false);
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

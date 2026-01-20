@@ -4,93 +4,143 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export async function signOut() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  redirect("/auth/login");
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/auth/login");
+  } catch (error) {
+    console.error("Error in signOut action:", error);
+    throw error;
+  }
 }
 
 export async function getUserSession() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.error("Error in getUserSession:", error);
+    throw error;
+  }
 }
 
 export async function signIn(formData: FormData) {
-  const supabase = await createClient();
-  
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  try {
+    const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-  if (error) {
-    throw new Error(error.message);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error("signIn supabase error:", error);
+      const msg = error.message?.toLowerCase() || "";
+      // Tradução de erro para email não confirmado
+      if (
+        msg.includes("email not confirmed") ||
+        msg.includes("email needs to be confirmed")
+      ) {
+        throw new Error("Seu e-mail ainda não foi confirmado. Por favor, verifique sua caixa de entrada e confirme o cadastro.");
+      }
+      // Tradução de erro para credenciais inválidas
+      if (msg.includes("invalid login credentials")) {
+        throw new Error("E-mail ou senha inválidos. Verifique seus dados e tente novamente.");
+      }
+      throw new Error(error.message || "Erro ao autenticar");
+    }
+
+    // Retorna sucesso para o cliente redirecionar
+    return { success: true };
+  } catch (error) {
+    console.error("Error in signIn action:", error);
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    }
+    throw error;
   }
-
-  redirect("/");
 }
 
 export async function signUp(formData: FormData) {
-  const supabase = await createClient();
-  
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const repeatPassword = formData.get("repeatPassword") as string;
-  const fullName = formData.get("fullName") as string;
-  const role = formData.get("role") as string;
+  try {
+    const supabase = await createClient();
 
-  if (password !== repeatPassword) {
-    throw new Error("As senhas não coincidem");
-  }
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const repeatPassword = formData.get("repeatPassword") as string;
+    const fullName = formData.get("fullName") as string;
+    const role = formData.get("role") as string;
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirmar`,
-      data: {
-        full_name: fullName,
-        role,
+    if (password !== repeatPassword) {
+      throw new Error("As senhas não coincidem");
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirmar`,
+        data: {
+          full_name: fullName,
+          role,
+        },
       },
-    },
-  });
+    });
 
-  if (error) {
-    throw new Error(error.message);
+    if (error) {
+      console.error("signUp supabase error:", error);
+      throw new Error(error.message || "Erro ao cadastrar");
+    }
+
+    redirect("/auth/cadastro-realizado");
+  } catch (error) {
+    console.error("Error in signUp action:", error);
+    throw error;
   }
-
-  redirect("/auth/cadastro-realizado");
 }
 
 export async function resetPassword(formData: FormData) {
-  const supabase = await createClient();
-  
-  const email = formData.get("email") as string;
+  try {
+    const supabase = await createClient();
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/alterar-senha`,
-  });
+    const email = formData.get("email") as string;
 
-  if (error) {
-    throw new Error(error.message);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/alterar-senha`,
+    });
+
+    if (error) {
+      console.error("resetPassword supabase error:", error);
+      throw new Error(error.message || "Erro ao resetar senha");
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in resetPassword action:", error);
+    throw error;
   }
-
-  return { success: true };
 }
 
 export async function updatePassword(formData: FormData) {
-  const supabase = await createClient();
-  
-  const password = formData.get("password") as string;
+  try {
+    const supabase = await createClient();
 
-  const { error } = await supabase.auth.updateUser({ password });
+    const password = formData.get("password") as string;
 
-  if (error) {
-    throw new Error(error.message);
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      console.error("updatePassword supabase error:", error);
+      throw new Error(error.message || "Erro ao atualizar senha");
+    }
+
+    redirect("/");
+  } catch (error) {
+    console.error("Error in updatePassword action:", error);
+    throw error;
   }
-
-  redirect("/");
 }

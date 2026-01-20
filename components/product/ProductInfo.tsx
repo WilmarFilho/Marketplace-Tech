@@ -29,6 +29,12 @@ interface ProductInfoProps {
         name: string;
       };
     }[];
+    products_categories?: {
+      category: {
+        id: string;
+        name: string;
+      };
+    }[];
   };
   isFavorite: boolean;
   currentUserId?: string;
@@ -108,7 +114,9 @@ export default function ProductInfo({ product, isFavorite, currentUserId, userRo
           <h1>{product.title}</h1>
 
           <div className={styles.tags}>
-            {product.category && <span className={styles.category}>{product.category}</span>}
+            {product.products_categories?.[0]?.category?.name && (
+              <span className={styles.category}>{product.products_categories[0].category.name}</span>
+            )}
             {product.product_tags?.map((productTag) => (
               <span key={productTag.tag.id} className={styles.tag}>
                 {productTag.tag.name}

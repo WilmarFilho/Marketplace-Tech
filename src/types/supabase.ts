@@ -143,7 +143,6 @@ export type Database = {
       products: {
         Row: {
           address: string | null
-          category: string | null
           city: string | null
           contact_phone: string | null
           created_at: string | null
@@ -158,7 +157,6 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          category?: string | null
           city?: string | null
           contact_phone?: string | null
           created_at?: string | null
@@ -173,7 +171,6 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          category?: string | null
           city?: string | null
           contact_phone?: string | null
           created_at?: string | null
@@ -306,7 +303,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      mark_message_read: {
+        Args: { message_id: string; user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

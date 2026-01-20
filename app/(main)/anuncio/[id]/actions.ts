@@ -54,6 +54,12 @@ export async function getProductDetails(id: string) {
           id,
           name
         )
+      ),
+      products_categories:products_categories (
+        category:categories (
+          id,
+          name
+        )
       )
     `)
     .eq("id", id)

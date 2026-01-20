@@ -133,7 +133,6 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
       
       if (filterDate) {
         // Filtrar produtos pela data
-        const beforeFilter = filtered.length;
         filtered = filtered.filter(product => {
           const productDate = product.created_at ? new Date(product.created_at) : null;
           const isValid = productDate && productDate >= filterDate;

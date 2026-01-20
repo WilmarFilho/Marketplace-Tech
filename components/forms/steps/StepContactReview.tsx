@@ -66,6 +66,12 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
     return phone;
   };
 
+  // LÓGICA DE UNIÃO DE FOTOS PARA PREVIEW
+  const allImages = [
+    ...(formData.imageUrls || []).map(url => ({ src: url, isFile: false })),
+    ...(formData.images || []).map(file => ({ src: URL.createObjectURL(file), isFile: true }))
+  ];
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -149,10 +155,6 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
               </div>
             </div>
           </div>
-
-          <p className="text-xs text-muted-foreground">
-            Essas informações ajudam compradores próximos a encontrar seu produto
-          </p>
         </div>
 
         <Separator />
@@ -166,23 +168,24 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
 
           {/* Card de Preview */}
           <div className="border rounded-lg overflow-hidden bg-card">
-            {/* Primeira Imagem */}
-            {formData.images && formData.images.length > 0 && (
+            {/* Primeira Imagem (Unificada) */}
+            {allImages.length > 0 && (
               <div className="aspect-video relative">
                 <Image
-                  src={formData.imageUrls?.[0] || URL.createObjectURL(formData.images[0])}
+                  src={allImages[0].src}
                   alt="Foto principal"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                  +{formData.images.length - 1} fotos
-                </div>
+                {allImages.length > 1 && (
+                  <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded">
+                    +{allImages.length - 1} fotos
+                  </div>
+                )}
               </div>
             )}
 
             <div className="p-6 space-y-4">
-              {/* Título e Preço */}
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">{formData.title || "Título do produto"}</h3>
                 <p className="text-2xl font-bold text-primary">
@@ -190,7 +193,6 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
                 </p>
               </div>
 
-              {/* Categoria e Tags */}
               <div className="space-y-3">
                 {categoryName && (
                   <div className="flex items-center gap-2">
@@ -213,15 +215,13 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
                 )}
               </div>
 
-              {/* Descrição */}
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground font-medium">Descrição:</p>
-                <p className="text-sm leading-relaxed">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap">
                   {formData.description || "Descrição do produto..."}
                 </p>
               </div>
 
-              {/* Contato e Localização */}
               <div className="space-y-2">
                 {formData.contact_phone && (
                   <div className="flex items-center gap-2 text-sm">
@@ -242,24 +242,23 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
             </div>
           </div>
 
-          {/* Resumo das Fotos */}
-          {formData.images && formData.images.length > 0 && (
+          {/* Resumo das Fotos (Unificado) */}
+          {allImages.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <FileImage className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium">
-                  {formData.images.length} fotos adicionadas
+                  {allImages.length} fotos no total
                 </span>
               </div>
               <div className="grid grid-cols-6 md:grid-cols-8 gap-2">
-                {formData.images.slice(0, 8).map((file, index) => (
-                  <div key={index} className="aspect-square rounded border overflow-hidden bg-gray-50">
+                {allImages.slice(0, 8).map((img, index) => (
+                  <div key={index} className="aspect-square rounded border overflow-hidden bg-gray-50 relative">
                     <Image
-                      src={formData.imageUrls?.[index] || URL.createObjectURL(file)}
+                      src={img.src}
                       alt={`Foto ${index + 1}`}
-                      width={60}
-                      height={60}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 ))}
@@ -267,7 +266,6 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
             </div>
           )}
 
-          {/* Informações importantes */}
           <div className="bg-muted p-4 rounded-lg space-y-2">
             <p className="text-sm font-medium">ℹ️ Informações importantes:</p>
             <ul className="text-xs text-muted-foreground space-y-1">

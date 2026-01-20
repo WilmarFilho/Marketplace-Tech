@@ -101,12 +101,12 @@ export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncio
     if (!product.tags || product.tags.length === 0) {
       return ["#Produtos", "#Seminovo"];
     }
-    
+  
     const availableTags = product.tags.map(tag => `#${tag.name}`);
     
-    // Se tem apenas 1 tag, adiciona uma tag genérica
+    // Se tem apenas 1 tag
     if (availableTags.length === 1) {
-      return [availableTags[0], "#Seminovo"];
+      return [availableTags[0], null];
     }
     
     // Se tem 2 ou mais tags, pega as 2 primeiras
@@ -152,7 +152,7 @@ export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncio
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center gap-[7px]">
               <span className={styles.tag}>{tag1}</span>
-              <span className={cn(styles.tag, styles.tagAlt)}>{tag2}</span>
+              {tag2 && <span className={cn(styles.tag, styles.tagAlt)}>{tag2}</span>}
             </div>
 
             <button

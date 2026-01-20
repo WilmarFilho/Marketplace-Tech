@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -10,6 +11,7 @@ import { StepCategoryTags } from "@/components/forms/steps/StepCategoryTags";
 import { StepPhotos } from "@/components/forms/steps/StepPhotos";
 import { StepContactReview } from "@/components/forms/steps/StepContactReview";
 import { createAdWithDetails, updateAdWithDetails } from "@/app/(main)/dashboard/anunciar/actions";
+import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 
 export interface AdFormData {
   title: string;
@@ -58,8 +60,9 @@ interface MultiStepAdFormProps {
 }
 
 export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiStepAdFormProps) {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
-  
+  const formRef = useRef<HTMLDivElement | null>(null);
   // Inicializar formData com dados existentes se estiver editando
   const [formData, setFormData] = useState<AdFormData>(() => {
     if (isEditing && existingProduct) {
@@ -154,7 +157,9 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
   const nextStep = () => {
     const stepErrors = validateStep(currentStep);
     setErrors(stepErrors);
-
+    if (stepErrors.length > 0 && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
     if (stepErrors.length === 0 && currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
@@ -173,16 +178,64 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
   const handleSubmit = async () => {
     const stepErrors = validateStep(currentStep);
     setErrors(stepErrors);
-
+    if (stepErrors.length > 0 && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
     if (stepErrors.length > 0) return;
 
     setIsLoading(true);
     try {
-      if (isEditing && existingProduct) {
-        await updateAdWithDetails(existingProduct.id, formData);
-      } else {
-        await createAdWithDetails(formData);
+      // 1. COMEÇAMOS COM AS URLS QUE JÁ ESTÃO NO FORMULÁRIO (ANTIGAS OU REORDENADAS)
+      const finalUrls = [...formData.imageUrls];
+
+      // 2. SE HOUVER ARQUIVOS NOVOS, FAZEMOS O UPLOAD E ADICIONAMOS AO ARRAY
+      if (formData.images && formData.images.length > 0) {
+        const supabase = createBrowserSupabaseClient();
+        const user = (await supabase.auth.getUser()).data.user;
+        if (!user) throw new Error("Usuário não autenticado");
+
+        // Faremos o upload de cada arquivo novo
+        for (let i = 0; i < formData.images.length; i++) {
+          const file = formData.images[i];
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}-${i}.${fileExt}`;
+          const filePath = `products/${user.id}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('products')
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (uploadError) {
+            throw new Error(`Erro no upload da imagem ${i + 1}: ${uploadError.message}`);
+          }
+
+          const { data: urlData } = supabase.storage
+            .from('products')
+            .getPublicUrl(filePath);
+
+          // ADICIONAMOS a nova URL ao array existente, em vez de resetar
+          finalUrls.push(urlData.publicUrl);
+        }
       }
+
+      // 3. ENVIAMOS O ARRAY COMPLETO (ANTIGAS + NOVAS) PARA O SERVIDOR
+      if (isEditing && existingProduct) {
+        await updateAdWithDetails(existingProduct.id, {
+          ...formData,
+          imageUrls: finalUrls // Enviamos a lista mesclada
+        });
+      } else {
+        await createAdWithDetails({
+          ...formData,
+          imageUrls: finalUrls // Enviamos a lista para criação
+        });
+      }
+
+      router.replace("/dashboard/meus-anuncios");
+      router.refresh(); // Opcional: força a atualização dos dados
     } catch (error) {
       console.error(`Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio:`, error);
       setErrors([{ field: "general", message: `Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio. Tente novamente.` }]);
@@ -191,7 +244,13 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
     }
   };
 
-  const CurrentStepComponent = steps[currentStep].component;
+
+
+  const CurrentStepComponent = steps[currentStep].component as React.ComponentType<{
+    formData: AdFormData;
+    updateFormData: (updates: Partial<AdFormData>) => void;
+    errors: FormError[];
+  }>;
 
   const slideVariants = {
     enter: (direction: number) => ({
@@ -211,16 +270,15 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-8 max-[1024px]:space-y-6 max-[768px]:space-y-5 max-[480px]:space-y-4">
+    <div ref={formRef} className="w-full max-w-4xl mx-auto space-y-8 max-[1024px]:space-y-6 max-[768px]:space-y-5 max-[480px]:space-y-4">
       {/* Progress Bar */}
       <div className="space-y-4 max-[768px]:space-y-3 max-[480px]:space-y-3">
         <div className="flex justify-between text-sm text-muted-foreground max-[1024px]:text-xs max-[800px]:text-sm max-[600px]:gap-2 max-[480px]:grid max-[480px]:grid-cols-2 max-[480px]:gap-x-4 max-[480px]:gap-y-2">
           {steps.map((step, index) => (
-            <span 
+            <span
               key={index}
-              className={`font-medium text-center flex-1 leading-tight max-[800px]:whitespace-normal max-[800px]:break-words max-[480px]:text-xs ${
-                index <= currentStep ? 'text-primary' : ''
-              }`}
+              className={`font-medium text-center flex-1 leading-tight max-[800px]:whitespace-normal max-[800px]:break-words max-[480px]:text-xs ${index <= currentStep ? 'text-primary' : ''
+                }`}
             >
               {step.title}
             </span>
@@ -290,7 +348,7 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
             disabled={isLoading}
             className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
           >
-            {isLoading 
+            {isLoading
               ? (isEditing ? "Atualizando..." : "Publicando...")
               : (isEditing ? "Atualizar Anúncio" : "Publicar Anúncio")
             }
