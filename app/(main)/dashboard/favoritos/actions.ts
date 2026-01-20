@@ -19,7 +19,6 @@ export async function getFavorites() {
         images_urls,
         status,
         description,
-        category,
         city,
         state,
         seller_id,
@@ -28,7 +27,8 @@ export async function getFavorites() {
         contact_phone,
         tags:products_tags(
           tag:tags(name)
-        )
+        ),
+        products_categories(category(name))
       )
     `)
     .eq("user_id", user.id);

@@ -47,9 +47,10 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
 
     // Filtro por categoria
     if (filters.categories && filters.categories.length > 0) {
-      filtered = filtered.filter(product => 
-        filters.categories?.some((cat: string) => 
-          product.category?.toLowerCase() === cat.toLowerCase()
+      filtered = filtered.filter(product =>
+        filters.categories?.some((cat: string) =>
+          product.products_categories &&
+          product.products_categories[0]?.category?.name?.toLowerCase() === cat.toLowerCase()
         )
       );
     }

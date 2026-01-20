@@ -15,7 +15,8 @@ export async function getMeusAnuncios() {
       *,
       tags:products_tags(
         tag:tags(name)
-      )
+      ),
+      products_categories(category(name))
     `)
     .eq("seller_id", user.id)
     .order("created_at", { ascending: false });
@@ -24,10 +25,9 @@ export async function getMeusAnuncios() {
   return products?.map(product => ({
     ...product,
     tags: product.tags?.map((t: any) => ({ name: t.tag.name })) || [],
-    // Garantir que campos de localização existem para filtragem
+    products_categories: product.products_categories || [],
     city: product.city || '',
     state: product.state || '',
-    category: product.category || '',
     description: product.description || ''
   })) || [];
 }

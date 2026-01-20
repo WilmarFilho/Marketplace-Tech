@@ -11,8 +11,9 @@ import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
 export type ProductRow = Tables<"products"> & {
-  tags?: Array<{ name: string; }>;
+  tags?: Array<{ name: string }>;
   isFavorited?: boolean;
+  products_categories?: Array<{ category?: { name?: string } }>;
 };
 
 type CardAnuncioProps = {

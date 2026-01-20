@@ -10,7 +10,8 @@ import { approveProduct, rejectProduct, deleteProduct } from "./actions";
 import { useRouter } from "next/navigation";
 
 type Product = Tables<"products"> & {
-  tags?: Array<{ name: string; }>;
+  tags?: Array<{ name: string }>;
+  products_categories?: Array<{ category?: { name?: string } }>;
 };
 
 interface ProductPreviewModalProps {
@@ -266,7 +267,11 @@ export function ProductPreviewModal({ product, onClose }: ProductPreviewModalPro
 
                   <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 max-[768px]:p-4 max-[768px]:rounded-lg">
                     <h5 className="text-sm font-semibold text-white/80 mb-2 uppercase tracking-wide max-[480px]:text-xs">Categoria</h5>
-                    <p className="text-white font-medium max-[768px]:text-sm">{product.category || 'Não informada'}</p>
+                    <p className="text-white font-medium max-[768px]:text-sm">
+                      {product.products_categories && product.products_categories.length > 0 && product.products_categories[0].category?.name
+                        ? product.products_categories[0].category.name
+                        : 'Não informada'}
+                    </p>
                   </div>
 
                   {product.tags && product.tags.length > 0 && (

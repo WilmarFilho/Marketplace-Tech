@@ -19,7 +19,7 @@ interface ExtendedProduct {
   images_urls: string[] | null;
   status: string;
   address?: string | null;
-  category?: string | null;
+  products_categories?: Array<{ category?: { name?: string } }>;
   city?: string | null;
   contact_phone?: string | null;
   created_at?: string | null;
@@ -44,7 +44,7 @@ function favoriteToProductRow(favorite: Favorite): ProductRow | null {
     images_urls: extendedProduct.images_urls,
     status: extendedProduct.status,
     address: extendedProduct.address || null,
-    category: extendedProduct.category || null,
+    products_categories: (extendedProduct as any).products_categories || [],
     city: extendedProduct.city || null,
     contact_phone: extendedProduct.contact_phone || null,
     created_at: extendedProduct.created_at || null,
@@ -97,9 +97,10 @@ function FavoritesGrid({ filters }: { filters: FilterParams }) {
 
     // Filtro por categoria
     if (filters.categories && filters.categories.length > 0) {
-      filtered = filtered.filter(product => 
-        filters.categories?.some((cat: string) => 
-          product.category?.toLowerCase() === cat.toLowerCase()
+      filtered = filtered.filter(product =>
+        filters.categories?.some((cat: string) =>
+          product.products_categories &&
+          product.products_categories[0]?.category?.name?.toLowerCase() === cat.toLowerCase()
         )
       );
     }
