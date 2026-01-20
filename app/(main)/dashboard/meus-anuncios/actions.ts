@@ -16,7 +16,7 @@ export async function getMeusAnuncios() {
       tags:products_tags(
         tag:tags(name)
       ),
-      products_categories(category(name))
+      products_categories(categories(name))
     `)
     .eq("seller_id", user.id)
     .order("created_at", { ascending: false });

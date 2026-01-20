@@ -28,7 +28,7 @@ export async function getFavorites() {
         tags:products_tags(
           tag:tags(name)
         ),
-        products_categories(category(name))
+        products_categories(categories(name))
       )
     `)
     .eq("user_id", user.id);

@@ -27,7 +27,7 @@ export async function getModerationPageData(status: ProductStatus = 'pendente') 
     .select(`
       *,
       profiles!products_seller_id_fkey(id, full_name),
-      products_categories(category(name))
+      products_categories(categories(name))
     `)
     .order('created_at', { ascending: false });
 

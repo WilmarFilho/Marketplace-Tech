@@ -81,7 +81,7 @@ export async function createAdWithDetails(formData: {
     }
 
     console.log('Produto criado:', product);
-    
+
     // 2. Associar categoria (se fornecida)
     if (formData.category_id && product) {
       const { error: categoryError } = await supabase
@@ -107,7 +107,8 @@ export async function createAdWithDetails(formData: {
         console.error("Erro ao associar tags:", tagsError);
       }
     }
-    return { success: true };
+    
+    redirect("/dashboard/meus-anuncios");
   } catch (error) {
     console.error("Erro ao criar anúncio:", error);
     throw error;
@@ -124,17 +125,17 @@ export async function updateAdWithDetails(productId: string, formData: AdFormDat
     // 1. FILTRAR E MANTER AS URLS QUE JÁ EXISTEM NO BUCKET
     // Quando você reordena no formulário, o array imageUrls contém as URLs do Supabase.
     // Precisamos garantir que o banco receba exatamente esse array.
-    const currentStorageUrls = formData.imageUrls?.filter(url => 
+    const currentStorageUrls = formData.imageUrls?.filter(url =>
       url && (url.startsWith('http')) && !url.startsWith('blob:')
     ) || [];
-    
+
     // 2. LÓGICA DE NOVAS IMAGENS
     // Se você faz o upload via Client Component antes de chamar essa Action, 
     // as novas URLs já devem estar vindo dentro do formData.imageUrls.
     // Se você faz o upload aqui no server, você precisaria converter formData.images em URLs primeiro.
-    
+
     // Assumindo que o seu formulário agora envia a lista completa de URLs desejadas em imageUrls:
-    const finalUrlsToSave = currentStorageUrls; 
+    const finalUrlsToSave = currentStorageUrls;
 
     // 3. ATUALIZAR O PRODUTO
     const { data: product, error: productError } = await supabase
