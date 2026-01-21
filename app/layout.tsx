@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Bebas_Neue, K2D, Poppins } from "next/font/google";
 import "./globals.css";
 
+console.log('teste')
+
 const defaultUrl = process.env.SITE_URL
   ? `https://${process.env.SITE_URL}`
   : "http://localhost:3000";
