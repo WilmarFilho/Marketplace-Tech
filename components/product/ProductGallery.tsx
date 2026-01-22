@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ChevronRight} from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import styles from './product.module.css';
@@ -24,69 +24,68 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxImage, setLightboxImage] = useState<number | null>(null);
   const [imagesPerView, setImagesPerView] = useState(3);
+
+  // Calcula o limite máximo de scroll baseado nas imagens visíveis
   const maxIndex = Math.max(0, images.length - imagesPerView);
 
   useEffect(() => {
     const updateImagesPerView = () => {
       const width = window.innerWidth;
-      if (width < 400) {
-        setImagesPerView(Math.min(1, images.length));
-      } else if (width < 650) {
-        setImagesPerView(Math.min(2, images.length));
+      if (width >= 1400) {
+        setImagesPerView(3);
+      } else if (width >= 650) {
+        setImagesPerView(2);
       } else {
-        setImagesPerView(Math.min(3, images.length));
+        setImagesPerView(1);
       }
     };
 
     updateImagesPerView();
     window.addEventListener('resize', updateImagesPerView);
     return () => window.removeEventListener('resize', updateImagesPerView);
-  }, [images.length]);
+  }, []);
 
-  const handlePrevious = () => {
-    setCurrentIndex(prev => Math.max(0, prev - 1));
-  };
+  // Garante que o currentIndex não fique "orfão" ao mudar o tamanho da tela
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [maxIndex, currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex(prev => Math.min(maxIndex, prev + 1));
-  };
-
-  const openLightbox = (index: number) => {
-    setLightboxImage(index);
-  };
-
-  const closeLightbox = () => {
-    setLightboxImage(null);
-  };
-
-  const nextImage = () => {
-    if (lightboxImage !== null) {
-      setLightboxImage((lightboxImage + 1) % images.length);
+    if (currentIndex < maxIndex) {
+      setCurrentIndex(prev => prev + 1);
     }
   };
 
-  const prevImage = () => {
-    if (lightboxImage !== null) {
-      setLightboxImage((lightboxImage - 1 + images.length) % images.length);
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
     }
   };
+
+  const openLightbox = (index: number) => setLightboxImage(index);
+  const closeLightbox = () => setLightboxImage(null);
+
+  const nextImage = () => setLightboxImage((prev) => (prev !== null ? (prev + 1) % images.length : null));
+  const prevImage = () => setLightboxImage((prev) => (prev !== null ? (prev - 1 + images.length) % images.length : null));
 
   return (
     <div className={styles.gallery}>
       <button 
         className={styles.galleryArrowLeft}
-        onClick={handlePrevious}
-        disabled={currentIndex === 0}
+        onClick={handlePrev}
+        style={{ display: currentIndex === 0 ? 'none' : 'flex' }}
       >
         <ChevronLeft />
       </button>
 
       <div className={styles.galleryContainer}>
         <div 
-          className={styles.galleryTrack}
+          className={styles.galleryTrack} 
           style={{ 
-            transform: `translateX(-${currentIndex * (100 / imagesPerView)}%)`,
-            width: `${(images.length / imagesPerView) * 100}%`
+            transform: `translateX(-${currentIndex * (100 / images.length)}%)`,
+            width: `${images.length * 100 / imagesPerView}%`
           }}
         >
           {images.map((image, index) => (
@@ -94,10 +93,11 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
               <Image 
                 src={image.src} 
                 alt={image.alt} 
-                width={300} 
-                height={200}
+                width={800} 
+                height={600}
                 className={styles.galleryImage}
                 onClick={() => openLightbox(index)}
+                priority={index < 3}
               />
             </div>
           ))}
@@ -107,29 +107,31 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
       <button 
         className={styles.galleryArrowRight}
         onClick={handleNext}
-        disabled={currentIndex === maxIndex}
+        style={{ display: currentIndex >= maxIndex ? 'none' : 'flex' }}
       >
         <ChevronRight />
       </button>
 
       {lightboxImage !== null && (
         <div className={styles.lightbox} onClick={closeLightbox}>
+          <button className={styles.lightboxClose} onClick={closeLightbox}>
+            <X size={32} />
+          </button>
           <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
-
             <button className={styles.lightboxPrev} onClick={prevImage}>
-              <ChevronLeft />
+              <ChevronLeft size={48} />
             </button>
-            
-            <Image 
-              src={images[lightboxImage].src}
-              alt={images[lightboxImage].alt}
-              width={800}
-              height={600}
-              className={styles.lightboxImage}
-            />
-            
+            <div className={styles.lightboxImageContainer}>
+              <Image 
+                src={images[lightboxImage].src}
+                alt={images[lightboxImage].alt}
+                width={1200}
+                height={800}
+                className={styles.lightboxImage}
+              />
+            </div>
             <button className={styles.lightboxNext} onClick={nextImage}>
-              <ChevronRight />
+              <ChevronRight size={48} />
             </button>
           </div>
         </div>

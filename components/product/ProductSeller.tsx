@@ -29,8 +29,8 @@ export default function ProductSeller({ product }: ProductSellerProps) {
             <Image
               src={seller.avatar_url}
               alt="Vendedor"
-              width={50}
-              height={50}
+              width={600}
+              height={600}
               className={styles.sellerAvatar}
             />
           ) : (

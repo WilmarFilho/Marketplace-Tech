@@ -9,7 +9,8 @@ import { approveProduct, rejectProduct, deleteProduct } from "./actions";
 import { useRouter } from "next/navigation";
 
 type Product = Tables<"products"> & {
-  tags?: Array<{ name: string; }>;
+  tags?: Array<{ name: string }>;
+  products_categories?: Array<{ categories?: { name?: string } }>;
 };
 
 type ProductStatus = 'pendente' | 'aprovado' | 'reprovado' | 'vendido' | 'all';

@@ -30,10 +30,18 @@ jobs:
               git reset --hard origin/main
             fi
 
-            # 3. Docker Compose (Sempre com hífen conforme solicitado)
-            # Nota: Certifique-se de ter o Alias ou a versão V1 instalada na VPS
-            docker-compose down
-            docker-compose up -d --build
+            # --- ADIÇÃO: LIMPEZA DE CACHE PRÉ-BUILD ---
+            # Remove o cache de build do Next.js que pode estar em volumes persistentes
+            # Isso garante que o fetch de dados e rotas estáticas sejam revalidados
+            echo "Limpando caches antigos..."
+            docker-compose down --volumes --remove-orphans
 
-            # 4. Limpeza de imagens antigas para poupar espaço
+            # 3. Docker Compose (Build sem cache para garantir integridade total)
+            # O parâmetro --no-cache força o Docker a baixar tudo do zero
+            docker-compose up -d --build --force-recreate
+
+            # 4. Limpeza profunda
+            # docker system prune limpa imagens, containers e redes órfãs que sobraram do build
+            echo "Limpando recursos de rede e imagens suspensas..."
             docker image prune -f
+            docker system prune -f --volumes

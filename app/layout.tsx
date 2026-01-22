@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, K2D, Poppins } from "next/font/google";
 import "./globals.css";
-
-console.log('teste')
+import RouteLoadingOverlay from "@/components/ui/RouteLoadingOverlay";
 
 const defaultUrl = process.env.SITE_URL
   ? `https://${process.env.SITE_URL}`
@@ -49,6 +48,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${poppins.className} ${poppins.variable} ${k2d.variable} ${bebasNeue.variable} antialiased`}
       >
+        <RouteLoadingOverlay />
         {children}
       </body>
     </html>

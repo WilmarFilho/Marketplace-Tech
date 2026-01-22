@@ -5,124 +5,95 @@
 
 .gallery {
   position: relative;
-  width: 100vw;
+  width: 100vw; /* Ocupa 100% da largura da janela */
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
   height: 520px;
   overflow: hidden;
-  margin-left: calc(-50vw + 50%);
+  background-color: #000;
 }
 
 .galleryContainer {
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
 
 .galleryTrack {
   display: flex;
   height: 100%;
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .gallerySlide {
-  flex: 0 0 33.333%;
+  /* Removemos o padding para as imagens colarem uma na outra e cobrirem tudo */
+  flex: 0 0 14.333333%; 
   height: 100%;
-  padding: 0 8px;
+  position: relative;
 }
 
 .galleryImage {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Garante que a foto preencha o espaço sem distorcer */
   cursor: pointer;
-  transition: transform 0.2s ease;
 }
 
-.galleryImage:hover {
-  transform: scale(1.01);
+/* Responsividade Progressiva */
+@media (max-width: 1399px) {
+  .gallerySlide {
+    flex: 0 0 20%; /* 2 fotos */
+  }
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
-  .gallery {
-    height: 400px;
-  }
-}
-
-@media (max-width: 649px) {
-  .gallery {
-    height: 350px;
-  }
-
   .gallerySlide {
-    flex: 0 0 50%;
+    flex: 0 0 15%; /* 1 foto */
   }
-}
-
-@media (max-width: 480px) {
   .gallery {
     height: 300px;
   }
 }
 
-@media (max-width: 399px) {
-  .gallery {
-    height: 280px;
-  }
-
+@media (max-width: 368px) {
   .gallerySlide {
-    flex: 0 0 100%;
+    flex: 0 0 10%; /* 1 foto */
   }
-
-  .galleryArrowLeft {
-    left: 12px;
-    width: 40px;
-    height: 40px;
-  }
-
-  .galleryArrowRight {
-    right: 12px;
-    width: 40px;
-    height: 40px;
-  }
-}
-
-@media (max-width: 649px) {
-  .gallery {
-    height: 350px;
-  }
-
-  .gallerySlide {
-    flex: 0 0 50%;
-  }
-}
-
-@media (max-width: 480px) {
   .gallery {
     height: 300px;
   }
 }
 
-@media (max-width: 399px) {
-  .gallery {
-    height: 280px;
-  }
 
-  .gallerySlide {
-    flex: 0 0 100%;
-  }
-
-  .galleryArrowLeft {
-    left: 12px;
-    width: 40px;
-    height: 40px;
-  }
-
-  .galleryArrowRight {
-    right: 12px;
-    width: 40px;
-    height: 40px;
-  }
+/* Setas flutuantes sobre as imagens */
+.galleryArrowLeft,
+.galleryArrowRight {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
+
+.galleryArrowLeft:hover, .galleryArrowRight:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.galleryArrowLeft { left: 20px; }
+.galleryArrowRight { right: 20px; }
+
 
 /* Lightbox Styles */
 .lightbox {
@@ -418,6 +389,14 @@
   display: flex;
   flex-direction: column;
   border-radius: 12px;
+}
+
+.tags {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tags span {

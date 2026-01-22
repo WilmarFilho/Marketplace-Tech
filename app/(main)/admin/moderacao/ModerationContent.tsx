@@ -5,7 +5,8 @@ import { ModerationGrid } from "./ModerationGrid";
 import type { Tables } from "@/src/types/supabase";
 
 type Product = Tables<"products"> & {
-  tags?: Array<{ name: string; }>;
+  tags?: Array<{ name: string }>;
+  products_categories?: Array<{ categories?: { name?: string } }>;
 };
 
 type ProductStatus = 'pendente' | 'aprovado' | 'reprovado' | 'vendido' | 'all';
