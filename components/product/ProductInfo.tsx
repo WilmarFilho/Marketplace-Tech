@@ -134,10 +134,10 @@ export default function ProductInfo({ product, isFavorite, currentUserId, userRo
                 onClick={handleToggleFavorite}
                 disabled={isPending}
                 style={{
-                  color: isCurrentlyFavorite ? '#ef4444' : '#6b7280'
+                  color: isCurrentlyFavorite ? '#ef4444' : '#000000'
                 }}
               >
-                <Heart fill={isCurrentlyFavorite ? 'currentColor' : 'none'} />
+                <Heart size={20} fill={isCurrentlyFavorite ? 'currentColor' : 'none'} />
               </button>
             )}
             

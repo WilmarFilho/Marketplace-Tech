@@ -514,6 +514,8 @@
   align-items: center;
   flex-direction: column;
   gap: 16px;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .sellerStats button,
@@ -551,27 +553,6 @@
   flex-direction: column;
 }
 
-.favorite svg {
-  width: 40px;
-  height: 40px;
-}
-
-.favorite {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-}
-
-.favorite:hover {
-  background-color: rgba(239, 68, 68, 0.1);
-}
-
 .actionButtons {
   display: flex;
   gap: 8px;
@@ -602,7 +583,7 @@
   cursor: not-allowed;
 }
 
-.editButton {
+.editButton, .favorite {
   background: white;
   border: none;
   cursor: pointer;
@@ -616,9 +597,9 @@
   margin-right: 8px;
 }
 
-.editButton:hover {
+.editButton:hover , .favorite:hover {
   background-color: rgba(0, 0, 0, 0.8);
-  color: white;
+  color: white !important;
   transform: scale(1.05);
 }
 
