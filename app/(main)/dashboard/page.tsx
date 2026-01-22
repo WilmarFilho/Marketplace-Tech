@@ -47,17 +47,7 @@ export default async function DashboardPage() {
           {/* Seller Actions */}
           {isSeller && (
             <>
-              <Card className="hover:bg-muted/50 transition-colors border-primary/20 flex flex-col justify-between">
-                  <CardHeader>
-                      <CardTitle>Anunciar</CardTitle>
-                      <CardDescription>Crie um novo anúncio de venda</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                      <Button asChild className="w-full" variant="default">
-                          <Link href="/dashboard/anunciar">Criar Anúncio</Link>
-                      </Button>
-                  </CardContent>
-              </Card>
+              {/* Removed the Anunciar card */}
 
               <Card className="hover:bg-muted/50 transition-colors flex flex-col justify-between">
                   <CardHeader>

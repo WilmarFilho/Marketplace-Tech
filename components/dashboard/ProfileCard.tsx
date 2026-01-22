@@ -8,7 +8,8 @@ import { ProfilePictureUpload } from "./ProfilePictureUpload";
 import { EditProfileModal } from "./EditProfileModal";
 import { MessagesModal } from "./MessagesModal";
 import { getUnreadMessagesCount } from "@/app/(main)/dashboard/actions";
-import { Edit3, Mail } from "lucide-react";
+import { Edit3, Mail, LogOut } from "lucide-react";
+import { BotaoSair } from "@/components/ui/botao-sair";
 
 interface ProfileCardProps {
   user: {
@@ -107,6 +108,14 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
               <Edit3 className="h-4 w-4" />
               <span className="sr-only">Editar perfil</span>
             </Button>
+            <BotaoSair
+              iconOnly
+              className="h-8 w-8 p-0"
+              title="Sair"
+              aria-label="Sair"
+            >
+              <LogOut className="h-4 w-4" />
+            </BotaoSair>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -138,6 +147,8 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
               </Badge>
             </div>
           </div>
+
+          {/* Removido botão de logout do card */}
         </CardContent>
       </Card>
 
@@ -146,6 +157,7 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
         onClose={() => setIsModalOpen(false)}
         currentPhone={profile?.phone}
         userName={profile?.full_name || 'Usuário'}
+        profile={{ role: profile?.role || '' }}
       />
       
       <MessagesModal

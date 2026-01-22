@@ -15,13 +15,24 @@ type CabecalhoProps = {
 
 export default function Cabecalho({ floating }: CabecalhoProps) {
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   useEffect(() => {
     const getUser = async () => {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .maybeSingle();
+        setRole(profile?.role || null);
+      } else {
+        setRole(null);
+      }
     };
     getUser();
   }, []);
@@ -86,6 +97,7 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
               >
                 Ofertas do Dia
               </Link>
+
             </nav>
 
             {/* Desktop Actions */}
@@ -101,7 +113,18 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                   >
                     Minha conta
                   </Link>
-                  <BotaoSair className={cn("hover:brightness-95 transition", styles.ctaButton)} />
+                  {role === 'vendedor' || role === 'admin' ? (
+                    <Link
+                      href="/dashboard/anunciar"
+                      className={cn(
+                        "text-black font-bold bg-[#FFD600] rounded-lg px-4 py-2 ml-2 hover:brightness-95 transition",
+                        styles.ctaButton
+                      )}
+                    >
+                      Criar Anúncio
+                    </Link>
+                  ) : <BotaoSair className={cn("hover:brightness-95 transition", styles.ctaButton)} />}
+
                 </>
               ) : (
                 <>
@@ -157,8 +180,8 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className={cn("fixed inset-0 bg-black/90 transition-opacity duration-300", styles.mobileMenuOverlay)} onClick={() => setIsMenuOpen(false)} style={{zIndex: 999}}>
-          <div 
+        <div className={cn("fixed inset-0 bg-black/90 transition-opacity duration-300", styles.mobileMenuOverlay)} onClick={() => setIsMenuOpen(false)} style={{ zIndex: 999 }}>
+          <div
             className={cn(
               "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-md h-auto max-h-[80vh] transition-all duration-300 ease-out",
               styles.mobileMenu,
@@ -175,7 +198,7 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
               >
                 <span className="text-white text-2xl">&times;</span>
               </button>
-              
+
               <nav className="flex flex-col space-y-8 text-center">
                 <Link
                   href="/"
@@ -217,8 +240,9 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                 >
                   Ofertas do Dia
                 </Link>
+
               </nav>
-              
+
               <div className="mt-10 space-y-4">
                 {user ? (
                   <>
@@ -232,7 +256,19 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                       Minha conta
                     </Link>
                     <div className="block w-full">
-                      <BotaoSair className={cn("w-full py-4", styles.mobileCtaButton)} />
+                      {role === 'vendedor' || role === 'admin' ? (
+                        <Link
+                          href="/dashboard/anunciar"
+                          className={cn(
+                            "block w-full text-center py-4 px-6 rounded-xl bg-[#FFD600] text-black font-bold hover:brightness-95 transition-colors",
+                            styles.mobileCtaButton
+                          )}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Criar Anúncio
+                        </Link>
+                      ) : <BotaoSair className={cn("w-full py-4", styles.mobileCtaButton)} />}
+
                     </div>
                   </>
                 ) : (

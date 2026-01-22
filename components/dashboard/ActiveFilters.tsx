@@ -29,7 +29,8 @@ export function ActiveFilters({
       filters.priceRange ||
       filters.city ||
       filters.state ||
-      filters.dateFilter
+      filters.dateFilter ||
+      filters.status
     );
   };
 
@@ -71,6 +72,30 @@ export function ActiveFilters({
       </div>
       
       <div className="flex flex-wrap gap-2">
+        {/* Status */}
+        {filters.status && (
+          <div
+            className={
+              `flex items-center gap-1 px-2 py-1 rounded-md text-xs border ` +
+              (filters.status === 'aprovado'
+                ? 'bg-green-500/20 text-green-300 border-green-400/30'
+                : filters.status === 'pendente'
+                ? 'bg-yellow-500/20 text-yellow-300 border-yellow-400/30'
+                : 'bg-red-500/20 text-red-300 border-red-400/30')
+            }
+          >
+            <span>
+              Status: {filters.status.charAt(0).toUpperCase() + filters.status.slice(1)}
+            </span>
+            <button
+              onClick={() => updateFilters({ status: '', page: 1 })}
+              className="hover:text-white"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        )}
+
         {/* Busca */}
         {filters.search && (
           <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-2 py-1 rounded-md text-xs border border-blue-400/30">

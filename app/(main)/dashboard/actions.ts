@@ -161,17 +161,24 @@ export async function updateUserProfile(formData: FormData) {
 
   const phone = formData.get('phone') as string;
   const password = formData.get('password') as string;
+  const role = formData.get('role') as string | null;
 
   try {
-    // Atualizar telefone no perfil
+    // Atualizar telefone e tipo de conta no perfil
+    const updateData: { phone?: string | null; role?: string | null } = {};
     if (phone !== undefined) {
+      updateData.phone = phone || null;
+    }
+    if (role) {
+      updateData.role = role;
+    }
+    if (Object.keys(updateData).length > 0) {
       const { error: profileError } = await supabase
         .from("profiles")
-        .update({ phone: phone || null })
+        .update(updateData)
         .eq("id", user.id);
-
       if (profileError) {
-        throw new Error(`Erro ao atualizar telefone: ${profileError.message}`);
+        throw new Error(`Erro ao atualizar perfil: ${profileError.message}`);
       }
     }
 
@@ -180,16 +187,13 @@ export async function updateUserProfile(formData: FormData) {
       const { error: passwordError } = await supabase.auth.updateUser({
         password: password
       });
-
       if (passwordError) {
         throw new Error(`Erro ao atualizar senha: ${passwordError.message}`);
       }
     }
 
     revalidatePath("/dashboard");
-    
     return { success: true };
-    
   } catch (error) {
     console.error('Erro ao atualizar perfil:', error);
     throw error;
@@ -257,9 +261,8 @@ export async function testMessagesAccess(userId: string) {
 
   if (selectData && selectData.length > 0) {
     const messageId = selectData[0].id;
-    
     // Testar UPDATE com RLS check
-    const { data: updateData, error: updateError } = await supabase
+    await supabase
       .from("messages")
       .update({ read: true })
       .eq("id", messageId)
@@ -267,7 +270,7 @@ export async function testMessagesAccess(userId: string) {
       .select();
 
     // Verificar se o update funcionou
-    const { data: verifyData, error: verifyError } = await supabase
+    await supabase
       .from("messages")
       .select("read")
       .eq("id", messageId)
@@ -304,7 +307,7 @@ export async function markMessageAsReadDirect(messageId: string) {
       if (!rpcError && rpcData === false) {
         throw new Error('Mensagem não encontrada ou você não tem permissão');
       }
-    } catch (rpcErr) {
+    } catch {
     }
 
     // 2. Fallback: tentar update direto com auth bypass

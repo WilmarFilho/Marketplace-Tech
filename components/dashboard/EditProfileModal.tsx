@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,14 +13,22 @@ interface EditProfileModalProps {
   onClose: () => void;
   currentPhone?: string | null;
   userName: string;
+  profile: {
+    role: string;
+  };
 }
 
-export function EditProfileModal({ isOpen, onClose, currentPhone, userName }: EditProfileModalProps) {
+export function EditProfileModal({ isOpen, onClose, currentPhone, userName, profile }: EditProfileModalProps) {
   const [phone, setPhone] = useState(currentPhone || '');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    setRole(profile?.role || 'comprador');
+  }, [profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +50,9 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName }: Ed
       if (newPassword) {
         formData.append('password', newPassword);
       }
+      if (role) {
+        formData.append('role', role);
+      }
 
       await updateUserProfile(formData);
       
@@ -61,6 +72,7 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName }: Ed
     setConfirmPassword('');
     setError('');
     setPhone(currentPhone || '');
+    setRole(profile?.role || 'comprador');
     onClose();
   };
 
@@ -124,6 +136,23 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName }: Ed
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+              </div>
+            )}
+
+            {/* Tipo de Conta (não exibe para admin) */}
+            {profile.role !== 'admin' && (
+              <div className="space-y-2">
+                <Label htmlFor="role">Tipo de Conta</Label>
+                <select
+                  id="role"
+                  value={role || ''}
+                  onChange={e => setRole(e.target.value)}
+                  className="w-full border rounded px-3 py-2 bg-white text-black"
+                  disabled={isLoading}
+                >
+                  <option value="comprador">Comprador</option>
+                  <option value="vendedor">Vendedor</option>
+                </select>
               </div>
             )}
           </div>

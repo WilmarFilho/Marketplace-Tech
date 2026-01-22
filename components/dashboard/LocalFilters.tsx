@@ -1,13 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import {
   ArrowRight,
-  Circle
 } from 'lucide-react';
 import styles from '../filters/filter.module.css';
 import { FilterSection } from '../filters/FilterSection';
-import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
 
 import type { FilterParams } from '../../app/(main)/explorar/actions';
 
@@ -22,28 +20,12 @@ interface LocalFiltersProps {
 export default function LocalFilters({
   filters,
   updateFilters,
-  toggleCategory,
   setPriceRange,
   setCustomPrice
 }: LocalFiltersProps) {
-  const [categories, setCategories] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Buscar categorias do banco de dados
-  useEffect(() => {
-    async function fetchCategories() {
-      const supabase = createClient();
-      const { data: categoriesData } = await supabase
-        .from('categories')
-        .select('name')
-        .order('name');
-      
-      setCategories(categoriesData?.map(cat => cat.name) || []);
-      setIsLoading(false);
-    }
-    
-    fetchCategories();
-  }, []);
+  const [isLoading] = useState(true);
+
   
   // Tags de faixas de preço
   const priceTags = [
@@ -73,12 +55,7 @@ export default function LocalFilters({
     updateFilters({ city: e.target.value, page: 1 });
   };
 
-  const handleDateFilterChange = (dateFilter: string) => {
-    const newFilter = filters.dateFilter === dateFilter ? '' : dateFilter;
-    updateFilters({ dateFilter: newFilter, page: 1 });
-  };
-
-  if (isLoading) {
+  if (!isLoading) {
     return (
       <aside className={styles.container}>
         <h2 className={styles.title}>FILTROS</h2>
@@ -98,6 +75,22 @@ export default function LocalFilters({
     <aside className={styles.container}>
       <h2 className={styles.title}>FILTROS</h2>
 
+      {/* Status do anúncio */}
+      <FilterSection title="Status do anúncio" id="filters-status">
+        <div className={styles.tags}>
+          {['aprovado', 'pendente', 'rejeitado'].map((status) => (
+            <button
+              key={status}
+              type="button"
+              className={filters.status === status ? styles.tagActive : ''}
+              onClick={() => updateFilters({ status: filters.status === status ? '' : status, page: 1 })}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
       {/* Preço */}
       <FilterSection title="Preço do produto" id="filters-price">
         <p className={styles.label}>Escolha um intervalo:</p>
@@ -106,7 +99,7 @@ export default function LocalFilters({
           <input 
             placeholder="Preço Min" 
             type="number"
-            value={filters.minPrice || ''}
+            value={filters.minPrice !== undefined ? filters.minPrice : ''}
             onChange={handleMinPriceChange}
           />
           <button type="button" className={styles.arrow}>

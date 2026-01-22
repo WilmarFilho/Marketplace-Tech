@@ -45,6 +45,11 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
     
     let filtered = [...allProducts];
 
+    // Filtro por status
+    if (filters.status) {
+      filtered = filtered.filter(product => product.status === filters.status);
+    }
+
     // Filtro por categoria
     if (filters.categories && filters.categories.length > 0) {
       filtered = filtered.filter(product =>
@@ -210,7 +215,7 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
         <div className="explore-grid justify-items-center gap-6">
           {filteredProducts.map((product: ProductRow) => (
             <div key={product.id} className="w-full">
-              <CardAnuncio product={product} showFavoriteButton={false} />
+              <CardAnuncio product={product} showFavoriteButton={false} showStatusBorder />
             </div>
           ))}
         </div>

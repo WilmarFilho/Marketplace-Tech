@@ -19,9 +19,10 @@ export type ProductRow = Tables<"products"> & {
 type CardAnuncioProps = {
   product: ProductRow;
   showFavoriteButton?: boolean;
+  showStatusBorder?: boolean;
 };
 
-export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncioProps) {
+export function CardAnuncio({ product, showFavoriteButton = false, showStatusBorder = false }: CardAnuncioProps) {
   const [isFavorited, setIsFavorited] = useState(product.isFavorited || false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -134,6 +135,14 @@ export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncio
       }
     : undefined;
 
+  // Definir cor da borda conforme status, apenas se showStatusBorder for true
+  let borderStatusColor = '';
+  if (showStatusBorder) {
+    if (product.status === 'aprovado') borderStatusColor = 'border-2 border-green-500';
+    else if (product.status === 'pendente') borderStatusColor = 'border-2 border-yellow-400';
+    else if (product.status === 'rejeitado') borderStatusColor = 'border-2 border-red-500';
+  }
+
   return (
     <>
       <Link
@@ -141,7 +150,8 @@ export function CardAnuncio({ product, showFavoriteButton = false }: CardAnuncio
         style={backgroundStyle}
         className={cn(
           "group relative w-full overflow-hidden rounded-[20px] bg-cover bg-center p-[10px]",
-          styles.cardRoot
+          styles.cardRoot,
+          borderStatusColor
         )}
       >
         {!imageSrc && <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600" />}
