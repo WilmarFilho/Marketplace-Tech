@@ -15,13 +15,15 @@ interface LocalFiltersProps {
   toggleCategory: (category: string) => void;
   setPriceRange: (range: string) => void;
   setCustomPrice: (min?: number, max?: number) => void;
+  showStatusFilter?: boolean;
 }
 
 export default function LocalFilters({
   filters,
   updateFilters,
   setPriceRange,
-  setCustomPrice
+  setCustomPrice,
+  showStatusFilter = false,
 }: LocalFiltersProps) {
 
   const [isLoading] = useState(true);
@@ -75,21 +77,23 @@ export default function LocalFilters({
     <aside className={styles.container}>
       <h2 className={styles.title}>FILTROS</h2>
 
-      {/* Status do anúncio */}
-      <FilterSection title="Status do anúncio" id="filters-status">
-        <div className={styles.tags}>
-          {['aprovado', 'pendente', 'rejeitado'].map((status) => (
-            <button
-              key={status}
-              type="button"
-              className={filters.status === status ? styles.tagActive : ''}
-              onClick={() => updateFilters({ status: filters.status === status ? '' : status, page: 1 })}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </button>
-          ))}
-        </div>
-      </FilterSection>
+      {/* Status do anúncio (só para Meus Anúncios) */}
+      {showStatusFilter && (
+        <FilterSection title="Status do anúncio" id="filters-status">
+          <div className={styles.tags}>
+            {['aprovado', 'pendente', 'rejeitado'].map((status) => (
+              <button
+                key={status}
+                type="button"
+                className={filters.status === status ? styles.tagActive : ''}
+                onClick={() => updateFilters({ status: filters.status === status ? '' : status, page: 1 })}
+              >
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </button>
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       {/* Preço */}
       <FilterSection title="Preço do produto" id="filters-price">

@@ -1,12 +1,20 @@
+/* Isso garante que os elementos comecem invisíveis se o JS demorar a carregar */
+.hero h1, .hero h2, .hero p, .hero a {
+  opacity: 0;
+}
+
 .hero {
   min-height: 100vh;
   background-color: #0f0f0f;
   background-image:
     radial-gradient(circle at -7% -20%, rgba(168, 154, 4, 0.15) 0%, rgba(15, 15, 15, 0) 65%),
     url("/figma/hero-bg.webp");
-  background-size: cover;
+  
+  /* Importante: Começar em 100% para o GSAP levar até 130% */
+  background-size: 100%; 
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
 }
 
 .heroContainer {

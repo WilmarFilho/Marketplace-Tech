@@ -6,36 +6,36 @@ import { createClient } from "@/lib/supabase/client";
 import { BotaoSair } from "@/components/ui/botao-sair";
 import { cn } from "@/lib/utils";
 import styles from "./cabecalho.module.css";
-import { useState, useEffect } from "react";
-import type { User } from "@supabase/supabase-js";
+import { useState, } from "react";
+import { useRole } from "@/lib/role-context";
+
+// Cache local da role do usuário
+const roleCache = new Map<string, string | null>();
+
+// Salva a role do usuário no cache local ao inicializar a aplicação, se já estiver logado
+if (typeof window !== "undefined") {
+  const supabase = createClient();
+  supabase.auth.getUser().then(({ data: { user } }) => {
+    if (user && !roleCache.has(user.id)) {
+      supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle()
+        .then(({ data: profile }) => {
+          roleCache.set(user.id, profile?.role || null);
+        });
+    }
+  });
+}
 
 type CabecalhoProps = {
   floating?: boolean;
 };
 
 export default function Cabecalho({ floating }: CabecalhoProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const { user, role, loading } = useRole();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .maybeSingle();
-        setRole(profile?.role || null);
-      } else {
-        setRole(null);
-      }
-    };
-    getUser();
-  }, []);
 
   return (
     <>
@@ -102,7 +102,12 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
 
             {/* Desktop Actions */}
             <div className={cn("items-center gap-[18px] md:gap-[31px]", styles.desktopActions)}>
-              {user ? (
+              {loading ? (
+                <div className="flex gap-4 animate-pulse">
+                  <div className="h-8 w-20 bg-gray-700 rounded-lg" />
+                  <div className="h-8 w-24 bg-gray-700 rounded-lg" />
+                </div>
+              ) : user ? (
                 <>
                   <Link
                     href="/dashboard"
@@ -113,7 +118,9 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                   >
                     Minha conta
                   </Link>
-                  {role === 'vendedor' || role === 'admin' ? (
+                  {role === undefined ? (
+                    <div className="h-12 w-32 bg-gray-700 rounded-lg animate-pulse ml-2" />
+                  ) : role === 'vendedor' || role === 'admin' ? (
                     <Link
                       href="/dashboard/anunciar"
                       className={cn(
@@ -123,7 +130,7 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                     >
                       Criar Anúncio
                     </Link>
-                  ) : <BotaoSair className={cn("hover:brightness-95 transition", styles.ctaButton)} />}
+                  ) : null }
 
                 </>
               ) : (

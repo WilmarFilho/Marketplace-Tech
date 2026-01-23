@@ -8,8 +8,8 @@ import { getFavorites } from "../../app/(main)/dashboard/favoritos/actions";
 import type { Favorite } from "@/src/types/products";
 import LocalFilterBar from "@/components/dashboard/LocalFilterBar";
 import LocalFilters from "@/components/dashboard/LocalFilters";
-import { ActiveFilters } from "@/components/dashboard/ActiveFilters";
 import type { FilterParams } from '../../app/(main)/explorar/actions';
+import { ActiveFilters } from "@/components/dashboard/ActiveFilters";
 
 // Interface para o produto completo com campos adicionais
 interface ExtendedProduct {
@@ -44,7 +44,7 @@ function favoriteToProductRow(favorite: Favorite): ProductRow | null {
     images_urls: extendedProduct.images_urls,
     status: extendedProduct.status,
     address: extendedProduct.address || null,
-    products_categories: (extendedProduct as any).products_categories || [],
+    products_categories: extendedProduct.products_categories || [],
     city: extendedProduct.city || null,
     contact_phone: extendedProduct.contact_phone || null,
     created_at: extendedProduct.created_at || null,
@@ -283,7 +283,6 @@ export default function FavoritesContent() {
           updateSearch={updateSearch}
           toggleTag={toggleTag}
         />
-
         <ActiveFilters 
           filters={filters}
           clearFilters={clearFilters}
@@ -291,11 +290,10 @@ export default function FavoritesContent() {
           toggleCategory={toggleCategory}
           updateFilters={updateFilters}
         />
-
         <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
           <div className="w-full lg:w-[380px] shrink-0">
             <LocalFilters 
-              filters={filters}
+              filters={{...filters, status: undefined}}
               updateFilters={updateFilters}
               toggleCategory={toggleCategory}
               setPriceRange={setPriceRange}
@@ -304,7 +302,7 @@ export default function FavoritesContent() {
           </div>
 
           <div className="min-w-0 flex-1">
-            <FavoritesGrid filters={filters} />
+            <FavoritesGrid filters={{...filters, status: undefined}} />
           </div>
         </div>
       </div>

@@ -1,6 +1,14 @@
+'use client';
+
+import { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import styles from "./secao-missao.module.css";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Registrar o plugin do GSAP
+gsap.registerPlugin(ScrollTrigger);
 
 type Testimonial = {
   name: string;
@@ -66,28 +74,83 @@ function TestimonialCard({ name, text, className }: { name: string; text: string
 }
 
 export function SecaoMissao() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 70%", // Inicia quando o topo da seção chega em 70% da viewport
+          toggleActions: "play none none none",
+        },
+      });
+
+      // 1. Fade in da imagem/mockup da esquerda (vem da esquerda)
+      tl.fromTo(leftRef.current,
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 1.2, ease: "power3.out" }
+      );
+
+      // 2. Fade in progressivo dos textos da direita (kicker, título, subtítulo e botão)
+      // Usamos um seletor para pegar os filhos diretos da div "right"
+      tl.fromTo(".animate-text",
+        { opacity: 0, y: 30 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 0.8, 
+          stagger: 0.2, 
+          ease: "power2.out" 
+        },
+        "-=0.8" // Começa antes da animação anterior terminar
+      );
+
+      // 3. Fade in progressivo dos TestimonialCards com tempos diferentes (stagger maior)
+      tl.fromTo([`.${styles.cardA}`, `.${styles.cardB}`, `.${styles.cardC}`],
+        { opacity: 0, scale: 0.8, y: 50 },
+        { 
+          opacity: 1, 
+          scale: 1, 
+          y: 0, 
+          duration: 1, 
+          stagger: 0.4, // Tempo de espera entre cada card aparecer
+          ease: "back.out(1.7)" // Efeito de mola leve
+        },
+        "-=0.4"
+      );
+    }, sectionRef);
+
+    return () => ctx.revert(); // Limpa as animações ao desmontar
+  }, []);
+
   return (
-    <section id="sobre" className={cn("w-full scroll-mt-[262px]", styles.section)}>
+    <section ref={sectionRef} id="sobre" className={cn("w-full scroll-mt-[262px]", styles.section)}>
       <div className={cn("mx-auto w-full max-w-[1800px]", styles.inner)}>
         <div className={styles.grid}>
-          <div className={styles.left} aria-hidden>
+          
+          <div ref={leftRef} className={styles.left} aria-hidden style={{ opacity: 0 }}>
             <div className={styles.productMock} />
           </div>
 
-          <div id="missao"  className={styles.right}>
-            <div className={styles.kicker}>Nossa missão</div>
+          <div id="missao" ref={rightRef} className={styles.right}>
+            <div className={cn(styles.kicker, "animate-text")} style={{ opacity: 0 }}>Nossa missão</div>
 
-            <h2 className={styles.title}>
+            <h2 className={cn(styles.title, "animate-text")} style={{ opacity: 0 }}>
               Conectar tecnologia a oportunidades reais
             </h2>
 
-            <p className={styles.subtitle}>
+            <p className={cn(styles.subtitle, "animate-text")} style={{ opacity: 0 }}>
               Queremos facilitar a compra e venda de tecnologia, aproximando quem vende e procura produtos tech.
             </p>
 
-            <Link href="/explorar" className={styles.cta}>
-              Explorar Ofertas
-            </Link>
+            <div className="animate-text" style={{ opacity: 0 }}>
+                <Link href="/explorar" className={styles.cta}>
+                  Explorar Ofertas
+                </Link>
+            </div>
 
             <div className={styles.floatingCards}>
               <TestimonialCard

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bebas_Neue, K2D, Poppins } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from 'nextjs-toploader';
+import { RoleProvider } from "@/lib/role-context";
 
 const defaultUrl = process.env.SITE_URL
   ? `https://${process.env.SITE_URL}`
@@ -61,8 +62,9 @@ export default function RootLayout({
           shadow="0 0 10px #FFD600, 0 0 5px #FFD600"
           zIndex={99999}
         />
-        
-        {children}
+        <RoleProvider>
+          {children}
+        </RoleProvider>
       </body>
     </html>
   );

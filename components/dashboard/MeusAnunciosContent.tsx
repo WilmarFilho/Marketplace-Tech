@@ -271,13 +271,14 @@ export default function MeusAnunciosContent() {
 
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
         <div className="w-full lg:w-[380px] shrink-0">
-          <LocalFilters 
-            filters={filters}
-            updateFilters={updateFilters}
-            toggleCategory={toggleCategory}
-            setPriceRange={setPriceRange}
-            setCustomPrice={setCustomPrice}
-          />
+            <LocalFilters 
+              filters={filters}
+              updateFilters={updateFilters}
+              toggleCategory={toggleCategory}
+              setPriceRange={setPriceRange}
+              setCustomPrice={setCustomPrice}
+              showStatusFilter={true}
+            />
         </div>
 
         <div className="min-w-0 flex-1">
