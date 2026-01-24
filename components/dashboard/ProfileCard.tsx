@@ -102,6 +102,7 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
             <Button
               variant="outline"
               size="sm"
+               title="Editar perfil"
               onClick={() => setIsModalOpen(true)}
               className="h-8 w-8 p-0"
             >

@@ -25,6 +25,7 @@ export interface AdFormData {
   tag_ids: string[];
   images: File[];
   imageUrls: string[];
+  cep?: string;
 }
 
 interface FormError {

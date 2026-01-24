@@ -187,29 +187,29 @@ export function CardAnuncio({ product, showFavoriteButton = false, showStatusBor
       {/* Modal de Login */}
       {showLoginModal && (
         <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[9999] p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white rounded-lg p-6 w-full max-w-xl mx-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Login Necessário</h3>
               <button onClick={() => setShowLoginModal(false)} className="text-gray-500 hover:text-gray-700">
-                <X className="h-5 w-5" />
+              <X className="h-5 w-5" />
               </button>
             </div>
             <p className="text-gray-600 mb-6">Você precisa estar logado para favoritar anúncios.</p>
             <div className="flex gap-3">
               <button 
-                onClick={() => router.push('/auth/login')}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => router.push('/auth/login')}
+              className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Fazer Login
+              Fazer Login
               </button>
               <button 
-                onClick={() => setShowLoginModal(false)}
-                className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              onClick={() => setShowLoginModal(false)}
+              className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                Cancelar
+              Cancelar
               </button>
             </div>
-          </div>
+            </div>
         </div>
       )}
     </>

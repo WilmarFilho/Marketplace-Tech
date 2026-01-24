@@ -56,7 +56,7 @@ export function MessagesModal({ isOpen, onClose, userId }: MessagesModalProps) {
     try {
       setMarkingRead(messageId);
       
-      const result = await markMessageAsRead(messageId);
+      await markMessageAsRead(messageId);
       
       // Atualizar o estado local
       setMessages(prev => prev.map(msg => 

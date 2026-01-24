@@ -38,9 +38,9 @@ export default async function DashboardPage() {
                   <CardDescription>Veja os produtos que você salvou</CardDescription>
               </CardHeader>
               <CardContent>
-                  <Button asChild className="w-full" variant="secondary">
-                      <Link href="/dashboard/favoritos">Ver Favoritos</Link>
-                  </Button>
+                    <Button asChild className="w-full" variant="secondary" aria-label="Ver favoritos salvos">
+                      <Link href="/dashboard/favoritos" aria-label="Ver favoritos salvos">Ver Favoritos</Link>
+                    </Button>
               </CardContent>
           </Card>
 
@@ -55,9 +55,9 @@ export default async function DashboardPage() {
                       <CardDescription>Gerencie seus produtos à venda</CardDescription>
                   </CardHeader>
                   <CardContent>
-                      <Button asChild className="w-full" variant="outline">
-                          <Link href="/dashboard/meus-anuncios">Ver Meus Anúncios</Link>
-                      </Button>
+                        <Button asChild className="w-full" variant="secondary" aria-label="Ver meus anúncios">
+                          <Link href="/dashboard/meus-anuncios" aria-label="Ver meus anúncios">Ver Meus Anúncios</Link>
+                        </Button>
                   </CardContent>
               </Card>
             </>
@@ -65,14 +65,14 @@ export default async function DashboardPage() {
 
           {/* Admin Actions */}
           {profile?.role === 'admin' && (
-            <Card className="hover:bg-muted/50 transition-colors border-red-200 dark:border-red-900 flex flex-col justify-between">
+            <Card className="hover:bg-muted/50 transition-colors border-red-200 dark:border-red-900 flex flex-col justify-between moderation-card-span">
                 <CardHeader>
                     <CardTitle>Moderação</CardTitle>
                     <CardDescription>Gerenciar anúncios e usuários</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button asChild className="w-full" variant="destructive">
-                        <Link href="/admin/moderacao">Acessar Painel</Link>
+                    <Button asChild className="w-full" variant="destructive" aria-label="Acessar painel de moderação">
+                      <Link href="/admin/moderacao" aria-label="Acessar painel de moderação">Acessar Painel</Link>
                     </Button>
                 </CardContent>
             </Card>

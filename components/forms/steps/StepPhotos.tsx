@@ -21,6 +21,7 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
 
   const getError = (field: string) => errors.find(e => e.field === field)?.message;
 
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
   const handleFiles = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
@@ -28,19 +29,22 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
     const maxFiles = 8;
     const maxSize = 10 * 1024 * 1024; // 10MB
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const errors: string[] = [];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       if (!allowedTypes.includes(file.type)) {
-        alert(`Arquivo ${file.name}: Tipo não suportado.`);
+        errors.push(`Arquivo ${file.name}: Tipo não suportado.`);
         continue;
       }
       if (file.size > maxSize) {
-        alert(`Arquivo ${file.name}: Muito grande.`);
+        errors.push(`Arquivo ${file.name}: Muito grande.`);
         continue;
       }
       validFiles.push(file);
     }
+
+    setFileErrors(errors);
 
     const currentImages = formData.images || [];
     const currentUrls = formData.imageUrls || [];
@@ -49,12 +53,13 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
 
     for (const file of validFiles) {
       if (totalCount >= maxFiles) {
-        alert(`Máximo de ${maxFiles} fotos permitidas`);
+        errors.push(`Máximo de ${maxFiles} fotos permitidas`);
         break;
       }
       newImages.push(file);
       totalCount++;
     }
+    setFileErrors(errors);
     updateFormData({ images: newImages });
   }, [formData, updateFormData]);
 
@@ -148,7 +153,7 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
 
   const images = formData.images || [];
   const imageUrls = formData.imageUrls || [];
-  const minRequired = 3;
+  const minRequired = 5;
   
   // LOGICA CORRIGIDA: Junta os dois mantendo a ordem para o preview
   const allImages = [
@@ -189,6 +194,13 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
         </div>
 
         {getError('images') && <p className="text-sm text-red-600">{getError('images')}</p>}
+        {fileErrors.length > 0 && (
+          <div className="space-y-1 mt-2">
+            {fileErrors.map((err, i) => (
+              <span key={i} className="block text-xs text-red-600">{err}</span>
+            ))}
+          </div>
+        )}
 
         <div className="flex items-center justify-between text-sm">
           <span className={totalImages >= minRequired ? 'text-green-600' : 'text-muted-foreground'}>

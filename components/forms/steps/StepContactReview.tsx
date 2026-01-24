@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { fetchCepData } from "@/lib/cep";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -16,12 +17,38 @@ interface StepContactReviewProps {
   updateFormData: (updates: Partial<AdFormData>) => void;
   errors: Array<{ field: string; message: string }>;
 }
-
 export function StepContactReview({ formData, updateFormData, errors }: StepContactReviewProps) {
   const [categoryName, setCategoryName] = useState<string>("");
   const [tagNames, setTagNames] = useState<string[]>([]);
+  const [cepLoading, setCepLoading] = useState(false);
+  const [cepError, setCepError] = useState<string>("");
 
   const getError = (field: string) => errors.find(e => e.field === field)?.message;
+
+  // Validação de telefone: só números, 11 dígitos
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= 11) {
+      updateFormData({ contact_phone: value });
+    }
+  };
+
+  // CEP handler
+  const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    updateFormData({ cep: value });
+    setCepError("");
+    if (value.length === 8) {
+      setCepLoading(true);
+      const data = await fetchCepData(value);
+      setCepLoading(false);
+      if (data) {
+        updateFormData({ city: data.city, state: data.state });
+      } else {
+        setCepError("CEP não encontrado ou inválido");
+      }
+    }
+  };
 
   // Buscar nomes da categoria e tags
   useEffect(() => {
@@ -92,9 +119,28 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
             id="contact_phone"
             placeholder="(11) 99999-9999"
             value={formData.contact_phone}
-            onChange={(e) => updateFormData({ contact_phone: e.target.value })}
+            onChange={handlePhoneChange}
+            maxLength={11}
             className={getError('contact_phone') ? 'border-red-500' : ''}
+            inputMode="numeric"
+            pattern="[0-9]*"
           />
+                  {/* CEP */}
+                  <div className="space-y-2">
+                    <Label htmlFor="cep">CEP</Label>
+                    <Input
+                      id="cep"
+                      placeholder="00000000"
+                      value={formData.cep || ""}
+                      onChange={handleCepChange}
+                      maxLength={8}
+                      className={cepError ? 'border-red-500' : ''}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                    />
+                    {cepLoading && <span className="text-xs text-muted-foreground">Buscando cidade/estado…</span>}
+                    {cepError && <span className="text-xs text-red-600">{cepError}</span>}
+                  </div>
           {getError('contact_phone') && (
             <p className="text-sm text-red-600">{getError('contact_phone')}</p>
           )}
@@ -134,6 +180,7 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
                   value={formData.city}
                   onChange={(e) => updateFormData({ city: e.target.value })}
                   className={getError('city') ? 'border-red-500' : ''}
+                  readOnly={!!formData.cep && formData.cep.length === 8}
                 />
                 {getError('city') && (
                   <p className="text-sm text-red-600">{getError('city')}</p>
@@ -148,6 +195,7 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
                   value={formData.state}
                   onChange={(e) => updateFormData({ state: e.target.value })}
                   className={getError('state') ? 'border-red-500' : ''}
+                  readOnly={!!formData.cep && formData.cep.length === 8}
                 />
                 {getError('state') && (
                   <p className="text-sm text-red-600">{getError('state')}</p>
