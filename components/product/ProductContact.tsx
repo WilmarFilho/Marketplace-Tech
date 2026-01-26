@@ -26,6 +26,12 @@ export default function ProductContact({ product }: ProductContactProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  // Função para validar Telefone Brasileiro (DDD + 8 ou 9 dígitos)
+  const isValidPhone = (phone: string) => {
+    const cleanPhone = phone.replace(/\D/g, ''); // Remove tudo que não é número
+    return cleanPhone.length >= 10 && cleanPhone.length <= 11;
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -43,6 +49,12 @@ export default function ProductContact({ product }: ProductContactProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validação antes de iniciar a Transition
+    if (!isValidPhone(formData.phone)) {
+      setError('Por favor, insira um telefone válido com DDD (ex: 11999999999)');
+      return;
+    }
     
     startTransition(async () => {
       try {
@@ -140,7 +152,7 @@ export default function ProductContact({ product }: ProductContactProps) {
                 id="contact-phone"
                 name="phone"
                 className={styles.formInput}
-                placeholder="Digite seu telefone com DDD"
+                placeholder="(00) 00000-0000"
                 type="tel"
                 value={formData.phone}
                 onChange={handleInputChange}

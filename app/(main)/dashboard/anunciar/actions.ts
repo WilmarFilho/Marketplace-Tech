@@ -80,8 +80,6 @@ export async function createAdWithDetails(formData: {
       throw new Error(`Erro ao criar produto: ${productError.message}`);
     }
 
-    console.log('Produto criado:', product);
-
     // 2. Associar categoria (se fornecida)
     if (formData.category_id && product) {
       const { error: categoryError } = await supabase

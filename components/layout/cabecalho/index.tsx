@@ -6,28 +6,11 @@ import { createClient } from "@/lib/supabase/client";
 import { BotaoSair } from "@/components/ui/botao-sair";
 import { cn } from "@/lib/utils";
 import styles from "./cabecalho.module.css";
-import { useState, } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useRole } from "@/lib/role-context";
 
-// Cache local da role do usuário
-const roleCache = new Map<string, string | null>();
-
-// Salva a role do usuário no cache local ao inicializar a aplicação, se já estiver logado
-if (typeof window !== "undefined") {
-  const supabase = createClient();
-  supabase.auth.getUser().then(({ data: { user } }) => {
-    if (user && !roleCache.has(user.id)) {
-      supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle()
-        .then(({ data: profile }) => {
-          roleCache.set(user.id, profile?.role || null);
-        });
-    }
-  });
-}
+// Removido cache local manual da role do usuário (desnecessário)
 
 type CabecalhoProps = {
   floating?: boolean;
@@ -36,6 +19,24 @@ type CabecalhoProps = {
 export default function Cabecalho({ floating }: CabecalhoProps) {
   const { user, role, loading } = useRole();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN") {
+        // Se detectou login, e o componente ainda acha que está deslogado
+        router.refresh();
+      }
+      if (event === "SIGNED_OUT") {
+        // Você disse que o logout já funciona, mas manter o refresh aqui é bom
+        router.refresh();
+      }
+    });
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [router]);
 
   return (
     <>
@@ -130,7 +131,7 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                     >
                       Criar Anúncio
                     </Link>
-                  ) : null }
+                  ) : null}
 
                 </>
               ) : (

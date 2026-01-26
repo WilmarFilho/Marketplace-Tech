@@ -81,7 +81,7 @@ export default function LocalFilters({
       {showStatusFilter && (
         <FilterSection title="Status do anúncio" id="filters-status">
           <div className={styles.tags}>
-            {['aprovado', 'pendente', 'rejeitado'].map((status) => (
+            {['aprovado', 'pendente', 'reprovado'].map((status) => (
               <button
                 key={status}
                 type="button"

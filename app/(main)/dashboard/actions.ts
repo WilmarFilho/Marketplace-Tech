@@ -12,13 +12,31 @@ export async function getDashboardData() {
     redirect("/auth/login");
   }
 
+  // 1. Buscar Perfil
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .maybeSingle();
 
-  return { user, profile };
+  // 2. Buscar Contagem de Favoritos (apenas o count, sem baixar dados)
+  const { count: favoritesCount } = await supabase
+    .from("favorites")
+    .select("*", { count: 'exact', head: true })
+    .eq("user_id", user.id);
+
+  // 3. Buscar Contagem de Anúncios do Usuário (apenas o count)
+  const { count: adsCount } = await supabase
+    .from("products")
+    .select("*", { count: 'exact', head: true })
+    .eq("seller_id", user.id);
+
+  return { 
+    user, 
+    profile, 
+    favoritesCount: favoritesCount || 0, 
+    adsCount: adsCount || 0 
+  };
 }
 
 export async function uploadProfilePicture(formData: FormData) {

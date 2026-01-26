@@ -99,7 +99,7 @@ export function CardAnuncio({ product, showFavoriteButton = false, showStatusBor
   if (showStatusBorder) {
     if (product.status === 'aprovado') borderStatusColor = 'border-2 border-green-500';
     else if (product.status === 'pendente') borderStatusColor = 'border-2 border-yellow-400';
-    else if (product.status === 'rejeitado') borderStatusColor = 'border-2 border-red-500';
+    else if (product.status === 'reprovado') borderStatusColor = 'border-2 border-red-500';
   }
 
   return (

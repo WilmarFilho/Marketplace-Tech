@@ -22,26 +22,29 @@ export function FormLogin({
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
+  type SignInResult = { success: boolean; error?: string };
+
   const [state, formAction] = useActionState(
     async (prevState: { error: string | null }, formData: FormData) => {
       try {
-        const result = await signIn(formData);
+        const result = await signIn(formData) as SignInResult;
+
+        // No seu FormLogin, dentro do if (result && result.success)
         if (result && result.success) {
-          // Redireciona no cliente após login
-          router.replace("/");
+          // Em vez de startTransition e router, usamos:
+          window.location.href = "/";
+          return { error: null };
         }
-        return { error: null };
-      } catch (error: any) {
+
+        setIsPending(false);
+        return { error: result?.error || "Erro ao entrar" };
+      } catch (error: unknown) {
+        setIsPending(false);
         return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
       }
     },
     { error: null }
   );
-
-  // Reset isPending quando houver erro
-  if (isPending && state.error) {
-    setIsPending(false);
-  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -92,14 +95,15 @@ export function FormLogin({
                 />
               </div>
               {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button 
-                type="submit" 
-                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+              <Button
+                type="submit"
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
                 disabled={isPending}
               >
                 {isPending ? "Entrando..." : "Entrar"}
               </Button>
             </div>
+
             <div className="mt-4 text-center text-sm">
               Não tem uma conta?{" "}
               <Link
@@ -109,18 +113,16 @@ export function FormLogin({
                 Cadastre-se
               </Link>
             </div>
-            <div className="mt-2 text-center text-sm show-below-700">
-              <Link
-                href="/auth/esqueci-senha"
-                className="inline-block text-sm underline-offset-4 hover:underline"
-              >
-                Esqueceu sua senha?
-              </Link>
-            </div>
+
             <div className="mt-2 text-center text-sm">
               <Link
                 href="/"
                 className="text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.refresh();
+                  router.push("/");
+                }}
               >
                 Voltar para a home
               </Link>
@@ -131,3 +133,5 @@ export function FormLogin({
     </div>
   );
 }
+
+
