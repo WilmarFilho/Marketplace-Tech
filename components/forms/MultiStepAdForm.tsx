@@ -227,7 +227,7 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
       const dataToSend = {
         ...formData,
         images: [], // Limpa os arquivos binários para não estourarem os 10MB da Action
-        imageUrls: finalUrls 
+        imageUrls: finalUrls
       };
 
       if (isEditing && existingProduct) {
@@ -238,10 +238,20 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
 
       router.replace("/dashboard/meus-anuncios");
       router.refresh(); // Opcional: força a atualização dos dados
-    } catch (error) {
+    } catch (error: unknown) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "message" in error &&
+        typeof (error as { message?: string }).message === "string" &&
+        (error as { message: string }).message.includes("NEXT_REDIRECT")
+      ) {
+        return;
+      }
       console.error(`Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio:`, error);
-      setErrors([{ field: "general", message: `Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio. Tente novamente.` }]);
+      setErrors([{ field: "general", message: "Ocorreu um erro ao salvar o anúncio." }]);
     } finally {
+      // Tenha cuidado aqui: se houver redirect, o componente pode ser desmontado
       setIsLoading(false);
     }
   };
