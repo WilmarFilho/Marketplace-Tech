@@ -57,7 +57,9 @@ export function FormLogin({
               width={200}
               height={29}
               priority
-              className="h-[29px] w-auto"
+              // Adicionado style para evitar o aviso de proporção no log
+              style={{ width: "auto", height: "auto" }}
+              className="h-[29px]"
             />
           </div>
           <CardDescription className="text-center">
@@ -133,5 +135,7 @@ export function FormLogin({
     </div>
   );
 }
+
+
 
 

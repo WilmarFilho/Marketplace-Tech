@@ -21,7 +21,7 @@ export function FormCadastro({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [role, setRole] = useState<"comprador" | "vendedor">("comprador");
   const [isPending, setIsPending] = useState(false);
-  
+
   const [state, formAction] = React.useActionState(async (prevState: { error: string | null }, formData: FormData) => {
     try {
       await signUp(formData);
@@ -42,7 +42,9 @@ export function FormCadastro({
               width={200}
               height={29}
               priority
-              className="h-[29px] w-auto"
+              // Adicionado style para evitar o aviso de proporção no log
+              style={{ width: "auto", height: "auto" }}
+              className="h-[29px]"
             />
           </div>
           <CardDescription className="text-center">Crie uma nova conta</CardDescription>
@@ -115,9 +117,9 @@ export function FormCadastro({
                 />
               </div>
               {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button 
-                type="submit" 
-                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+              <Button
+                type="submit"
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
                 disabled={isPending}
               >
                 {isPending ? "Criando..." : "Cadastrar"}

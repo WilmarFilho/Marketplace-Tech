@@ -24,7 +24,7 @@ export function SecaoPorQue() {
       });
 
       // 1. Animação do Header (Kicker, Título, Subtítulo) - Mais rápida
-      tl.fromTo(".animate-header", 
+      tl.fromTo(".animate-header",
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: "power3.out" }
       );
@@ -43,7 +43,7 @@ export function SecaoPorQue() {
         "-=0.8"
       );
 
-     
+
 
     }, sectionRef);
 
@@ -58,10 +58,17 @@ export function SecaoPorQue() {
         alt=""
         width={1007}
         height={976}
-        className={cn("animate-decor pointer-events-none absolute right-[-100px] top-20 w-[180px]  md:right-[-140px] md:top-[26px] md:bottom-auto md:w-[1007px]", styles.decorD)}
+        // Adicione width e height auto aqui para neutralizar a interferência do CSS fixo
+        style={{
+          width: "auto",
+          height: "auto"
+        }}
+        className={cn(
+          "animate-decor pointer-events-none absolute right-[-100px] top-20 w-[180px] md:right-[-140px] md:top-[26px] md:bottom-auto md:w-[1007px]",
+          styles.decorD
+        )}
         aria-hidden
       />
-
       <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-[48px] px-4 py-12 pb-6 sm:px-6 md:gap-[80px] md:px-[44px] md:py-[100px] md:pb-[120px]">
         {/* Header */}
         <div className="flex w-full max-w-[1093px] flex-col justify-center gap-[13px]">
@@ -82,7 +89,7 @@ export function SecaoPorQue() {
         {/* Content */}
         <div className="relative flex w-full items-stretch gap-[57px]">
           <div className={cn("relative flex w-full flex-col gap-10 px-4 pb-6 pt-8 sm:px-6 md:px-6 md:pt-10 animate-panel", styles.greenPanel)}>
-            
+
             {/* Illustration */}
             <Image
               src="/figma/por-que-illustration.png"

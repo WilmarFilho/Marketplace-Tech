@@ -49,7 +49,9 @@ export function FormEsqueciSenha({
                 width={200}
                 height={29}
                 priority
-                className="h-[29px] w-auto"
+                // Adicionado style para evitar o aviso de proporção no log
+                style={{ width: "auto", height: "auto" }}
+                className="h-[29px]"
               />
             </div>
             <CardDescription className="text-center">Instruções de redefinição de senha enviadas</CardDescription>
@@ -91,9 +93,9 @@ export function FormEsqueciSenha({
                   />
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button 
-                  type="submit" 
-                  className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+                <Button
+                  type="submit"
+                  className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
                   disabled={isLoading}
                 >
                   {isLoading ? "Enviando..." : "Enviar email de redefinição"}

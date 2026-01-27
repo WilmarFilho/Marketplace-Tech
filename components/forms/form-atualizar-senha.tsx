@@ -20,7 +20,7 @@ export function FormAtualizarSenha({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [isPending, setIsPending] = useState(false);
-  
+
   const [state, formAction] = useFormState(async (prevState: { error: string | null }, formData: FormData) => {
     try {
       await updatePassword(formData);
@@ -41,7 +41,9 @@ export function FormAtualizarSenha({
               width={200}
               height={29}
               priority
-              className="h-[29px] w-auto"
+              // Adicionado style para evitar o aviso de proporção no log
+              style={{ width: "auto", height: "auto" }}
+              className="h-[29px]"
             />
           </div>
           <CardDescription className="text-center">
@@ -62,9 +64,9 @@ export function FormAtualizarSenha({
                 />
               </div>
               {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button 
-                type="submit" 
-                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+              <Button
+                type="submit"
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
                 disabled={isPending}
               >
                 {isPending ? "Salvando..." : "Salvar nova senha"}
