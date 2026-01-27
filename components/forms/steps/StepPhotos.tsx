@@ -27,7 +27,7 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
 
     const validFiles: File[] = [];
     const maxFiles = 8;
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const maxSize = 8 * 1024 * 1024; // 8MB
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     const errors: string[] = [];
 
@@ -38,7 +38,7 @@ export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps
         continue;
       }
       if (file.size > maxSize) {
-        errors.push(`Arquivo ${file.name}: Muito grande.`);
+        errors.push(`Arquivo ${file.name}: Muito grande. O tamanho máximo permitido é 8MB.`);
         continue;
       }
       validFiles.push(file);

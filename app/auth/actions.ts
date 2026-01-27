@@ -40,28 +40,27 @@ export async function signIn(formData: FormData) {
     if (error) {
       console.error("signIn supabase error:", error);
       const msg = error.message?.toLowerCase() || "";
-      // Tradução de erro para email não confirmado
-      if (
-        msg.includes("email not confirmed") ||
-        msg.includes("email needs to be confirmed")
-      ) {
-        throw new Error("Seu e-mail ainda não foi confirmado. Por favor, verifique sua caixa de entrada e confirme o cadastro.");
+      
+      // TRADUÇÃO: Em vez de 'throw', usamos 'return'
+      if (msg.includes("email not confirmed") || msg.includes("email needs to be confirmed")) {
+        return { success: false, error: "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada." };
       }
-      // Tradução de erro para credenciais inválidas
+      
       if (msg.includes("invalid login credentials")) {
-        throw new Error("E-mail ou senha inválidos. Verifique seus dados e tente novamente.");
+        return { success: false, error: "E-mail ou senha inválidos. Verifique seus dados e tente novamente." };
       }
-      throw new Error(error.message || "Erro ao autenticar");
+
+      return { success: false, error: error.message || "Erro ao autenticar" };
     }
 
-    // Retorna sucesso para o cliente redirecionar
     return { success: true };
   } catch (error) {
     console.error("Error in signIn action:", error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw error;
+    // Erro inesperado também deve ser retornado como objeto
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Ocorreu um erro inesperado." 
+    };
   }
 }
 

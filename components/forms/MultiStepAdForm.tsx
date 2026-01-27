@@ -222,17 +222,18 @@ export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiSte
         }
       }
 
-      // 3. ENVIAMOS O ARRAY COMPLETO (ANTIGAS + NOVAS) PARA O SERVIDOR
+      // --- CORREÇÃO AQUI ---
+      // Criamos uma cópia dos dados SEM os arquivos binários (images: [])
+      const dataToSend = {
+        ...formData,
+        images: [], // Limpa os arquivos binários para não estourarem os 10MB da Action
+        imageUrls: finalUrls 
+      };
+
       if (isEditing && existingProduct) {
-        await updateAdWithDetails(existingProduct.id, {
-          ...formData,
-          imageUrls: finalUrls // Enviamos a lista mesclada
-        });
+        await updateAdWithDetails(existingProduct.id, dataToSend);
       } else {
-        await createAdWithDetails({
-          ...formData,
-          imageUrls: finalUrls // Enviamos a lista para criação
-        });
+        await createAdWithDetails(dataToSend);
       }
 
       router.replace("/dashboard/meus-anuncios");
