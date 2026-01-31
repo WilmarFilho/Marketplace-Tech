@@ -105,16 +105,11 @@ function FavoritesGrid({ filters }: { filters: FilterParams }) {
       );
     }
 
-    // Filtro por localização (estado ou cidade)
-    if (filters.state) {
+    // Filtro por localização unificado (cidade ou estado)
+    if (filters.location) {
       filtered = filtered.filter(product => 
-        product.state?.toLowerCase().includes(filters.state?.toLowerCase() || '')
-      );
-    }
-    
-    if (filters.city) {
-      filtered = filtered.filter(product => 
-        product.city?.toLowerCase().includes(filters.city?.toLowerCase() || '')
+        product.city?.toLowerCase().includes(filters.location?.toLowerCase() || '') ||
+        product.state?.toLowerCase().includes(filters.location?.toLowerCase() || '')
       );
     }
 
