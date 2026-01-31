@@ -22,8 +22,6 @@ export function ResultsHeader({ total, page, limit, isLoading }: ResultsHeaderPr
     filters.maxPrice ||
     filters.priceRange ||
     filters.location ||
-    filters.city ||
-    filters.state ||
     filters.dateFilter;
 
   const startItem = (page - 1) * limit + 1;
@@ -78,6 +76,11 @@ export function ResultsHeader({ total, page, limit, isLoading }: ResultsHeaderPr
             {filters.priceRange && (
               <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded">
                 {filters.priceRange}
+              </span>
+            )}
+             {filters.location && (
+              <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 rounded">
+                Localização: {filters.location}
               </span>
             )}
             {(filters.minPrice || filters.maxPrice) && (

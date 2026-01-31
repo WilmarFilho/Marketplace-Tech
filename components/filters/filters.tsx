@@ -22,6 +22,8 @@ export default function Filters() {
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log('filter:', filters.priceRange);
+
   // Buscar categorias do banco de dados
   useEffect(() => {
     async function fetchCategories() {
@@ -48,6 +50,7 @@ export default function Filters() {
     'Acima de R$ 10.000'
   ];
 
+  // Ao digitar nos inputs, desmarcar tag de preço
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value ? Number(e.target.value) : undefined;
     setCustomPrice(value, filters.maxPrice);
@@ -58,22 +61,41 @@ export default function Filters() {
     setCustomPrice(filters.minPrice, value);
   };
 
+  // Sincronizar inputs ao selecionar uma tag de preço
+  const getRangeFromTag = (tag: string) => {
+    switch (tag) {
+      case 'Até R$ 500': return { min: undefined, max: 500 };
+      case 'R$ 500 - R$ 1.000': return { min: 500, max: 1000 };
+      case 'R$ 1.000 - R$ 2.500': return { min: 1000, max: 2500 };
+      case 'R$ 2.500 - R$ 5.000': return { min: 2500, max: 5000 };
+      case 'R$ 5.000 - R$ 10.000': return { min: 5000, max: 10000 };
+      case 'Acima de R$ 10.000': return { min: 10000, max: undefined };
+      default: return { min: undefined, max: undefined };
+    }
+  };
+
+  const handlePriceTagClick = (tag: string) => {
+    if (filters.priceRange === tag) {
+      // Se já está selecionada, limpa tudo
+      setPriceRange('');
+      setCustomPrice(undefined, undefined);
+    } else {
+      setPriceRange(tag);
+      const { min, max } = getRangeFromTag(tag);
+      setCustomPrice(min, max);
+    }
+  };
+
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFilters({ location: e.target.value, page: 1 });
-  };
-
-  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ city: e.target.value, page: 1 });
-  };
-
-  const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ state: e.target.value, page: 1 });
   };
 
   const handleDateFilterChange = (dateFilter: string) => {
     const newFilter = filters.dateFilter === dateFilter ? '' : dateFilter;
     updateFilters({ dateFilter: newFilter, page: 1 });
   };
+
+  
 
   if (isLoading) {
     return (
@@ -103,7 +125,7 @@ export default function Filters() {
           <input 
             placeholder="Preço Min" 
             type="number"
-            value={filters.minPrice || ''}
+            value={filters.minPrice ?? (filters.priceRange ? getRangeFromTag(filters.priceRange).min ?? '' : '')}
             onChange={handleMinPriceChange}
           />
           <button type="button" className={styles.arrow}>
@@ -112,7 +134,7 @@ export default function Filters() {
           <input 
             placeholder="Preço Max" 
             type="number"
-            value={filters.maxPrice || ''}
+            value={filters.maxPrice ?? (filters.priceRange ? getRangeFromTag(filters.priceRange).max ?? '' : '')}
             onChange={handleMaxPriceChange}
           />
         </div>
@@ -120,35 +142,32 @@ export default function Filters() {
         <p className={styles.label}>Ou uma faixa específica:</p>
 
         <div className={styles.tags}>
-          {priceTags.map((tag, i) => (
-            <button 
-              key={i} 
-              type="button"
-              className={filters.priceRange === tag ? styles.tagActive : ''}
-              onClick={() => setPriceRange(tag)}
-            >
-              {tag}
-            </button>
-          ))}
+          {priceTags.map((tag, i) => {
+            const isActive = filters.priceRange === tag;
+            return (
+              <button
+                key={i}
+                type="button"
+                className={isActive ? styles.tagActive : ''}
+                onClick={() => handlePriceTagClick(tag)}
+              >
+                {tag}
+              </button>
+            );
+          })}
         </div>
       </FilterSection>
 
       {/* Localização */}
       <FilterSection title="Localização do produto" id="filters-location">
-        <p className={styles.label}>Escolha um estado:</p>
+        <p className={styles.label}>
+          Digite a cidade ou, se preferir filtrar por estado, digite a UF (ex: SP, GO, RJ)
+        </p>
         <input
           className={styles.fullInput}
-          placeholder="Goiás, São Paulo ..."
-          value={filters.state || ''}
-          onChange={handleStateChange}
-        />
-
-        <p className={styles.label}>Ou uma cidade específica:</p>
-        <input
-          className={styles.fullInput}
-          placeholder="Goiânia, Trindade ..."
-          value={filters.city || ''}
-          onChange={handleCityChange}
+          placeholder="Ex: Goiânia, SP, Rio de Janeiro ..."
+          value={filters.location || ''}
+          onChange={handleLocationChange}
         />
       </FilterSection>
 

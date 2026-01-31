@@ -10,8 +10,6 @@ export interface FilterParams {
   maxPrice?: number;
   priceRange?: string;
   location?: string;
-  city?: string;
-  state?: string;
   dateFilter?: string;
   sortBy?: 'newest' | 'oldest' | 'price_asc' | 'price_desc';
   status?: string;
@@ -30,7 +28,22 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export async function getProducts(filters: FilterParams = {}): Promise<PaginatedResponse<any>> {
+export interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  status: string;
+  created_at: string;
+  seller: {
+    full_name: string;
+    avatar_url: string;
+  } | null;
+  tags: { name: string }[];
+  // Add other fields as needed based on your "products" table structure
+}
+
+export async function getProducts(filters: FilterParams = {}): Promise<PaginatedResponse<Product>> {
   const supabase = await createClient();
   
   const page = filters.page || 1;
@@ -149,12 +162,6 @@ export async function getProducts(filters: FilterParams = {}): Promise<Paginated
   // Filtros de localização
   if (filters.location) {
     query = query.or(`city.ilike.%${filters.location}%,state.ilike.%${filters.location}%`);
-  }
-  if (filters.city) {
-    query = query.ilike("city", `%${filters.city}%`);
-  }
-  if (filters.state) {
-    query = query.ilike("state", `%${filters.state}%`);
   }
 
   // Filtro por data

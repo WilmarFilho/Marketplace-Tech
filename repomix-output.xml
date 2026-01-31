@@ -2679,155 +2679,6 @@ FOR SELECT USING (
 }
 </file>
 
-<file path="app/auth/actions.ts">
-"use server";
-
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-
-export async function signOut() {
-  try {
-    const supabase = await createClient();
-    await supabase.auth.signOut();
-    redirect("/auth/login");
-  } catch (error) {
-    console.error("Error in signOut action:", error);
-    throw error;
-  }
-}
-
-export async function getUserSession() {
-  try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    return user;
-  } catch (error) {
-    console.error("Error in getUserSession:", error);
-    throw error;
-  }
-}
-
-export async function signIn(formData: FormData) {
-  try {
-    const supabase = await createClient();
-
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      console.error("signIn supabase error:", error);
-      const msg = error.message?.toLowerCase() || "";
-      // Tradução de erro para email não confirmado
-      if (
-        msg.includes("email not confirmed") ||
-        msg.includes("email needs to be confirmed")
-      ) {
-        throw new Error("Seu e-mail ainda não foi confirmado. Por favor, verifique sua caixa de entrada e confirme o cadastro.");
-      }
-      // Tradução de erro para credenciais inválidas
-      if (msg.includes("invalid login credentials")) {
-        throw new Error("E-mail ou senha inválidos. Verifique seus dados e tente novamente.");
-      }
-      throw new Error(error.message || "Erro ao autenticar");
-    }
-
-    // Retorna sucesso para o cliente redirecionar
-    return { success: true };
-  } catch (error) {
-    console.error("Error in signIn action:", error);
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw error;
-  }
-}
-
-export async function signUp(formData: FormData) {
-  try {
-    const supabase = await createClient();
-
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const repeatPassword = formData.get("repeatPassword") as string;
-    const fullName = formData.get("fullName") as string;
-    const role = formData.get("role") as string;
-
-    if (password !== repeatPassword) {
-      throw new Error("As senhas não coincidem");
-    }
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirmar`,
-        data: {
-          full_name: fullName,
-          role,
-        },
-      },
-    });
-
-    if (error) {
-      console.error("signUp supabase error:", error);
-      throw new Error(error.message || "Erro ao cadastrar");
-    }
-
-    redirect("/auth/cadastro-realizado");
-  } catch (error) {
-    console.error("Error in signUp action:", error);
-    throw error;
-  }
-}
-
-export async function resetPassword(formData: FormData) {
-  try {
-    const supabase = await createClient();
-
-    const email = formData.get("email") as string;
-
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/alterar-senha`,
-    });
-
-    if (error) {
-      console.error("resetPassword supabase error:", error);
-      throw new Error(error.message || "Erro ao resetar senha");
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error in resetPassword action:", error);
-    throw error;
-  }
-}
-
-export async function updatePassword(formData: FormData) {
-  try {
-    const supabase = await createClient();
-
-    const password = formData.get("password") as string;
-
-    const { error } = await supabase.auth.updateUser({ password });
-
-    if (error) {
-      console.error("updatePassword supabase error:", error);
-      throw new Error(error.message || "Erro ao atualizar senha");
-    }
-
-    redirect("/");
-  } catch (error) {
-    console.error("Error in updatePassword action:", error);
-    throw error;
-  }
-}
-</file>
-
 <file path="app/auth/cadastro-realizado/page.tsx">
 import {
   Card,
@@ -2986,8 +2837,7 @@ export function ActiveFilters({
       filters.minPrice !== undefined ||
       filters.maxPrice !== undefined ||
       filters.priceRange ||
-      filters.city ||
-      filters.state ||
+      filters.location ||
       filters.dateFilter ||
       filters.status
     );
@@ -3112,26 +2962,13 @@ export function ActiveFilters({
           </div>
         )}
 
-        {/* Cidade */}
-        {filters.city && (
+        {/* Localização */}
+        {filters.location && (
           <div className="flex items-center gap-1 bg-orange-500/20 text-orange-300 px-2 py-1 rounded-md text-xs border border-orange-400/30">
-            <span>Cidade: {filters.city}</span>
+            <span>Localização: {filters.location}</span>
             <button
-              onClick={() => updateFilters({ city: '', page: 1 })}
+              onClick={() => updateFilters({ location: '', page: 1 })}
               className="hover:text-orange-200"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </div>
-        )}
-
-        {/* Estado */}
-        {filters.state && (
-          <div className="flex items-center gap-1 bg-pink-500/20 text-pink-300 px-2 py-1 rounded-md text-xs border border-pink-400/30">
-            <span>Estado: {filters.state}</span>
-            <button
-              onClick={() => updateFilters({ state: '', page: 1 })}
-              className="hover:text-pink-200"
             >
               <X className="h-3 w-3" />
             </button>
@@ -3298,207 +3135,6 @@ export function FilterSection({ title, id, defaultOpen = true, children, classNa
         {children}
       </div>
     </section>
-  );
-}
-</file>
-
-<file path="components/forms/form-atualizar-senha.tsx">
-"use client";
-
-import { cn } from "@/lib/utils";
-import { updatePassword } from "@/app/auth/actions";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
-import { useState } from "react";
-import { useFormState } from "react-dom";
-
-export function FormAtualizarSenha({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  const [isPending, setIsPending] = useState(false);
-  
-  const [state, formAction] = useFormState(async (prevState: { error: string | null }, formData: FormData) => {
-    try {
-      await updatePassword(formData);
-      return { error: null };
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
-    }
-  }, { error: null });
-
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <div className="flex justify-center mb-2">
-            <Image
-              src="/logo.svg"
-              alt="DROPTECH"
-              width={200}
-              height={29}
-              priority
-              className="h-[29px] w-auto"
-            />
-          </div>
-          <CardDescription className="text-center">
-            Por favor, digite sua nova senha abaixo.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={formAction} onSubmit={() => setIsPending(true)}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="password">Nova senha</Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="Nova senha"
-                  required
-                />
-              </div>
-              {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button 
-                type="submit" 
-                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
-                disabled={isPending}
-              >
-                {isPending ? "Salvando..." : "Salvar nova senha"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-</file>
-
-<file path="components/forms/form-esqueci-senha.tsx">
-"use client";
-
-import { cn } from "@/lib/utils";
-import { resetPassword } from "@/app/auth/actions";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-
-export function FormEsqueciSenha({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleForgotPassword = async (formData: FormData) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await resetPassword(formData);
-      setSuccess(true);
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ocorreu um erro");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      {success ? (
-        <Card>
-          <CardHeader>
-            <div className="flex justify-center mb-2">
-              <Image
-                src="/logo.svg"
-                alt="DROPTECH"
-                width={200}
-                height={29}
-                priority
-                className="h-[29px] w-auto"
-              />
-            </div>
-            <CardDescription className="text-center">Instruções de redefinição de senha enviadas</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Se você se registrou usando seu email e senha, você receberá um email de redefinição de senha.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <div className="flex justify-center mb-2">
-              <Image
-                src="/logo.svg"
-                alt="DROPTECH"
-                width={200}
-                height={29}
-                priority
-                className="h-[29px] w-auto"
-              />
-            </div>
-            <CardDescription className="text-center">
-              Digite seu email e enviaremos um link para redefinir sua senha
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form action={handleForgotPassword}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button 
-                  type="submit" 
-                  className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Enviando..." : "Enviar email de redefinição"}
-                </Button>
-              </div>
-              <div className="mt-4 text-center text-sm">
-                Já tem uma conta?{" "}
-                <Link
-                  href="/auth/login"
-                  className="underline underline-offset-4"
-                >
-                  Entrar
-                </Link>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      )}
-    </div>
   );
 }
 </file>
@@ -4411,8 +4047,6 @@ export function useLocalFilters() {
     maxPrice: undefined,
     priceRange: '',
     location: '',
-    city: '',
-    state: '',
     dateFilter: '',
     sortBy: 'newest',
     status: '',
@@ -4515,8 +4149,6 @@ export function useLocalFilters() {
       maxPrice: undefined,
       priceRange: '',
       location: '',
-      city: '',
-      state: '',
       dateFilter: '',
       sortBy: 'newest',
       status: '',
@@ -4856,6 +4488,154 @@ export default function MainLayout({
 }
 </file>
 
+<file path="app/auth/actions.ts">
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+
+export async function signOut() {
+  try {
+    const supabase = await createClient();
+    await supabase.auth.signOut();
+    redirect("/auth/login");
+  } catch (error) {
+    console.error("Error in signOut action:", error);
+    throw error;
+  }
+}
+
+export async function getUserSession() {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  } catch (error) {
+    console.error("Error in getUserSession:", error);
+    throw error;
+  }
+}
+
+export async function signIn(formData: FormData) {
+  try {
+    const supabase = await createClient();
+
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error("signIn supabase error:", error);
+      const msg = error.message?.toLowerCase() || "";
+      
+      // TRADUÇÃO: Em vez de 'throw', usamos 'return'
+      if (msg.includes("email not confirmed") || msg.includes("email needs to be confirmed")) {
+        return { success: false, error: "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada." };
+      }
+      
+      if (msg.includes("invalid login credentials")) {
+        return { success: false, error: "E-mail ou senha inválidos. Verifique seus dados e tente novamente." };
+      }
+
+      return { success: false, error: error.message || "Erro ao autenticar" };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in signIn action:", error);
+    // Erro inesperado também deve ser retornado como objeto
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : "Ocorreu um erro inesperado." 
+    };
+  }
+}
+
+export async function signUp(formData: FormData) {
+  try {
+    const supabase = await createClient();
+
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const repeatPassword = formData.get("repeatPassword") as string;
+    const fullName = formData.get("fullName") as string;
+    const role = formData.get("role") as string;
+
+    if (password !== repeatPassword) {
+      throw new Error("As senhas não coincidem");
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/confirmar`,
+        data: {
+          full_name: fullName,
+          role,
+        },
+      },
+    });
+
+    if (error) {
+      console.error("signUp supabase error:", error);
+      throw new Error(error.message || "Erro ao cadastrar");
+    }
+
+    redirect("/auth/cadastro-realizado");
+  } catch (error) {
+    console.error("Error in signUp action:", error);
+    throw error;
+  }
+}
+
+export async function resetPassword(formData: FormData) {
+  try {
+    const supabase = await createClient();
+
+    const email = formData.get("email") as string;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/alterar-senha`,
+    });
+
+    if (error) {
+      console.error("resetPassword supabase error:", error);
+      throw new Error(error.message || "Erro ao resetar senha");
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in resetPassword action:", error);
+    throw error;
+  }
+}
+
+export async function updatePassword(formData: FormData) {
+  try {
+    const supabase = await createClient();
+
+    const password = formData.get("password") as string;
+
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      console.error("updatePassword supabase error:", error);
+      throw new Error(error.message || "Erro ao atualizar senha");
+    }
+
+    redirect("/");
+  } catch (error) {
+    console.error("Error in updatePassword action:", error);
+    throw error;
+  }
+}
+</file>
+
 <file path="components/cards/anuncio/card-anuncio.module.css">
 .tag {
   background: rgba(255, 255, 255, 0.1);
@@ -5022,11 +4802,11 @@ export default function MainLayout({
 }
 </file>
 
-<file path="components/forms/form-cadastro.tsx">
+<file path="components/forms/form-atualizar-senha.tsx">
 "use client";
 
 import { cn } from "@/lib/utils";
-import { signUp } from "@/app/auth/actions";
+import { updatePassword } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -5036,20 +4816,19 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import Image from "next/image";
-import React, { useState } from "react";
+import { useState } from "react";
+import { useFormState } from "react-dom";
 
-export function FormCadastro({
+export function FormAtualizarSenha({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [role, setRole] = useState<"comprador" | "vendedor">("comprador");
   const [isPending, setIsPending] = useState(false);
-  
-  const [state, formAction] = React.useActionState(async (prevState: { error: string | null }, formData: FormData) => {
+
+  const [state, formAction] = useFormState(async (prevState: { error: string | null }, formData: FormData) => {
     try {
-      await signUp(formData);
+      await updatePassword(formData);
       return { error: null };
     } catch (error) {
       return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
@@ -5067,96 +4846,162 @@ export function FormCadastro({
               width={200}
               height={29}
               priority
-              className="h-[29px] w-auto"
+              // Adicionado style para evitar o aviso de proporção no log
+              style={{ width: "auto", height: "auto" }}
+              className="h-[29px]"
             />
           </div>
-          <CardDescription className="text-center">Crie uma nova conta</CardDescription>
+          <CardDescription className="text-center">
+            Por favor, digite sua nova senha abaixo.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={formAction} onSubmit={() => setIsPending(true)}>
             <div className="flex flex-col gap-6">
-              <input type="hidden" name="role" value={role} />
               <div className="grid gap-2">
-                <Label>Eu quero:</Label>
-                <div className="flex gap-2 p-1 bg-muted rounded-lg border">
-                  <Button
-                    type="button"
-                    variant={role === "comprador" ? "default" : "ghost"}
-                    className="flex-1"
-                    onClick={() => setRole("comprador")}
-                  >
-                    Comprar
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={role === "vendedor" ? "default" : "ghost"}
-                    className="flex-1"
-                    onClick={() => setRole("vendedor")}
-                  >
-                    Vender
-                  </Button>
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Nome Completo</Label>
-                <Input
-                  id="nome"
-                  name="fullName"
-                  type="text"
-                  placeholder="João da Silva Alves"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="seumelhoremail@hotmail.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
-                </div>
+                <Label htmlFor="password">Nova senha</Label>
                 <Input
                   id="password"
                   name="password"
                   type="password"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repita a Senha</Label>
-                </div>
-                <Input
-                  id="repeat-password"
-                  name="repeatPassword"
-                  type="password"
+                  placeholder="Nova senha"
                   required
                 />
               </div>
               {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button 
-                type="submit" 
-                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90" 
+              <Button
+                type="submit"
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
                 disabled={isPending}
               >
-                {isPending ? "Criando..." : "Cadastrar"}
+                {isPending ? "Salvando..." : "Salvar nova senha"}
               </Button>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Já tem uma conta?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4">
-                Entrar
-              </Link>
             </div>
           </form>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+</file>
+
+<file path="components/forms/form-esqueci-senha.tsx">
+"use client";
+
+import { cn } from "@/lib/utils";
+import { resetPassword } from "@/app/auth/actions";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+
+export function FormEsqueciSenha({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleForgotPassword = async (formData: FormData) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await resetPassword(formData);
+      setSuccess(true);
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "Ocorreu um erro");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      {success ? (
+        <Card>
+          <CardHeader>
+            <div className="flex justify-center mb-2">
+              <Image
+                src="/logo.svg"
+                alt="DROPTECH"
+                width={200}
+                height={29}
+                priority
+                // Adicionado style para evitar o aviso de proporção no log
+                style={{ width: "auto", height: "auto" }}
+                className="h-[29px]"
+              />
+            </div>
+            <CardDescription className="text-center">Instruções de redefinição de senha enviadas</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Se você se registrou usando seu email e senha, você receberá um email de redefinição de senha.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <div className="flex justify-center mb-2">
+              <Image
+                src="/logo.svg"
+                alt="DROPTECH"
+                width={200}
+                height={29}
+                priority
+                className="h-[29px] w-auto"
+              />
+            </div>
+            <CardDescription className="text-center">
+              Digite seu email e enviaremos um link para redefinir sua senha
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form action={handleForgotPassword}>
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                  />
+                </div>
+                {error && <p className="text-sm text-red-500">{error}</p>}
+                <Button
+                  type="submit"
+                  className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Enviando..." : "Enviar email de redefinição"}
+                </Button>
+              </div>
+              <div className="mt-4 text-center text-sm">
+                Já tem uma conta?{" "}
+                <Link
+                  href="/auth/login"
+                  className="underline underline-offset-4"
+                >
+                  Entrar
+                </Link>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
@@ -5646,60 +5491,6 @@ export function SecaoMissao() {
   
   .title { font-size: 20px; }
   .subtitle { font-size: 14px; }
-}
-</file>
-
-<file path="components/ui/botao-sair.tsx">
-"use client";
-
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { ReactNode, useTransition } from "react";
-
-interface BotaoSairProps {
-  className?: string;
-  iconOnly?: boolean;
-  title?: string;
-  children?: ReactNode;
-  [key: string]: unknown;
-}
-
-export function BotaoSair({ className, iconOnly, title, children, ...props }: BotaoSairProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-
-  const logout = async () => {
-    const supabase = createClient();
-    
-    // 1. Faz o logout no Supabase (limpa cookies no cliente)
-    await supabase.auth.signOut();
-    
-    // 2. startTransition garante que a UI espere a atualização do servidor
-    startTransition(() => {
-      // 3. Força o servidor a re-renderizar todos os componentes (Header, etc)
-      router.refresh();
-      
-      // 4. Redireciona para a Home ou Login
-      // Se você quer que o usuário veja a Home deslogada, use "/"
-      router.push("/"); 
-    });
-  };
-
-  return (
-    <Button 
-      onClick={logout} 
-      className={className} 
-      title={title} 
-      aria-label={title} 
-      disabled={isPending}
-      {...props}
-    >
-      {isPending ? "..." : (
-        iconOnly ? (children ? children : null) : (children ? children : "Logout")
-      )}
-    </Button>
-  );
 }
 </file>
 
@@ -6480,8 +6271,6 @@ export interface FilterParams {
   maxPrice?: number;
   priceRange?: string;
   location?: string;
-  city?: string;
-  state?: string;
   dateFilter?: string;
   sortBy?: 'newest' | 'oldest' | 'price_asc' | 'price_desc';
   status?: string;
@@ -6500,7 +6289,22 @@ export interface PaginatedResponse<T> {
   };
 }
 
-export async function getProducts(filters: FilterParams = {}): Promise<PaginatedResponse<any>> {
+export interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  status: string;
+  created_at: string;
+  seller: {
+    full_name: string;
+    avatar_url: string;
+  } | null;
+  tags: { name: string }[];
+  // Add other fields as needed based on your "products" table structure
+}
+
+export async function getProducts(filters: FilterParams = {}): Promise<PaginatedResponse<Product>> {
   const supabase = await createClient();
   
   const page = filters.page || 1;
@@ -6619,12 +6423,6 @@ export async function getProducts(filters: FilterParams = {}): Promise<Paginated
   // Filtros de localização
   if (filters.location) {
     query = query.or(`city.ilike.%${filters.location}%,state.ilike.%${filters.location}%`);
-  }
-  if (filters.city) {
-    query = query.ilike("city", `%${filters.city}%`);
-  }
-  if (filters.state) {
-    query = query.ilike("state", `%${filters.state}%`);
   }
 
   // Filtro por data
@@ -7240,7 +7038,7 @@ export function MessagesModal({ isOpen, onClose, userId }: MessagesModalProps) {
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { getProducts, type PaginatedResponse } from "../../app/(main)/explorar/actions";
+import { getProducts } from "../../app/(main)/explorar/actions";
 import Filters from "@/components/filters/filters";
 import FilterBar from "@/components/filterbar/filterbar";
 import { CardAnuncio, type ProductRow } from "@/components/cards/anuncio";
@@ -7267,10 +7065,8 @@ function ProductGrid() {
   // Verificar se os filtros mudaram (excluindo page)
   const filtersChanged = useCallback(() => {
     if (!lastFilters) return true;
-    
-    const { page: _, ...currentFiltersWithoutPage } = filters;
-    const { page: __, ...lastFiltersWithoutPage } = lastFilters;
-    
+    const { page, ...currentFiltersWithoutPage } = filters;
+    const { page: lastPage, ...lastFiltersWithoutPage } = lastFilters;
     return JSON.stringify(currentFiltersWithoutPage) !== JSON.stringify(lastFiltersWithoutPage);
   }, [filters, lastFilters]);
 
@@ -7286,10 +7082,18 @@ function ProductGrid() {
       const currentPage = resetProducts ? 1 : pagination.page + 1;
       const data = await getProducts({ ...filters, page: currentPage });
       
+      // Converter Product para ProductRow (adicionando campos opcionais se necessário)
+      const toProductRow = (p: import("../../app/(main)/explorar/actions").Product): ProductRow => ({
+        ...p,
+        tags: p.tags || [],
+        isFavorited: (p as any).isFavorited,
+        products_categories: (p as any).products_categories || [],
+      });
+      const rows = data.data.map(toProductRow);
       if (resetProducts) {
-        setAllProducts(data.data);
+        setAllProducts(rows);
       } else {
-        setAllProducts(prev => [...prev, ...data.data]);
+        setAllProducts(prev => [...prev, ...rows]);
       }
       
       setPagination({
@@ -7308,7 +7112,7 @@ function ProductGrid() {
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  }, [filters]);
+  }, [filters, pagination.page]);
 
   // Carregar mais produtos
   const loadMore = useCallback(async () => {
@@ -7321,7 +7125,14 @@ function ProductGrid() {
       const currentPage = pagination.page + 1;
       const data = await getProducts({ ...filters, page: currentPage });
       
-      setAllProducts(prev => [...prev, ...data.data]);
+      // Converter Product para ProductRow
+      const toProductRow = (p: import("../../app/(main)/explorar/actions").Product): ProductRow => ({
+        ...p,
+        tags: p.tags || [],
+        isFavorited: (p as any).isFavorited,
+        products_categories: (p as any).products_categories || [],
+      });
+      setAllProducts(prev => [...prev, ...data.data.map(toProductRow)]);
       
       setPagination({
         page: currentPage,
@@ -7355,7 +7166,8 @@ function ProductGrid() {
     if (filtersChanged()) {
       fetchProducts(true);
     }
-  }, [filters]);
+    //
+  }, [filters, fetchProducts, filtersChanged]);
 
   if (error && allProducts.length === 0) {
     return (
@@ -7766,14 +7578,6 @@ export default function Filters() {
     updateFilters({ location: e.target.value, page: 1 });
   };
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ city: e.target.value, page: 1 });
-  };
-
-  const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ state: e.target.value, page: 1 });
-  };
-
   const handleDateFilterChange = (dateFilter: string) => {
     const newFilter = filters.dateFilter === dateFilter ? '' : dateFilter;
     updateFilters({ dateFilter: newFilter, page: 1 });
@@ -7839,20 +7643,14 @@ export default function Filters() {
 
       {/* Localização */}
       <FilterSection title="Localização do produto" id="filters-location">
-        <p className={styles.label}>Escolha um estado:</p>
+        <p className={styles.label}>
+          Digite a cidade ou, se preferir filtrar por estado, digite a UF (ex: SP, GO, RJ)
+        </p>
         <input
           className={styles.fullInput}
-          placeholder="Goiás, São Paulo ..."
-          value={filters.state || ''}
-          onChange={handleStateChange}
-        />
-
-        <p className={styles.label}>Ou uma cidade específica:</p>
-        <input
-          className={styles.fullInput}
-          placeholder="Goiânia, Trindade ..."
-          value={filters.city || ''}
-          onChange={handleCityChange}
+          placeholder="Ex: Goiânia, SP, Rio de Janeiro ..."
+          value={filters.location || ''}
+          onChange={handleLocationChange}
         />
       </FilterSection>
 
@@ -7893,6 +7691,148 @@ export default function Filters() {
         </div>
       </FilterSection>
     </aside>
+  );
+}
+</file>
+
+<file path="components/forms/form-cadastro.tsx">
+"use client";
+
+import { cn } from "@/lib/utils";
+import { signUp } from "@/app/auth/actions";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import Image from "next/image";
+import React, { useState } from "react";
+
+export function FormCadastro({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const [role, setRole] = useState<"comprador" | "vendedor">("comprador");
+  const [isPending, setIsPending] = useState(false);
+
+  const [state, formAction] = React.useActionState(async (prevState: { error: string | null }, formData: FormData) => {
+    try {
+      await signUp(formData);
+      return { error: null };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
+    }
+  }, { error: null });
+
+  return (
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-center mb-2">
+            <Image
+              src="/logo.svg"
+              alt="DROPTECH"
+              width={200}
+              height={29}
+              priority
+              // Adicionado style para evitar o aviso de proporção no log
+              style={{ width: "auto", height: "auto" }}
+              className="h-[29px]"
+            />
+          </div>
+          <CardDescription className="text-center">Crie uma nova conta</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={formAction} onSubmit={() => setIsPending(true)}>
+            <div className="flex flex-col gap-6">
+              <input type="hidden" name="role" value={role} />
+              <div className="grid gap-2">
+                <Label>Eu quero:</Label>
+                <div className="flex gap-2 p-1 bg-muted rounded-lg border">
+                  <Button
+                    type="button"
+                    variant={role === "comprador" ? "default" : "ghost"}
+                    className="flex-1"
+                    onClick={() => setRole("comprador")}
+                  >
+                    Comprar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={role === "vendedor" ? "default" : "ghost"}
+                    className="flex-1"
+                    onClick={() => setRole("vendedor")}
+                  >
+                    Vender
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Nome Completo</Label>
+                <Input
+                  id="nome"
+                  name="fullName"
+                  type="text"
+                  placeholder="João da Silva Alves"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="seumelhoremail@hotmail.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Senha</Label>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="repeat-password">Repita a Senha</Label>
+                </div>
+                <Input
+                  id="repeat-password"
+                  name="repeatPassword"
+                  type="password"
+                  required
+                />
+              </div>
+              {state.error && <p className="text-sm text-red-500">{state.error}</p>}
+              <Button
+                type="submit"
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
+                disabled={isPending}
+              >
+                {isPending ? "Criando..." : "Cadastrar"}
+              </Button>
+            </div>
+            <div className="mt-4 text-center text-sm">
+              Já tem uma conta?{" "}
+              <Link href="/auth/login" className="underline underline-offset-4">
+                Entrar
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 </file>
@@ -8070,136 +8010,48 @@ export default async function ProductPage({ productId }: ProductPageProps) {
 }
 </file>
 
-<file path="components/sections/por-que/index.tsx">
-'use client';
+<file path="components/ui/botao-sair.tsx">
+"use client";
 
-import { useLayoutEffect, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import styles from "./secao-por-que.module.css";
-import { cn } from "@/lib/utils";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { ReactNode, useTransition } from "react";
 
-gsap.registerPlugin(ScrollTrigger);
+interface BotaoSairProps {
+  className?: string;
+  iconOnly?: boolean;
+  title?: string;
+  children?: ReactNode;
+  [key: string]: unknown;
+}
 
-export function SecaoPorQue() {
-  const sectionRef = useRef<HTMLElement>(null);
+export function BotaoSair({ className, iconOnly, title, children, ...props }: BotaoSairProps) {
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%", // Inicia quando a seção estiver 75% visível
-          toggleActions: "play none none none",
-        }
-      });
+  const [isPending,] = useTransition();
 
-      // 1. Animação do Header (Kicker, Título, Subtítulo) - Mais rápida
-      tl.fromTo(".animate-header", 
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: "power3.out" }
-      );
+  const logout = async () => {
+    const supabase = createClient();
 
-      // 2. Animação do Painel Verde e Ilustração - Surgimento suave
-      tl.fromTo(".animate-panel",
-        { opacity: 0, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" },
-        "-=0.5" // Começa meio segundo antes de terminar a anterior
-      );
+    // 1. Faz o logout no Supabase (limpa cookies no cliente)
+    await supabase.auth.signOut();
 
-      // 3. Animação dos Glass Cards - Com tempos mais espaçados (stagger maior)
-      tl.fromTo(".animate-card",
-        { opacity: 0, y: 40, rotationY: 20 },
-        { opacity: 1, y: 0, rotationY: 0, duration: 1.5, stagger: 0.4, ease: "power4.out" },
-        "-=0.8"
-      );
+    window.location.href = "/";
 
-     
-
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  };
 
   return (
-    <section ref={sectionRef} className={cn("relative w-full overflow-hidden", styles.section)}>
-      {/* Decorative D */}
-      <Image
-        src="/figma/decor-d.svg"
-        alt=""
-        width={1007}
-        height={976}
-        className={cn("animate-decor pointer-events-none absolute right-[-100px] top-20 w-[180px]  md:right-[-140px] md:top-[26px] md:bottom-auto md:w-[1007px]", styles.decorD)}
-        aria-hidden
-      />
-
-      <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-[48px] px-4 py-12 pb-6 sm:px-6 md:gap-[80px] md:px-[44px] md:py-[100px] md:pb-[120px]">
-        {/* Header */}
-        <div className="flex w-full max-w-[1093px] flex-col justify-center gap-[13px]">
-          <div className="w-fit animate-header">
-            <div className={styles.kicker}>sem burocracia</div>
-          </div>
-
-          <h2 className={cn("text-white font-medium animate-header", styles.title)}>
-            Por que anunciar ou comprar na DropTech?
-          </h2>
-
-          <p className={cn("text-white font-normal animate-header", styles.subtitle)}>
-            Um marketplace feito para quem vive de tecnologia. Mais visibilidade
-            para quem anuncia, mais confiança para quem compra.
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="relative flex w-full items-stretch gap-[57px]">
-          <div className={cn("relative flex w-full flex-col gap-10 px-4 pb-6 pt-8 sm:px-6 md:px-6 md:pt-10 animate-panel", styles.greenPanel)}>
-            
-            {/* Illustration */}
-            <Image
-              src="/figma/por-que-illustration.png"
-              alt=""
-              width={1225}
-              height={891}
-              className={cn(
-                "pointer-events-none absolute right-0 bottom-0 w-[220px] md:right-0 md:top-[-260px] md:bottom-auto md:w-[1040px] max-w-none",
-                styles.illustration
-              )}
-              aria-hidden
-            />
-
-            <div className={cn("relative flex flex-col items-center gap-8 md:flex-row md:gap-[72px]", styles.content)}>
-              {/* Glass cards */}
-              <div className={cn("flex flex-col items-center justify-center p-10 animate-card", styles.glassCard)}>
-                <Image src="/figma/icon-users-three.svg" alt="" width={81} height={81} aria-hidden />
-                <div className="mt-6 whitespace-pre-line">
-                  <div className={styles.glassTitle}>{"Público\nqualificado"}</div>
-                </div>
-              </div>
-
-              <div className={cn("flex flex-col items-center justify-center p-10 animate-card", styles.glassCard)}>
-                <Image src="/figma/icon-cpu.svg" alt="" width={78} height={78} aria-hidden />
-                <div className="mt-6 whitespace-pre-line">
-                  <div className={styles.glassTitle}>{"Nada genérico\nSó tecnologia"}</div>
-                </div>
-              </div>
-            </div>
-
-            <Link
-              href="/explorar"
-              className={cn(
-                "animate-cta inline-flex items-center justify-center font-medium hover:brightness-95 transition",
-                "w-full md:w-[817px]",
-                styles.cta
-              )}
-            >
-              Explorar Ofertas
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
+    <Button
+      onClick={logout}
+      className={className}
+      title={title}
+      aria-label={title}
+      disabled={isPending}
+      {...props}
+    >
+      {isPending ? "..." : (
+        iconOnly ? (children ? children : null) : (children ? children : "Logout")
+      )}
+    </Button>
   );
 }
 </file>
@@ -8895,508 +8747,6 @@ export function ProfileCard({ user, profile, isSeller }: ProfileCardProps) {
 }
 </file>
 
-<file path="components/forms/form-login.tsx">
-"use client";
-
-import { cn } from "@/lib/utils";
-import { signIn } from "@/app/auth/actions";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import Image from "next/image";
-import { useState, useActionState } from "react";
-import { useRouter } from "next/navigation";
-
-export function FormLogin({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
-  const router = useRouter();
-  const [isPending, setIsPending] = useState(false);
-  type SignInResult = { success: boolean; error?: string };
-
-  const [state, formAction] = useActionState(
-    async (prevState: { error: string | null }, formData: FormData) => {
-      try {
-        const result = await signIn(formData) as SignInResult;
-
-        // No seu FormLogin, dentro do if (result && result.success)
-        if (result && result.success) {
-          // Em vez de startTransition e router, usamos:
-          window.location.href = "/";
-          return { error: null };
-        }
-
-        setIsPending(false);
-        return { error: result?.error || "Erro ao entrar" };
-      } catch (error: unknown) {
-        setIsPending(false);
-        return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
-      }
-    },
-    { error: null }
-  );
-
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <div className="flex justify-center mb-2">
-            <Image
-              src="/logo.svg"
-              alt="DROPTECH"
-              width={200}
-              height={29}
-              priority
-              className="h-[29px] w-auto"
-            />
-          </div>
-          <CardDescription className="text-center">
-            Digite seu email abaixo para entrar na sua conta
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={formAction} onSubmit={() => setIsPending(true)}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Senha</Label>
-                  <Link
-                    href="/auth/esqueci-senha"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline hide-below-700"
-                  >
-                    Esqueceu sua senha?
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                />
-              </div>
-              {state.error && <p className="text-sm text-red-500">{state.error}</p>}
-              <Button
-                type="submit"
-                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
-                disabled={isPending}
-              >
-                {isPending ? "Entrando..." : "Entrar"}
-              </Button>
-            </div>
-
-            <div className="mt-4 text-center text-sm">
-              Não tem uma conta?{" "}
-              <Link
-                href="/auth/cadastro"
-                className="underline underline-offset-4"
-              >
-                Cadastre-se
-              </Link>
-            </div>
-
-            <div className="mt-2 text-center text-sm">
-              <Link
-                href="/"
-                className="text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.refresh();
-                  router.push("/");
-                }}
-              >
-                Voltar para a home
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-</file>
-
-<file path="components/forms/MultiStepAdForm.tsx">
-"use client";
-
-import React, { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { StepBasicInfo } from "@/components/forms/steps/StepBasicInfo";
-import { StepCategoryTags } from "@/components/forms/steps/StepCategoryTags";
-import { StepPhotos } from "@/components/forms/steps/StepPhotos";
-import { StepContactReview } from "@/components/forms/steps/StepContactReview";
-import { createAdWithDetails, updateAdWithDetails } from "@/app/(main)/dashboard/anunciar/actions";
-import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
-
-export interface AdFormData {
-  title: string;
-  price: number;
-  description: string;
-  contact_phone: string;
-  address: string;
-  city: string;
-  state: string;
-  category_id: string;
-  tag_ids: string[];
-  images: File[];
-  imageUrls: string[];
-  cep?: string;
-}
-
-interface FormError {
-  field: string;
-  message: string;
-}
-
-interface ExistingProduct {
-  id: string;
-  title?: string;
-  price?: number;
-  description?: string;
-  contact_phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  products_categories?: Array<{
-    category: {
-      id: string;
-    };
-  }>;
-  products_tags?: Array<{
-    tag: {
-      id: string;
-    };
-  }>;
-  images_urls?: string[];
-}
-
-interface MultiStepAdFormProps {
-  existingProduct?: ExistingProduct;
-  isEditing?: boolean;
-}
-
-export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiStepAdFormProps) {
-  const router = useRouter();
-  const [currentStep, setCurrentStep] = useState(0);
-  const formRef = useRef<HTMLDivElement | null>(null);
-  // Inicializar formData com dados existentes se estiver editando
-  const [formData, setFormData] = useState<AdFormData>(() => {
-    if (isEditing && existingProduct) {
-      return {
-        title: existingProduct.title || "",
-        price: existingProduct.price || 0,
-        description: existingProduct.description || "",
-        contact_phone: existingProduct.contact_phone || "",
-        address: existingProduct.address || "",
-        city: existingProduct.city || "",
-        state: existingProduct.state || "",
-        category_id: existingProduct.products_categories?.[0]?.category?.id || "",
-        tag_ids: existingProduct.products_tags?.map((pt: { tag: { id: string } }) => pt.tag.id) || [],
-        images: [],
-        imageUrls: existingProduct.images_urls || []
-      };
-    }
-    return {
-      title: "",
-      price: 0,
-      description: "",
-      contact_phone: "",
-      address: "",
-      city: "",
-      state: "",
-      category_id: "",
-      tag_ids: [],
-      images: [],
-      imageUrls: []
-    };
-  });
-  const [errors, setErrors] = useState<FormError[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const steps = [
-    { title: "Informações Básicas", component: StepBasicInfo },
-    { title: "Categoria e Tags", component: StepCategoryTags },
-    { title: "Fotos", component: StepPhotos },
-    { title: "Contato e Revisão", component: StepContactReview }
-  ];
-
-  const progress = ((currentStep + 1) / steps.length) * 100;
-
-  const validateStep = (step: number): FormError[] => {
-    const stepErrors: FormError[] = [];
-
-    switch (step) {
-      case 0: // Informações Básicas
-        if (!formData.title.trim()) {
-          stepErrors.push({ field: "title", message: "Título é obrigatório" });
-        }
-        if (formData.price <= 0) {
-          stepErrors.push({ field: "price", message: "Preço deve ser maior que zero" });
-        }
-        if (!formData.description.trim()) {
-          stepErrors.push({ field: "description", message: "Descrição é obrigatória" });
-        }
-        break;
-
-      case 1: // Categoria e Tags
-        if (!formData.category_id) {
-          stepErrors.push({ field: "category_id", message: "Categoria é obrigatória" });
-        }
-        break;
-
-      case 2: // Fotos
-        const totalImages = formData.images.length + formData.imageUrls.length;
-        if (totalImages < 3) {
-          stepErrors.push({ field: "images", message: "Mínimo de 3 fotos é obrigatório" });
-        }
-        break;
-
-      case 3: // Contato e Revisão
-        if (!formData.contact_phone.trim()) {
-          stepErrors.push({ field: "contact_phone", message: "Telefone de contato é obrigatório" });
-        }
-        if (!formData.address.trim()) {
-          stepErrors.push({ field: "address", message: "Endereço é obrigatório" });
-        }
-        if (!formData.city.trim()) {
-          stepErrors.push({ field: "city", message: "Cidade é obrigatória" });
-        }
-        if (!formData.state.trim()) {
-          stepErrors.push({ field: "state", message: "Estado é obrigatório" });
-        }
-        break;
-    }
-
-    return stepErrors;
-  };
-
-  const nextStep = () => {
-    const stepErrors = validateStep(currentStep);
-    setErrors(stepErrors);
-    if (stepErrors.length > 0 && formRef.current) {
-      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    if (stepErrors.length === 0 && currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const updateFormData = (updates: Partial<AdFormData>) => {
-    setFormData(prev => ({ ...prev, ...updates }));
-  };
-
-  const handleSubmit = async () => {
-    const stepErrors = validateStep(currentStep);
-    setErrors(stepErrors);
-    if (stepErrors.length > 0 && formRef.current) {
-      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    if (stepErrors.length > 0) return;
-
-    setIsLoading(true);
-    try {
-      // 1. COMEÇAMOS COM AS URLS QUE JÁ ESTÃO NO FORMULÁRIO (ANTIGAS OU REORDENADAS)
-      const finalUrls = [...formData.imageUrls];
-
-      // 2. SE HOUVER ARQUIVOS NOVOS, FAZEMOS O UPLOAD E ADICIONAMOS AO ARRAY
-      if (formData.images && formData.images.length > 0) {
-        const supabase = createBrowserSupabaseClient();
-        const user = (await supabase.auth.getUser()).data.user;
-        if (!user) throw new Error("Usuário não autenticado");
-
-        // Faremos o upload de cada arquivo novo
-        for (let i = 0; i < formData.images.length; i++) {
-          const file = formData.images[i];
-          const fileExt = file.name.split('.').pop();
-          const fileName = `${Date.now()}-${i}.${fileExt}`;
-          const filePath = `products/${user.id}/${fileName}`;
-
-          const { error: uploadError } = await supabase.storage
-            .from('products')
-            .upload(filePath, file, {
-              cacheControl: '3600',
-              upsert: false
-            });
-
-          if (uploadError) {
-            throw new Error(`Erro no upload da imagem ${i + 1}: ${uploadError.message}`);
-          }
-
-          const { data: urlData } = supabase.storage
-            .from('products')
-            .getPublicUrl(filePath);
-
-          // ADICIONAMOS a nova URL ao array existente, em vez de resetar
-          finalUrls.push(urlData.publicUrl);
-        }
-      }
-
-      // 3. ENVIAMOS O ARRAY COMPLETO (ANTIGAS + NOVAS) PARA O SERVIDOR
-      if (isEditing && existingProduct) {
-        await updateAdWithDetails(existingProduct.id, {
-          ...formData,
-          imageUrls: finalUrls // Enviamos a lista mesclada
-        });
-      } else {
-        await createAdWithDetails({
-          ...formData,
-          imageUrls: finalUrls // Enviamos a lista para criação
-        });
-      }
-
-      router.replace("/dashboard/meus-anuncios");
-      router.refresh(); // Opcional: força a atualização dos dados
-    } catch (error) {
-      console.error(`Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio:`, error);
-      setErrors([{ field: "general", message: `Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio. Tente novamente.` }]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
-
-  const CurrentStepComponent = steps[currentStep].component as React.ComponentType<{
-    formData: AdFormData;
-    updateFormData: (updates: Partial<AdFormData>) => void;
-    errors: FormError[];
-  }>;
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 300 : -300,
-      opacity: 0
-    })
-  };
-
-  return (
-    <div ref={formRef} className="w-full max-w-4xl mx-auto space-y-8 max-[1024px]:space-y-6 max-[768px]:space-y-5 max-[480px]:space-y-4">
-      {/* Progress Bar */}
-      <div className="space-y-4 max-[768px]:space-y-3 max-[480px]:space-y-3">
-        <div className="flex justify-between text-sm text-muted-foreground max-[1024px]:text-xs max-[800px]:text-sm max-[600px]:gap-2 max-[480px]:grid max-[480px]:grid-cols-2 max-[480px]:gap-x-4 max-[480px]:gap-y-2">
-          {steps.map((step, index) => (
-            <span
-              key={index}
-              className={`font-medium text-center flex-1 leading-tight max-[800px]:whitespace-normal max-[800px]:break-words max-[480px]:text-xs ${index <= currentStep ? 'text-primary' : ''
-                }`}
-            >
-              {step.title}
-            </span>
-          ))}
-        </div>
-        <Progress value={progress} className="h-2 max-[480px]:h-1.5" />
-      </div>
-
-      {/* Step Content with Animation */}
-      <div className="relative overflow-hidden max-[480px]:overflow-visible">
-        <AnimatePresence mode="wait" custom={currentStep}>
-          <motion.div
-            key={currentStep}
-            custom={currentStep}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{
-              x: { type: "spring", stiffness: 300, damping: 30 },
-              opacity: { duration: 0.2 }
-            }}
-            className="w-full"
-          >
-            <CurrentStepComponent
-              formData={formData}
-              updateFormData={updateFormData}
-              errors={errors.filter(e => e.field !== 'general')}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* General Error */}
-      {errors.some(e => e.field === 'general') && (
-        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md max-[768px]:text-xs max-[768px]:p-2 max-[480px]:text-[10px]">
-          {errors.find(e => e.field === 'general')?.message}
-        </div>
-      )}
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between max-[480px]:flex-col max-[480px]:gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={prevStep}
-          disabled={currentStep === 0}
-          className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
-        >
-          <ChevronLeft className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
-          Voltar
-        </Button>
-
-        {currentStep < steps.length - 1 ? (
-          <Button
-            type="button"
-            onClick={nextStep}
-            className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
-          >
-            Próximo
-            <ChevronRight className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
-          >
-            {isLoading
-              ? (isEditing ? "Atualizando..." : "Publicando...")
-              : (isEditing ? "Atualizar Anúncio" : "Publicar Anúncio")
-            }
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-}
-</file>
-
 <file path="components/forms/steps/StepContactReview.tsx">
 "use client";
 
@@ -9723,264 +9073,6 @@ export function StepContactReview({ formData, updateFormData, errors }: StepCont
             </ul>
           </div>
         </div>
-      </CardContent>
-    </Card>
-  );
-}
-</file>
-
-<file path="components/forms/steps/StepPhotos.tsx">
-"use client";
-
-import { useState, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
-import Image from "next/image";
-import type { AdFormData } from "@/components/forms/MultiStepAdForm";
-
-interface StepPhotosProps {
-  formData: AdFormData;
-  updateFormData: (updates: Partial<AdFormData>) => void;
-  errors: Array<{ field: string; message: string }>;
-}
-
-export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps) {
-  const [dragActive, setDragActive] = useState(false);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-
-  const getError = (field: string) => errors.find(e => e.field === field)?.message;
-
-  const [fileErrors, setFileErrors] = useState<string[]>([]);
-  const handleFiles = useCallback(async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-
-    const validFiles: File[] = [];
-    const maxFiles = 8;
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    const errors: string[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!allowedTypes.includes(file.type)) {
-        errors.push(`Arquivo ${file.name}: Tipo não suportado.`);
-        continue;
-      }
-      if (file.size > maxSize) {
-        errors.push(`Arquivo ${file.name}: Muito grande.`);
-        continue;
-      }
-      validFiles.push(file);
-    }
-
-    setFileErrors(errors);
-
-    const currentImages = formData.images || [];
-    const currentUrls = formData.imageUrls || [];
-    let totalCount = currentImages.length + currentUrls.length;
-    const newImages = [...currentImages];
-
-    for (const file of validFiles) {
-      if (totalCount >= maxFiles) {
-        errors.push(`Máximo de ${maxFiles} fotos permitidas`);
-        break;
-      }
-      newImages.push(file);
-      totalCount++;
-    }
-    setFileErrors(errors);
-    updateFormData({ images: newImages });
-  }, [formData, updateFormData]);
-
-  const removeImage = (index: number) => {
-    const imageUrlsCount = (formData.imageUrls || []).length;
-
-    if (index < imageUrlsCount) {
-      // Remove foto antiga do banco
-      const newImageUrls = [...(formData.imageUrls || [])];
-      newImageUrls.splice(index, 1);
-      updateFormData({ imageUrls: newImageUrls });
-    } else {
-      // Remove foto nova (File)
-      const fileIndex = index - imageUrlsCount;
-      const newImages = [...(formData.images || [])];
-      newImages.splice(fileIndex, 1);
-      updateFormData({ images: newImages });
-    }
-  };
-
-  const reorderImages = (fromIndex: number, toIndex: number) => {
-    const imageUrls = [...(formData.imageUrls || [])];
-    const images = [...(formData.images || [])];
-    const combined = [
-      ...imageUrls.map(url => ({ type: 'url' as const, value: url })),
-      ...images.map(file => ({ type: 'file' as const, value: file }))
-    ];
-
-    // Move o item na lista combinada
-    const [movedItem] = combined.splice(fromIndex, 1);
-    combined.splice(toIndex, 0, movedItem);
-
-    // Separa de volta
-    const newUrls = combined.filter(i => i.type === 'url').map(i => i.value as string);
-    const newFiles = combined.filter(i => i.type === 'file').map(i => i.value as File);
-
-    updateFormData({
-      imageUrls: newUrls,
-      images: newFiles
-    });
-  };
-
-  const handleImageDragStart = (e: React.DragEvent, index: number) => {
-    e.dataTransfer.effectAllowed = 'move';
-    setDraggedIndex(index);
-  };
-
-  const handleImageDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverIndex(index);
-  };
-
-  const handleImageDragLeave = () => setDragOverIndex(null);
-
-  const handleImageDrop = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    if (draggedIndex !== null && draggedIndex !== index) {
-      reorderImages(draggedIndex, index);
-    }
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleImageDragEnd = () => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(e.type === "dragenter" || e.type === "dragover");
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
-  };
-
-  const onButtonClick = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.multiple = true;
-    input.accept = 'image/*';
-    input.onchange = (e: Event) => handleFiles((e.target as HTMLInputElement).files);
-    input.click();
-  };
-
-  const images = formData.images || [];
-  const imageUrls = formData.imageUrls || [];
-  const minRequired = 5;
-  
-  // LOGICA CORRIGIDA: Junta os dois mantendo a ordem para o preview
-  const allImages = [
-    ...imageUrls.map((url) => ({ src: url, name: url.split('/').pop() || 'Imagem' })),
-    ...images.map((file) => ({ src: URL.createObjectURL(file), name: file.name }))
-  ];
-  const totalImages = allImages.length;
-
-  return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Fotos do Produto</CardTitle>
-        <CardDescription>
-          Adicione pelo menos {minRequired} fotos de boa qualidade. A primeira será a foto principal.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6 max-[480px]:space-y-4 max-[480px]:p-4">
-        <div
-          className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-            dragActive ? 'border-primary bg-primary/5' : getError('images') ? 'border-red-300' : 'border-gray-300 hover:border-gray-400'
-          }`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-        >
-          <div className="space-y-4">
-            <div className="flex justify-center">
-              <Upload className={`h-12 w-12 ${dragActive ? 'text-primary' : 'text-gray-400'}`} />
-            </div>
-            <div>
-              <p className="text-lg font-medium">{dragActive ? 'Solte as imagens aqui' : 'Arraste suas fotos aqui'}</p>
-              <Button type="button" variant="outline" className="mt-3" onClick={onButtonClick}>
-                <ImageIcon className="h-4 w-4 mr-2" /> Escolher Arquivos
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {getError('images') && <p className="text-sm text-red-600">{getError('images')}</p>}
-        {fileErrors.length > 0 && (
-          <div className="space-y-1 mt-2">
-            {fileErrors.map((err, i) => (
-              <span key={i} className="block text-xs text-red-600">{err}</span>
-            ))}
-          </div>
-        )}
-
-        <div className="flex items-center justify-between text-sm">
-          <span className={totalImages >= minRequired ? 'text-green-600' : 'text-muted-foreground'}>
-            {totalImages} de {minRequired} fotos obrigatórias
-          </span>
-          <span className="text-muted-foreground">{totalImages}/8 fotos</span>
-        </div>
-
-        {totalImages > 0 && (
-          <div className="space-y-4">
-            <Label>Prévia das Fotos</Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {allImages.map((image, index) => (
-                <div 
-                  key={index}
-                  className={`relative group cursor-move ${draggedIndex === index ? 'opacity-50 scale-95' : ''} ${dragOverIndex === index ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-                  draggable
-                  onDragStart={(e) => handleImageDragStart(e, index)}
-                  onDragOver={(e) => handleImageDragOver(e, index)}
-                  onDragLeave={handleImageDragLeave}
-                  onDrop={(e) => handleImageDrop(e, index)}
-                  onDragEnd={handleImageDragEnd}
-                >
-                  <div className="aspect-square rounded-lg border-2 border-gray-200 overflow-hidden bg-gray-50">
-                    <Image src={image.src} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" width={200} height={200} />
-                  </div>
-                  
-                  {index === 0 && (
-                    <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded z-10">Principal</div>
-                  )}
-
-                  <Button
-                    variant="destructive" size="sm"
-                    className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                    onClick={() => removeImage(index)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                    {image.name}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">🐆 Dica: Arraste as fotos para reordenar.</p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
@@ -11591,6 +10683,147 @@ export function SecaoHero() {
 }
 </file>
 
+<file path="components/sections/por-que/index.tsx">
+'use client';
+
+import { useLayoutEffect, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import styles from "./secao-por-que.module.css";
+import { cn } from "@/lib/utils";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+export function SecaoPorQue() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%", // Inicia quando a seção estiver 75% visível
+          toggleActions: "play none none none",
+        }
+      });
+
+      // 1. Animação do Header (Kicker, Título, Subtítulo) - Mais rápida
+      tl.fromTo(".animate-header",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1, stagger: 0.2, ease: "power3.out" }
+      );
+
+      // 2. Animação do Painel Verde e Ilustração - Surgimento suave
+      tl.fromTo(".animate-panel",
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" },
+        "-=0.5" // Começa meio segundo antes de terminar a anterior
+      );
+
+      // 3. Animação dos Glass Cards - Com tempos mais espaçados (stagger maior)
+      tl.fromTo(".animate-card",
+        { opacity: 0, y: 40, rotationY: 20 },
+        { opacity: 1, y: 0, rotationY: 0, duration: 1.5, stagger: 0.4, ease: "power4.out" },
+        "-=0.8"
+      );
+
+
+
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={sectionRef} className={cn("relative w-full overflow-hidden", styles.section)}>
+      {/* Decorative D */}
+      <Image
+        src="/figma/decor-d.svg"
+        alt=""
+        width={1007}
+        height={976}
+        // Adicione width e height auto aqui para neutralizar a interferência do CSS fixo
+        style={{
+          width: "auto",
+          height: "auto"
+        }}
+        className={cn(
+          "animate-decor pointer-events-none absolute right-[-100px] top-20 w-[180px] md:right-[-140px] md:top-[26px] md:bottom-auto md:w-[1007px]",
+          styles.decorD
+        )}
+        aria-hidden
+      />
+      <div className="mx-auto flex w-full max-w-[1800px] flex-col gap-[48px] px-4 py-12 pb-6 sm:px-6 md:gap-[80px] md:px-[44px] md:py-[100px] md:pb-[120px]">
+        {/* Header */}
+        <div className="flex w-full max-w-[1093px] flex-col justify-center gap-[13px]">
+          <div className="w-fit animate-header">
+            <div className={styles.kicker}>sem burocracia</div>
+          </div>
+
+          <h2 className={cn("text-white font-medium animate-header", styles.title)}>
+            Por que anunciar ou comprar na DropTech?
+          </h2>
+
+          <p className={cn("text-white font-normal animate-header", styles.subtitle)}>
+            Um marketplace feito para quem vive de tecnologia. Mais visibilidade
+            para quem anuncia, mais confiança para quem compra.
+          </p>
+        </div>
+
+        {/* Content */}
+        <div className="relative flex w-full items-stretch gap-[57px]">
+          <div className={cn("relative flex w-full flex-col gap-10 px-4 pb-6 pt-8 sm:px-6 md:px-6 md:pt-10 animate-panel", styles.greenPanel)}>
+
+            {/* Illustration */}
+            <Image
+              src="/figma/por-que-illustration.png"
+              alt=""
+              width={1225}
+              height={891}
+              className={cn(
+                "pointer-events-none absolute right-0 bottom-0 w-[220px] md:right-0 md:top-[-260px] md:bottom-auto md:w-[1040px] max-w-none",
+                styles.illustration
+              )}
+              aria-hidden
+            />
+
+            <div className={cn("relative flex flex-col items-center gap-8 md:flex-row md:gap-[72px]", styles.content)}>
+              {/* Glass cards */}
+              <div className={cn("flex flex-col items-center justify-center p-10 animate-card", styles.glassCard)}>
+                <Image src="/figma/icon-users-three.svg" alt="" width={81} height={81} aria-hidden />
+                <div className="mt-6 whitespace-pre-line">
+                  <div className={styles.glassTitle}>{"Público\nqualificado"}</div>
+                </div>
+              </div>
+
+              <div className={cn("flex flex-col items-center justify-center p-10 animate-card", styles.glassCard)}>
+                <Image src="/figma/icon-cpu.svg" alt="" width={78} height={78} aria-hidden />
+                <div className="mt-6 whitespace-pre-line">
+                  <div className={styles.glassTitle}>{"Nada genérico\nSó tecnologia"}</div>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/explorar"
+              className={cn(
+                "animate-cta inline-flex items-center justify-center font-medium hover:brightness-95 transition",
+                "w-full md:w-[817px]",
+                styles.cta
+              )}
+            >
+              Explorar Ofertas
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
 <file path="src/types/supabase.ts">
 export type Json =
   | string
@@ -12685,12 +11918,10 @@ export default function LocalFilters({
     setCustomPrice(filters.minPrice, value);
   };
 
-  const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ state: e.target.value, page: 1 });
-  };
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ city: e.target.value, page: 1 });
+  // Novo campo unificado de localização
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFilters({ location: e.target.value, page: 1 });
   };
 
   if (!isLoading) {
@@ -12731,6 +11962,7 @@ export default function LocalFilters({
         </FilterSection>
       )}
 
+
       {/* Preço */}
       <FilterSection title="Preço do produto" id="filters-price">
         <p className={styles.label}>Escolha um intervalo:</p>
@@ -12753,7 +11985,7 @@ export default function LocalFilters({
           />
         </div>
 
-        <p className={styles.label}>Ou uma faixa específica:</p>
+        <p className={styles.label}>Ou escolha uma faixa abaixo:</p>
 
         <div className={styles.tags}>
           {priceTags.map((tag, i) => (
@@ -12761,7 +11993,7 @@ export default function LocalFilters({
               key={i} 
               type="button"
               className={filters.priceRange === tag ? styles.tagActive : ''}
-              onClick={() => setPriceRange(tag)}
+              onClick={() => setPriceRange(filters.priceRange === tag ? '' : tag)}
             >
               {tag}
             </button>
@@ -12771,23 +12003,415 @@ export default function LocalFilters({
 
       {/* Localização */}
       <FilterSection title="Localização do produto" id="filters-location">
-        <p className={styles.label}>Escolha um estado:</p>
+        <p className={styles.label}>
+          Digite a cidade ou, se preferir filtrar por estado, digite a UF (ex: SP, GO, RJ)
+        </p>
         <input
           className={styles.fullInput}
-          placeholder="Goiás, São Paulo ..."
-          value={filters.state || ''}
-          onChange={handleStateChange}
-        />
-
-        <p className={styles.label}>Ou uma cidade específica:</p>
-        <input
-          className={styles.fullInput}
-          placeholder="Goiânia, Trindade ..."
-          value={filters.city || ''}
-          onChange={handleCityChange}
+          placeholder="Ex: Goiânia, SP, Rio de Janeiro ..."
+          value={filters.location || ''}
+          onChange={handleLocationChange}
         />
       </FilterSection>
     </aside>
+  );
+}
+</file>
+
+<file path="components/forms/form-login.tsx">
+"use client";
+
+import { cn } from "@/lib/utils";
+import { signIn } from "@/app/auth/actions";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import Image from "next/image";
+import { useState, useActionState } from "react";
+import { useRouter } from "next/navigation";
+
+export function FormLogin({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"div">) {
+  const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
+  type SignInResult = { success: boolean; error?: string };
+
+  const [state, formAction] = useActionState(
+    async (prevState: { error: string | null }, formData: FormData) => {
+      try {
+        const result = await signIn(formData) as SignInResult;
+
+        // No seu FormLogin, dentro do if (result && result.success)
+        if (result && result.success) {
+          // Em vez de startTransition e router, usamos:
+          window.location.href = "/";
+          return { error: null };
+        }
+
+        setIsPending(false);
+        return { error: result?.error || "Erro ao entrar" };
+      } catch (error: unknown) {
+        setIsPending(false);
+        return { error: error instanceof Error ? error.message : "Ocorreu um erro" };
+      }
+    },
+    { error: null }
+  );
+
+  return (
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <Card>
+        <CardHeader>
+          <div className="flex justify-center mb-2">
+            <Image
+              src="/logo.svg"
+              alt="DROPTECH"
+              width={200}
+              height={29}
+              priority
+              // Adicionado style para evitar o aviso de proporção no log
+              style={{ width: "auto", height: "auto" }}
+              className="h-[29px]"
+            />
+          </div>
+          <CardDescription className="text-center">
+            Digite seu email abaixo para entrar na sua conta
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form action={formAction} onSubmit={() => setIsPending(true)}>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">Senha</Label>
+                  <Link
+                    href="/auth/esqueci-senha"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline hide-below-700"
+                  >
+                    Esqueceu sua senha?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                />
+              </div>
+              {state.error && <p className="text-sm text-red-500">{state.error}</p>}
+              <Button
+                type="submit"
+                className="w-full bg-[#ecf230] text-[#312e2e] hover:bg-[#ecf230]/90"
+                disabled={isPending}
+              >
+                {isPending ? "Entrando..." : "Entrar"}
+              </Button>
+            </div>
+
+            <div className="mt-4 text-center text-sm">
+              Não tem uma conta?{" "}
+              <Link
+                href="/auth/cadastro"
+                className="underline underline-offset-4"
+              >
+                Cadastre-se
+              </Link>
+            </div>
+
+            <div className="mt-2 text-center text-sm">
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.refresh();
+                  router.push("/");
+                }}
+              >
+                Voltar para a home
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+</file>
+
+<file path="components/forms/steps/StepPhotos.tsx">
+"use client";
+
+import { useState, useCallback } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
+import Image from "next/image";
+import type { AdFormData } from "@/components/forms/MultiStepAdForm";
+
+interface StepPhotosProps {
+  formData: AdFormData;
+  updateFormData: (updates: Partial<AdFormData>) => void;
+  errors: Array<{ field: string; message: string }>;
+}
+
+export function StepPhotos({ formData, updateFormData, errors }: StepPhotosProps) {
+  const [dragActive, setDragActive] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const getError = (field: string) => errors.find(e => e.field === field)?.message;
+
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
+  const handleFiles = useCallback(async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    const validFiles: File[] = [];
+    const maxFiles = 8;
+    const maxSize = 8 * 1024 * 1024; // 8MB
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const errors: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!allowedTypes.includes(file.type)) {
+        errors.push(`Arquivo ${file.name}: Tipo não suportado.`);
+        continue;
+      }
+      if (file.size > maxSize) {
+        errors.push(`Arquivo ${file.name}: Muito grande. O tamanho máximo permitido é 8MB.`);
+        continue;
+      }
+      validFiles.push(file);
+    }
+
+    setFileErrors(errors);
+
+    const currentImages = formData.images || [];
+    const currentUrls = formData.imageUrls || [];
+    let totalCount = currentImages.length + currentUrls.length;
+    const newImages = [...currentImages];
+
+    for (const file of validFiles) {
+      if (totalCount >= maxFiles) {
+        errors.push(`Máximo de ${maxFiles} fotos permitidas`);
+        break;
+      }
+      newImages.push(file);
+      totalCount++;
+    }
+    setFileErrors(errors);
+    updateFormData({ images: newImages });
+  }, [formData, updateFormData]);
+
+  const removeImage = (index: number) => {
+    const imageUrlsCount = (formData.imageUrls || []).length;
+
+    if (index < imageUrlsCount) {
+      // Remove foto antiga do banco
+      const newImageUrls = [...(formData.imageUrls || [])];
+      newImageUrls.splice(index, 1);
+      updateFormData({ imageUrls: newImageUrls });
+    } else {
+      // Remove foto nova (File)
+      const fileIndex = index - imageUrlsCount;
+      const newImages = [...(formData.images || [])];
+      newImages.splice(fileIndex, 1);
+      updateFormData({ images: newImages });
+    }
+  };
+
+  const reorderImages = (fromIndex: number, toIndex: number) => {
+    const imageUrls = [...(formData.imageUrls || [])];
+    const images = [...(formData.images || [])];
+    const combined = [
+      ...imageUrls.map(url => ({ type: 'url' as const, value: url })),
+      ...images.map(file => ({ type: 'file' as const, value: file }))
+    ];
+
+    // Move o item na lista combinada
+    const [movedItem] = combined.splice(fromIndex, 1);
+    combined.splice(toIndex, 0, movedItem);
+
+    // Separa de volta
+    const newUrls = combined.filter(i => i.type === 'url').map(i => i.value as string);
+    const newFiles = combined.filter(i => i.type === 'file').map(i => i.value as File);
+
+    updateFormData({
+      imageUrls: newUrls,
+      images: newFiles
+    });
+  };
+
+  const handleImageDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggedIndex(index);
+  };
+
+  const handleImageDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  };
+
+  const handleImageDragLeave = () => setDragOverIndex(null);
+
+  const handleImageDrop = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      reorderImages(draggedIndex, index);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleImageDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+  };
+
+  const onButtonClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.multiple = true;
+    input.accept = 'image/*';
+    input.onchange = (e: Event) => handleFiles((e.target as HTMLInputElement).files);
+    input.click();
+  };
+
+  const images = formData.images || [];
+  const imageUrls = formData.imageUrls || [];
+  const minRequired = 5;
+  
+  // LOGICA CORRIGIDA: Junta os dois mantendo a ordem para o preview
+  const allImages = [
+    ...imageUrls.map((url) => ({ src: url, name: url.split('/').pop() || 'Imagem' })),
+    ...images.map((file) => ({ src: URL.createObjectURL(file), name: file.name }))
+  ];
+  const totalImages = allImages.length;
+
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Fotos do Produto</CardTitle>
+        <CardDescription>
+          Adicione pelo menos {minRequired} fotos de boa qualidade. A primeira será a foto principal.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6 max-[480px]:space-y-4 max-[480px]:p-4">
+        <div
+          className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            dragActive ? 'border-primary bg-primary/5' : getError('images') ? 'border-red-300' : 'border-gray-300 hover:border-gray-400'
+          }`}
+          onDragEnter={handleDrag}
+          onDragLeave={handleDrag}
+          onDragOver={handleDrag}
+          onDrop={handleDrop}
+        >
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <Upload className={`h-12 w-12 ${dragActive ? 'text-primary' : 'text-gray-400'}`} />
+            </div>
+            <div>
+              <p className="text-lg font-medium">{dragActive ? 'Solte as imagens aqui' : 'Arraste suas fotos aqui'}</p>
+              <Button type="button" variant="outline" className="mt-3" onClick={onButtonClick}>
+                <ImageIcon className="h-4 w-4 mr-2" /> Escolher Arquivos
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {getError('images') && <p className="text-sm text-red-600">{getError('images')}</p>}
+        {fileErrors.length > 0 && (
+          <div className="space-y-1 mt-2">
+            {fileErrors.map((err, i) => (
+              <span key={i} className="block text-xs text-red-600">{err}</span>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between text-sm">
+          <span className={totalImages >= minRequired ? 'text-green-600' : 'text-muted-foreground'}>
+            {totalImages} de {minRequired} fotos obrigatórias
+          </span>
+          <span className="text-muted-foreground">{totalImages}/8 fotos</span>
+        </div>
+
+        {totalImages > 0 && (
+          <div className="space-y-4">
+            <Label>Prévia das Fotos</Label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {allImages.map((image, index) => (
+                <div 
+                  key={index}
+                  className={`relative group cursor-move ${draggedIndex === index ? 'opacity-50 scale-95' : ''} ${dragOverIndex === index ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                  draggable
+                  onDragStart={(e) => handleImageDragStart(e, index)}
+                  onDragOver={(e) => handleImageDragOver(e, index)}
+                  onDragLeave={handleImageDragLeave}
+                  onDrop={(e) => handleImageDrop(e, index)}
+                  onDragEnd={handleImageDragEnd}
+                >
+                  <div className="aspect-square rounded-lg border-2 border-gray-200 overflow-hidden bg-gray-50">
+                    <Image src={image.src} alt={`Preview ${index + 1}`} className="w-full h-full object-cover" width={200} height={200} />
+                  </div>
+                  
+                  {index === 0 && (
+                    <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded z-10">Principal</div>
+                  )}
+
+                  <Button
+                    variant="destructive" size="sm"
+                    className="absolute top-2 right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    onClick={() => removeImage(index)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[10px] p-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                    {image.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">🐆 Dica: Arraste as fotos para reordenar.</p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 </file>
@@ -13068,57 +12692,6 @@ export default Rodape;
   .subtitle { font-size: 14px; }
 
 }
-</file>
-
-<file path="next.config.ts">
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  output: 'standalone',
-  experimental: {
-    serverActions: {
-      bodySizeLimit: '50mb', // Aumenta o limite para 50MB para permitir upload de múltiplas imagens
-    },
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'avatars.githubusercontent.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.amazonaws.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.pixabay.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'i.imgur.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-      },
-    ],
-  },
-};
-
-export default nextConfig;
 </file>
 
 <file path="package.json">
@@ -13668,6 +13241,381 @@ export default function Home() {
 }
 </file>
 
+<file path="components/forms/MultiStepAdForm.tsx">
+"use client";
+
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { StepBasicInfo } from "@/components/forms/steps/StepBasicInfo";
+import { StepCategoryTags } from "@/components/forms/steps/StepCategoryTags";
+import { StepPhotos } from "@/components/forms/steps/StepPhotos";
+import { StepContactReview } from "@/components/forms/steps/StepContactReview";
+import { createAdWithDetails, updateAdWithDetails } from "@/app/(main)/dashboard/anunciar/actions";
+import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
+
+export interface AdFormData {
+  title: string;
+  price: number;
+  description: string;
+  contact_phone: string;
+  address: string;
+  city: string;
+  state: string;
+  category_id: string;
+  tag_ids: string[];
+  images: File[];
+  imageUrls: string[];
+  cep?: string;
+}
+
+interface FormError {
+  field: string;
+  message: string;
+}
+
+interface ExistingProduct {
+  id: string;
+  title?: string;
+  price?: number;
+  description?: string;
+  contact_phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  products_categories?: Array<{
+    category: {
+      id: string;
+    };
+  }>;
+  products_tags?: Array<{
+    tag: {
+      id: string;
+    };
+  }>;
+  images_urls?: string[];
+}
+
+interface MultiStepAdFormProps {
+  existingProduct?: ExistingProduct;
+  isEditing?: boolean;
+}
+
+export function MultiStepAdForm({ existingProduct, isEditing = false }: MultiStepAdFormProps) {
+  const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(0);
+  const formRef = useRef<HTMLDivElement | null>(null);
+  // Inicializar formData com dados existentes se estiver editando
+  const [formData, setFormData] = useState<AdFormData>(() => {
+    if (isEditing && existingProduct) {
+      return {
+        title: existingProduct.title || "",
+        price: existingProduct.price || 0,
+        description: existingProduct.description || "",
+        contact_phone: existingProduct.contact_phone || "",
+        address: existingProduct.address || "",
+        city: existingProduct.city || "",
+        state: existingProduct.state || "",
+        category_id: existingProduct.products_categories?.[0]?.category?.id || "",
+        tag_ids: existingProduct.products_tags?.map((pt: { tag: { id: string } }) => pt.tag.id) || [],
+        images: [],
+        imageUrls: existingProduct.images_urls || []
+      };
+    }
+    return {
+      title: "",
+      price: 0,
+      description: "",
+      contact_phone: "",
+      address: "",
+      city: "",
+      state: "",
+      category_id: "",
+      tag_ids: [],
+      images: [],
+      imageUrls: []
+    };
+  });
+  const [errors, setErrors] = useState<FormError[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const steps = [
+    { title: "Informações Básicas", component: StepBasicInfo },
+    { title: "Categoria e Tags", component: StepCategoryTags },
+    { title: "Fotos", component: StepPhotos },
+    { title: "Contato e Revisão", component: StepContactReview }
+  ];
+
+  const progress = ((currentStep + 1) / steps.length) * 100;
+
+  const validateStep = (step: number): FormError[] => {
+    const stepErrors: FormError[] = [];
+
+    switch (step) {
+      case 0: // Informações Básicas
+        if (!formData.title.trim()) {
+          stepErrors.push({ field: "title", message: "Título é obrigatório" });
+        }
+        if (formData.price <= 0) {
+          stepErrors.push({ field: "price", message: "Preço deve ser maior que zero" });
+        }
+        if (!formData.description.trim()) {
+          stepErrors.push({ field: "description", message: "Descrição é obrigatória" });
+        }
+        break;
+
+      case 1: // Categoria e Tags
+        if (!formData.category_id) {
+          stepErrors.push({ field: "category_id", message: "Categoria é obrigatória" });
+        }
+        break;
+
+      case 2: // Fotos
+        const totalImages = formData.images.length + formData.imageUrls.length;
+        if (totalImages < 3) {
+          stepErrors.push({ field: "images", message: "Mínimo de 3 fotos é obrigatório" });
+        }
+        break;
+
+      case 3: // Contato e Revisão
+        if (!formData.contact_phone.trim()) {
+          stepErrors.push({ field: "contact_phone", message: "Telefone de contato é obrigatório" });
+        }
+        if (!formData.address.trim()) {
+          stepErrors.push({ field: "address", message: "Endereço é obrigatório" });
+        }
+        if (!formData.city.trim()) {
+          stepErrors.push({ field: "city", message: "Cidade é obrigatória" });
+        }
+        if (!formData.state.trim()) {
+          stepErrors.push({ field: "state", message: "Estado é obrigatório" });
+        }
+        break;
+    }
+
+    return stepErrors;
+  };
+
+  const nextStep = () => {
+    const stepErrors = validateStep(currentStep);
+    setErrors(stepErrors);
+    if (stepErrors.length > 0 && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (stepErrors.length === 0 && currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const updateFormData = (updates: Partial<AdFormData>) => {
+    setFormData(prev => ({ ...prev, ...updates }));
+  };
+
+  const handleSubmit = async () => {
+    const stepErrors = validateStep(currentStep);
+    setErrors(stepErrors);
+    if (stepErrors.length > 0 && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (stepErrors.length > 0) return;
+
+    setIsLoading(true);
+    try {
+      // 1. COMEÇAMOS COM AS URLS QUE JÁ ESTÃO NO FORMULÁRIO (ANTIGAS OU REORDENADAS)
+      const finalUrls = [...formData.imageUrls];
+
+      // 2. SE HOUVER ARQUIVOS NOVOS, FAZEMOS O UPLOAD E ADICIONAMOS AO ARRAY
+      if (formData.images && formData.images.length > 0) {
+        const supabase = createBrowserSupabaseClient();
+        const user = (await supabase.auth.getUser()).data.user;
+        if (!user) throw new Error("Usuário não autenticado");
+
+        // Faremos o upload de cada arquivo novo
+        for (let i = 0; i < formData.images.length; i++) {
+          const file = formData.images[i];
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}-${i}.${fileExt}`;
+          const filePath = `products/${user.id}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('products')
+            .upload(filePath, file, {
+              cacheControl: '3600',
+              upsert: false
+            });
+
+          if (uploadError) {
+            throw new Error(`Erro no upload da imagem ${i + 1}: ${uploadError.message}`);
+          }
+
+          const { data: urlData } = supabase.storage
+            .from('products')
+            .getPublicUrl(filePath);
+
+          // ADICIONAMOS a nova URL ao array existente, em vez de resetar
+          finalUrls.push(urlData.publicUrl);
+        }
+      }
+
+      // --- CORREÇÃO AQUI ---
+      // Criamos uma cópia dos dados SEM os arquivos binários (images: [])
+      const dataToSend = {
+        ...formData,
+        images: [], // Limpa os arquivos binários para não estourarem os 10MB da Action
+        imageUrls: finalUrls
+      };
+
+      if (isEditing && existingProduct) {
+        await updateAdWithDetails(existingProduct.id, dataToSend);
+      } else {
+        await createAdWithDetails(dataToSend);
+      }
+
+      router.replace("/dashboard/meus-anuncios");
+      router.refresh(); // Opcional: força a atualização dos dados
+    } catch (error: unknown) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "message" in error &&
+        typeof (error as { message?: string }).message === "string" &&
+        (error as { message: string }).message.includes("NEXT_REDIRECT")
+      ) {
+        return;
+      }
+      console.error(`Erro ao ${isEditing ? 'atualizar' : 'criar'} anúncio:`, error);
+      setErrors([{ field: "general", message: "Ocorreu um erro ao salvar o anúncio." }]);
+    } finally {
+      // Tenha cuidado aqui: se houver redirect, o componente pode ser desmontado
+      setIsLoading(false);
+    }
+  };
+
+
+
+  const CurrentStepComponent = steps[currentStep].component as React.ComponentType<{
+    formData: AdFormData;
+    updateFormData: (updates: Partial<AdFormData>) => void;
+    errors: FormError[];
+  }>;
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 300 : -300,
+      opacity: 0
+    })
+  };
+
+  return (
+    <div ref={formRef} className="w-full max-w-4xl mx-auto space-y-8 max-[1024px]:space-y-6 max-[768px]:space-y-5 max-[480px]:space-y-4">
+      {/* Progress Bar */}
+      <div className="space-y-4 max-[768px]:space-y-3 max-[480px]:space-y-3">
+        <div className="flex justify-between text-sm text-muted-foreground max-[1024px]:text-xs max-[800px]:text-sm max-[600px]:gap-2 max-[480px]:grid max-[480px]:grid-cols-2 max-[480px]:gap-x-4 max-[480px]:gap-y-2">
+          {steps.map((step, index) => (
+            <span
+              key={index}
+              className={`font-medium text-center flex-1 leading-tight max-[800px]:whitespace-normal max-[800px]:break-words max-[480px]:text-xs ${index <= currentStep ? 'text-primary' : ''
+                }`}
+            >
+              {step.title}
+            </span>
+          ))}
+        </div>
+        <Progress value={progress} className="h-2 max-[480px]:h-1.5" />
+      </div>
+
+      {/* Step Content with Animation */}
+      <div className="relative overflow-hidden max-[480px]:overflow-visible">
+        <AnimatePresence mode="wait" custom={currentStep}>
+          <motion.div
+            key={currentStep}
+            custom={currentStep}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 }
+            }}
+            className="w-full"
+          >
+            <CurrentStepComponent
+              formData={formData}
+              updateFormData={updateFormData}
+              errors={errors.filter(e => e.field !== 'general')}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* General Error */}
+      {errors.some(e => e.field === 'general') && (
+        <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md max-[768px]:text-xs max-[768px]:p-2 max-[480px]:text-[10px]">
+          {errors.find(e => e.field === 'general')?.message}
+        </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between max-[480px]:flex-col max-[480px]:gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={prevStep}
+          disabled={currentStep === 0}
+          className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
+        >
+          <ChevronLeft className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
+          Voltar
+        </Button>
+
+        {currentStep < steps.length - 1 ? (
+          <Button
+            type="button"
+            onClick={nextStep}
+            className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
+          >
+            Próximo
+            <ChevronRight className="h-4 w-4 max-[768px]:h-3 max-[768px]:w-3" />
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="flex items-center gap-2 max-[768px]:text-sm max-[768px]:px-4 max-[480px]:w-full max-[480px]:justify-center"
+          >
+            {isLoading
+              ? (isEditing ? "Atualizando..." : "Publicando...")
+              : (isEditing ? "Atualizar Anúncio" : "Publicar Anúncio")
+            }
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+</file>
+
 <file path="components/layout/cabecalho/index.tsx">
 "use client";
 
@@ -13983,6 +13931,57 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
 }
 </file>
 
+<file path="next.config.ts">
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  output: 'standalone',
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.pixabay.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.imgur.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+    ],
+  },
+};
+
+export default nextConfig;
+</file>
+
 <file path="app/(main)/admin/moderacao/page.tsx">
 import { getModerationPageData } from "./actions";
 import { ModerationContent } from "./ModerationContent";
@@ -14223,19 +14222,6 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
           product.products_categories &&
           product.products_categories[0]?.category?.name?.toLowerCase() === cat.toLowerCase()
         )
-      );
-    }
-
-    // Filtro por localização (estado ou cidade)
-    if (filters.state) {
-      filtered = filtered.filter(product => 
-        product.state?.toLowerCase().includes(filters.state?.toLowerCase() || '')
-      );
-    }
-    
-    if (filters.city) {
-      filtered = filtered.filter(product => 
-        product.city?.toLowerCase().includes(filters.city?.toLowerCase() || '')
       );
     }
 

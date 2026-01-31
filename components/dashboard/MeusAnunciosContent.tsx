@@ -60,19 +60,6 @@ function MeusAnunciosGrid({ filters }: { filters: FilterParams }) {
       );
     }
 
-    // Filtro por localização (estado ou cidade)
-    if (filters.state) {
-      filtered = filtered.filter(product => 
-        product.state?.toLowerCase().includes(filters.state?.toLowerCase() || '')
-      );
-    }
-    
-    if (filters.city) {
-      filtered = filtered.filter(product => 
-        product.city?.toLowerCase().includes(filters.city?.toLowerCase() || '')
-      );
-    }
-
     // Filtro por localização genérica (se ainda existe)
     if (filters.location) {
       filtered = filtered.filter(product => 

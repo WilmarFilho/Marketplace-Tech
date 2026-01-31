@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { getProducts, type PaginatedResponse } from "../../app/(main)/explorar/actions";
+import { getProducts } from "../../app/(main)/explorar/actions";
 import Filters from "@/components/filters/filters";
 import FilterBar from "@/components/filterbar/filterbar";
-import { CardAnuncio, type ProductRow } from "@/components/cards/anuncio";
+import { CardAnuncio, ProductRow } from "@/components/cards/anuncio";
 import { ResultsHeader } from "@/components/filters/ResultsHeader";
 import { useFilters } from "@/lib/hooks/useFilters";
+
+import type { Product } from "@/app/(main)/explorar/actions";
+
 
 function ProductGrid() {
   const { filters } = useFilters();
@@ -22,37 +25,69 @@ function ProductGrid() {
     hasMore: false
   });
   const [lastFilters, setLastFilters] = useState<typeof filters | null>(null);
-  
+
   const observer = useRef<IntersectionObserver | null>(null);
 
-  // Verificar se os filtros mudaram (excluindo page)
+  // Corrigido: Removido prefixo _ e variáveis não usadas
   const filtersChanged = useCallback(() => {
     if (!lastFilters) return true;
-    
-    const { page: _, ...currentFiltersWithoutPage } = filters;
-    const { page: __, ...lastFiltersWithoutPage } = lastFilters;
-    
+    const currentFiltersWithoutPage = { ...filters };
+    delete currentFiltersWithoutPage.page;
+    const lastFiltersWithoutPage = { ...lastFilters };
+    delete lastFiltersWithoutPage.page;
     return JSON.stringify(currentFiltersWithoutPage) !== JSON.stringify(lastFiltersWithoutPage);
   }, [filters, lastFilters]);
 
-  // Buscar produtos (primeira página ou quando filtros mudarem)
+  // Função de conversão tipada Product (API) -> ProductRow (UI)
+  type ProductWithUIFields = Product & {
+    isFavorited?: boolean;
+    tags?: { name: string }[];
+    products_categories?: { category?: { name?: string } }[];
+    images_urls?: string[] | null;
+    address?: string | null;
+    city?: string | null;
+    contact_phone?: string | null;
+    seller_id?: string;
+    state?: string | null;
+  };
+  const toProductRow = useCallback((p: ProductWithUIFields): ProductRow => ({
+    id: String(p.id),
+    title: p.title,
+    price: p.price,
+    description: p.description ?? null,
+    images_urls: p.images_urls ?? null,
+    status: p.status ?? null,
+    isFavorited: !!p.isFavorited,
+    tags: p.tags ?? [],
+    products_categories: p.products_categories ?? [],
+    address: p.address ?? null,
+    city: p.city ?? null,
+    contact_phone: p.contact_phone ?? null,
+    created_at: p.created_at ?? null,
+    seller_id: p.seller_id ?? '',
+    state: p.state ?? null,
+  }), []);
+
   const fetchProducts = useCallback(async (resetProducts = false) => {
     if (resetProducts) {
       setIsLoading(true);
       setAllProducts([]);
     }
     setError(null);
-    
+
     try {
       const currentPage = resetProducts ? 1 : pagination.page + 1;
       const data = await getProducts({ ...filters, page: currentPage });
-      
+
+      // Corrigido: Conversão robusta Product -> ProductRow
+      const rows = (data.data as Product[]).map(toProductRow);
+
       if (resetProducts) {
-        setAllProducts(data.data);
+        setAllProducts(rows);
       } else {
-        setAllProducts(prev => [...prev, ...data.data]);
+        setAllProducts(prev => [...prev, ...rows]);
       }
-      
+
       setPagination({
         page: currentPage,
         limit: data.pagination.limit,
@@ -60,7 +95,7 @@ function ProductGrid() {
         totalPages: data.pagination.totalPages,
         hasMore: data.pagination.hasMore
       });
-      
+
       setLastFilters(filters);
     } catch (err) {
       setError('Erro ao carregar produtos');
@@ -69,21 +104,21 @@ function ProductGrid() {
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  }, [filters]);
+  }, [filters, pagination.page, toProductRow]);
 
-  // Carregar mais produtos
   const loadMore = useCallback(async () => {
     if (isLoadingMore || !pagination.hasMore) return;
-    
+
     setIsLoadingMore(true);
     setError(null);
-    
+
     try {
       const currentPage = pagination.page + 1;
       const data = await getProducts({ ...filters, page: currentPage });
-      
-      setAllProducts(prev => [...prev, ...data.data]);
-      
+
+      const rows = (data.data as Product[]).map(toProductRow);
+      setAllProducts(prev => [...prev, ...rows]);
+
       setPagination({
         page: currentPage,
         limit: data.pagination.limit,
@@ -97,31 +132,31 @@ function ProductGrid() {
     } finally {
       setIsLoadingMore(false);
     }
-  }, [isLoadingMore, pagination.hasMore, pagination.page, filters]);
+  }, [isLoadingMore, pagination.hasMore, pagination.page, filters, toProductRow]);
 
-  // Intersection Observer para scroll infinito
-  const lastProductElementRef = useCallback((node: HTMLDivElement) => {
+  const lastProductElementRef = useCallback((node: HTMLDivElement | null) => {
     if (isLoadingMore) return;
     if (observer.current) observer.current.disconnect();
+
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && pagination.hasMore) {
         loadMore();
       }
     });
+
     if (node) observer.current.observe(node);
   }, [isLoadingMore, pagination.hasMore, loadMore]);
 
-  // Buscar produtos quando filtros mudarem
   useEffect(() => {
     if (filtersChanged()) {
       fetchProducts(true);
     }
-  }, [filters]);
+  }, [filters, fetchProducts, filtersChanged]);
 
   if (error && allProducts.length === 0) {
     return (
       <div>
-        <ResultsHeader 
+        <ResultsHeader
           total={0}
           page={pagination.page}
           limit={pagination.limit}
@@ -136,7 +171,7 @@ function ProductGrid() {
 
   return (
     <div>
-      <ResultsHeader 
+      <ResultsHeader
         total={pagination.total}
         page={pagination.page}
         limit={pagination.limit}
@@ -170,10 +205,10 @@ function ProductGrid() {
               </div>
             ))}
           </div>
-          
+
           {/* Loading indicator para scroll infinito */}
           {isLoadingMore && (
-              <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex justify-center">
               <div className="explore-grid justify-items-center gap-6">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="h-[395px] w-full max-w-[478px] bg-gray-200 animate-pulse rounded-[20px]"></div>
@@ -191,17 +226,17 @@ export default function ExplorarContent() {
   return (
     <div className="w-full px-4">
       <div className="mx-auto w-full max-w-[1744px] px-6 py-10 md:px-[40px]">
-      <FilterBar />
+        <FilterBar />
 
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-        <div className="w-full lg:w-[380px] shrink-0">
-          <Filters />
-        </div>
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+          <div className="w-full lg:w-[380px] shrink-0">
+            <Filters />
+          </div>
 
-        <div className="min-w-0 flex-1">
-          <ProductGrid />
+          <div className="min-w-0 flex-1">
+            <ProductGrid />
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

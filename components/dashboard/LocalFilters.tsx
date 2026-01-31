@@ -49,12 +49,10 @@ export default function LocalFilters({
     setCustomPrice(filters.minPrice, value);
   };
 
-  const handleStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ state: e.target.value, page: 1 });
-  };
 
-  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFilters({ city: e.target.value, page: 1 });
+  // Novo campo unificado de localização
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFilters({ location: e.target.value, page: 1 });
   };
 
   if (!isLoading) {
@@ -95,6 +93,7 @@ export default function LocalFilters({
         </FilterSection>
       )}
 
+
       {/* Preço */}
       <FilterSection title="Preço do produto" id="filters-price">
         <p className={styles.label}>Escolha um intervalo:</p>
@@ -117,7 +116,7 @@ export default function LocalFilters({
           />
         </div>
 
-        <p className={styles.label}>Ou uma faixa específica:</p>
+        <p className={styles.label}>Ou escolha uma faixa abaixo:</p>
 
         <div className={styles.tags}>
           {priceTags.map((tag, i) => (
@@ -125,7 +124,7 @@ export default function LocalFilters({
               key={i} 
               type="button"
               className={filters.priceRange === tag ? styles.tagActive : ''}
-              onClick={() => setPriceRange(tag)}
+              onClick={() => setPriceRange(filters.priceRange === tag ? '' : tag)}
             >
               {tag}
             </button>
@@ -135,20 +134,14 @@ export default function LocalFilters({
 
       {/* Localização */}
       <FilterSection title="Localização do produto" id="filters-location">
-        <p className={styles.label}>Escolha um estado:</p>
+        <p className={styles.label}>
+          Digite a cidade ou, se preferir filtrar por estado, digite a UF (ex: SP, GO, RJ)
+        </p>
         <input
           className={styles.fullInput}
-          placeholder="Goiás, São Paulo ..."
-          value={filters.state || ''}
-          onChange={handleStateChange}
-        />
-
-        <p className={styles.label}>Ou uma cidade específica:</p>
-        <input
-          className={styles.fullInput}
-          placeholder="Goiânia, Trindade ..."
-          value={filters.city || ''}
-          onChange={handleCityChange}
+          placeholder="Ex: Goiânia, SP, Rio de Janeiro ..."
+          value={filters.location || ''}
+          onChange={handleLocationChange}
         />
       </FilterSection>
     </aside>

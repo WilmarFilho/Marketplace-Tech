@@ -27,8 +27,7 @@ export function ActiveFilters({
       filters.minPrice !== undefined ||
       filters.maxPrice !== undefined ||
       filters.priceRange ||
-      filters.city ||
-      filters.state ||
+      filters.location ||
       filters.dateFilter ||
       filters.status
     );
@@ -153,26 +152,13 @@ export function ActiveFilters({
           </div>
         )}
 
-        {/* Cidade */}
-        {filters.city && (
+        {/* Localização */}
+        {filters.location && (
           <div className="flex items-center gap-1 bg-orange-500/20 text-orange-300 px-2 py-1 rounded-md text-xs border border-orange-400/30">
-            <span>Cidade: {filters.city}</span>
+            <span>Localização: {filters.location}</span>
             <button
-              onClick={() => updateFilters({ city: '', page: 1 })}
+              onClick={() => updateFilters({ location: '', page: 1 })}
               className="hover:text-orange-200"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </div>
-        )}
-
-        {/* Estado */}
-        {filters.state && (
-          <div className="flex items-center gap-1 bg-pink-500/20 text-pink-300 px-2 py-1 rounded-md text-xs border border-pink-400/30">
-            <span>Estado: {filters.state}</span>
-            <button
-              onClick={() => updateFilters({ state: '', page: 1 })}
-              className="hover:text-pink-200"
             >
               <X className="h-3 w-3" />
             </button>
