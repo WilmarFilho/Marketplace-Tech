@@ -12,48 +12,47 @@ gsap.registerPlugin(ScrollTrigger);
 export function SecaoHero() {
   const heroRef = useRef<HTMLDivElement>(null);
   // Refs para os grupos de elementos que vamos animar
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      // 1. Animação de Scroll (Zoom do Background)
-     // Dentro do useLayoutEffect do GSAP
-gsap.fromTo(heroRef.current,
-  { backgroundSize: "110%" }, // Começa levemente maior que o cover padrão
-  {
-    backgroundSize: "140%",   // Aumenta o zoom no scroll
-    ease: "none",
-    scrollTrigger: {
-      trigger: heroRef.current,
-      start: "top top",
-      end: "bottom top",
-      scrub: 1.5,
-      invalidateOnRefresh: true,
-    },
-  }
-);
-      // 2. Animação de Entrada (Fade In + Slide Up)
-      // Selecionamos os títulos, subtítulo e botões dentro do container
-      const elementsToAnimate = heroRef.current?.querySelectorAll('h1, h2, p, a');
+ useLayoutEffect(() => {
+  const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
 
-      if (elementsToAnimate) {
-        gsap.fromTo(elementsToAnimate,
-          { 
-            opacity: 0, 
-            y: 30 
+    // Só executa se a tela for MAIOR que 1000px
+    mm.add("(min-width: 1001px)", () => {
+      gsap.fromTo(heroRef.current,
+        { backgroundSize: "110%" },
+        {
+          backgroundSize: "130%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.5,
+            invalidateOnRefresh: true,
           },
-          { 
-            opacity: 1, 
-            y: 0, 
-            duration: 1, 
-            stagger: 0.15, // Atraso entre cada elemento para o efeito cascata
-            ease: "power3.out",
-            delay: 0.2 // Pequeno delay inicial para o carregamento da página
-          }
-        );
-      }
-    }, heroRef);
+        }
+      );
+    });
 
-    return () => ctx.revert();
-  }, []);
+    // Animação de entrada dos textos (roda em todas as telas)
+    const elementsToAnimate = heroRef.current?.querySelectorAll('h1, h2, p, a');
+    if (elementsToAnimate) {
+      gsap.fromTo(elementsToAnimate,
+        { opacity: 0, y: 30 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 1, 
+          stagger: 0.15, 
+          ease: "power3.out",
+          delay: 0.2 
+        }
+      );
+    }
+  }, heroRef);
+
+  return () => ctx.revert();
+}, []);
 
   return (
     <section ref={heroRef} className={cn("w-full", styles.hero)}>
