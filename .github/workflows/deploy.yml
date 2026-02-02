@@ -34,7 +34,7 @@ jobs:
             
             # Mudamos para 'docker compose' (sem hífen)
             # O build é feito primeiro. Se o build falhar, o site antigo continua no ar.
-            docker compose up -d --build --force-recreate
+            docker-compose up -d --build --force-recreate
 
             # Agora limpamos o que sobrou
             echo "Limpando recursos antigos..."
