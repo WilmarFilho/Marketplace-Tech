@@ -15,21 +15,21 @@ export function SecaoHero() {
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       // 1. Animação de Scroll (Zoom do Background)
-      gsap.fromTo(heroRef.current,
-        { backgroundSize: "100%" },
-        {
-          backgroundSize: "150%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 1.5,
-            invalidateOnRefresh: true,
-          },
-        }
-      );
-
+     // Dentro do useLayoutEffect do GSAP
+gsap.fromTo(heroRef.current,
+  { backgroundSize: "110%" }, // Começa levemente maior que o cover padrão
+  {
+    backgroundSize: "140%",   // Aumenta o zoom no scroll
+    ease: "none",
+    scrollTrigger: {
+      trigger: heroRef.current,
+      start: "top top",
+      end: "bottom top",
+      scrub: 1.5,
+      invalidateOnRefresh: true,
+    },
+  }
+);
       // 2. Animação de Entrada (Fade In + Slide Up)
       // Selecionamos os títulos, subtítulo e botões dentro do container
       const elementsToAnimate = heroRef.current?.querySelectorAll('h1, h2, p, a');
