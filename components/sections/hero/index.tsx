@@ -5,59 +5,39 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import styles from "./secao-hero.module.css";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export function SecaoHero() {
   const heroRef = useRef<HTMLDivElement>(null);
-  // Refs para os grupos de elementos que vamos animar
- useLayoutEffect(() => {
-  const ctx = gsap.context(() => {
-    const mm = gsap.matchMedia();
 
-    // Só executa se a tela for MAIOR que 1000px
-    mm.add("(min-width: 1001px)", () => {
-      gsap.fromTo(heroRef.current,
-        { backgroundSize: "110%" },
-        {
-          backgroundSize: "130%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 1.5,
-            invalidateOnRefresh: true,
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // APENAS Animação de Entrada dos Textos (Fade In + Slide Up)
+      const elementsToAnimate = heroRef.current?.querySelectorAll('h1, h2, p, a');
+
+      if (elementsToAnimate) {
+        gsap.fromTo(elementsToAnimate,
+          { 
+            opacity: 0, 
+            y: 30 
           },
-        }
-      );
-    });
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 1, 
+            stagger: 0.15, 
+            ease: "power3.out",
+            delay: 0.2 
+          }
+        );
+      }
+    }, heroRef);
 
-    // Animação de entrada dos textos (roda em todas as telas)
-    const elementsToAnimate = heroRef.current?.querySelectorAll('h1, h2, p, a');
-    if (elementsToAnimate) {
-      gsap.fromTo(elementsToAnimate,
-        { opacity: 0, y: 30 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          duration: 1, 
-          stagger: 0.15, 
-          ease: "power3.out",
-          delay: 0.2 
-        }
-      );
-    }
-  }, heroRef);
-
-  return () => ctx.revert();
-}, []);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={heroRef} className={cn("w-full", styles.hero)}>
       <div className={cn("mx-auto flex w-full max-w-[1800px] gap-[10px]", styles.heroContainer)}>
-
         {/* Coluna Esquerda */}
         <div className="flex flex-1 flex-col justify-between pt-20">
           <h1 className={cn("text-white font-medium tracking-tight", styles.title)}>
