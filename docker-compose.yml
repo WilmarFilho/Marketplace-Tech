@@ -1,3 +1,5 @@
+version: '3.8' # Adicione a versão para garantir compatibilidade
+
 services:
   app:
     build: .
