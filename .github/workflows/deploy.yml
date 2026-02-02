@@ -22,7 +22,6 @@ jobs:
             # 2. Sincronizar com o commit atual
             if [ ! -d ".git" ]; then
               echo "Repositório não encontrado localmente. Clonando..."
-              find . -mindepth 1 -delete
               git clone https://github.com/WilmarFilho/Marketplace-Tech.git .
             else
               echo "Sincronizando repositório existente..."
@@ -30,18 +29,18 @@ jobs:
               git reset --hard origin/main
             fi
 
-            # --- ADIÇÃO: LIMPEZA DE CACHE PRÉ-BUILD ---
-            # Remove o cache de build do Next.js que pode estar em volumes persistentes
-            # Isso garante que o fetch de dados e rotas estáticas sejam revalidados
-            echo "Limpando caches antigos..."
-            docker-compose down --volumes --remove-orphans
+            # --- MELHORIA: BUILD E DEPOIS LIMPEZA ---
+            echo "Iniciando build e deploy com Docker Compose V2..."
+            
+            # Mudamos para 'docker compose' (sem hífen)
+            # O build é feito primeiro. Se o build falhar, o site antigo continua no ar.
+            docker compose up -d --build --force-recreate
 
-            # 3. Docker Compose (Build sem cache para garantir integridade total)
-            # O parâmetro --no-cache força o Docker a baixar tudo do zero
-            docker-compose up -d --build --force-recreate
-
-            # 4. Limpeza profunda
-            # docker system prune limpa imagens, containers e redes órfãs que sobraram do build
-            echo "Limpando recursos de rede e imagens suspensas..."
+            # Agora limpamos o que sobrou
+            echo "Limpando recursos antigos..."
+            
+            # Remove imagens que ficaram sem tag (dangling images) do build anterior
             docker image prune -f
-            docker system prune -f --volumes
+            
+            # Opcional: remove volumes órfãos (cuidado se tiver banco de dados no docker)
+            # docker volume prune -f
