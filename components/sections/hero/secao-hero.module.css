@@ -17,6 +17,13 @@
   overflow: hidden;
 }
 
+/* Garante que abaixo de 1000px o background não mude */
+@media (max-width: 1000px) {
+  .hero {
+    background-size: cover !important;
+  }
+}
+
 .heroContainer {
   min-height: 100vh;
   padding: clamp(80px, 12vh, 230px) clamp(16px, 4vw, 60px) clamp(40px, 8vh, 86px) clamp(16px, 4vw, 60px);
