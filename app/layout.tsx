@@ -50,8 +50,8 @@ export default function RootLayout({
         className={`${poppins.className} ${poppins.variable} ${k2d.variable} ${bebasNeue.variable} antialiased`}
       >
         {/* Configuração do Loader de Rota instantâneo */}
-        <NextTopLoader 
-          color="#FFD600" // Cor amarela principal da DropTech
+        <NextTopLoader
+          color="#ecf230" // Cor amarela principal da DropTech
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
@@ -59,7 +59,7 @@ export default function RootLayout({
           showSpinner={false}
           easing="ease"
           speed={200}
-          shadow="0 0 10px #FFD600, 0 0 5px #FFD600"
+          shadow="0 0 10px #ecf230, 0 0 5px #ecf230"
           zIndex={99999}
         />
         <RoleProvider>

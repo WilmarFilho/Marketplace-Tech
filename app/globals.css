@@ -2,6 +2,7 @@
 .moderation-card-span {
   grid-column: 1 / -1 !important;
 }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -55,8 +56,16 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
   }
 }
 
@@ -94,19 +103,30 @@ body {
 }
 
 /* Utility to show/hide elements under a 700px breakpoint */
-.show-below-700 { display: none; }
-.hide-below-700 { display: inherit; }
+.show-below-700 {
+  display: none;
+}
+
+.hide-below-700 {
+  display: inherit;
+}
 
 @media (max-width: 700px) {
-  .show-below-700 { display: block; }
-  .hide-below-700 { display: none; }
+  .show-below-700 {
+    display: block;
+  }
+
+  .hide-below-700 {
+    display: none;
+  }
 }
 
 /* Dashboard grid: 1 column by default, 2 columns @670px, 3 columns @1024px */
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem; /* match gap-6 */
+  gap: 1.5rem;
+  /* match gap-6 */
 }
 
 @media (min-width: 670px) {

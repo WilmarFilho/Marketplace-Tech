@@ -125,11 +125,21 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                     <Link
                       href="/dashboard/anunciar"
                       className={cn(
-                        "text-black font-bold bg-[#FFD600] rounded-lg px-4 py-2 ml-2 hover:brightness-95 transition",
+                        "text-black font-bold bg-[#ecf230] rounded-lg px-4 py-2 ml-2 hover:brightness-95 transition",
                         styles.ctaButton
                       )}
                     >
                       Criar Anúncio
+                    </Link>
+                  ) : role === 'comprador' ? (
+                    <Link
+                      href="/dashboard/meus-pedidos/criar"
+                      className={cn(
+                        "text-black font-bold bg-[#ecf230] rounded-lg px-4 py-2 ml-2 hover:brightness-95 transition",
+                        styles.ctaButton
+                      )}
+                    >
+                      Criar Pedido
                     </Link>
                   ) : null}
 
@@ -268,12 +278,23 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                         <Link
                           href="/dashboard/anunciar"
                           className={cn(
-                            "block w-full text-center py-4 px-6 rounded-xl bg-[#FFD600] text-black font-bold hover:brightness-95 transition-colors",
+                            "block w-full text-center py-4 px-6 rounded-xl bg-[#ecf230] text-black font-bold hover:brightness-95 transition-colors",
                             styles.mobileCtaButton
                           )}
                           onClick={() => setIsMenuOpen(false)}
                         >
                           Criar Anúncio
+                        </Link>
+                      ) : role === 'comprador' ? (
+                        <Link
+                          href="/dashboard/meus-pedidos/criar"
+                          className={cn(
+                            "block w-full text-center py-4 px-6 rounded-xl bg-[#ecf230] text-black font-bold hover:brightness-95 transition-colors",
+                            styles.mobileCtaButton
+                          )}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Criar Pedido
                         </Link>
                       ) : <BotaoSair className={cn("w-full py-4", styles.mobileCtaButton)} />}
 

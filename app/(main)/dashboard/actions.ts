@@ -31,11 +31,19 @@ export async function getDashboardData() {
     .select("*", { count: 'exact', head: true })
     .eq("seller_id", user.id);
 
+  // 4. Buscar Contagem de Pedidos de Compra ativos do Usuário
+  const { count: purchaseRequestsCount } = await supabase
+    .from("purchase_requests")
+    .select("*", { count: 'exact', head: true })
+    .eq("buyer_id", user.id)
+    .eq("status", "ativo");
+
   return { 
     user, 
     profile, 
     favoritesCount: favoritesCount || 0, 
-    adsCount: adsCount || 0 
+    adsCount: adsCount || 0,
+    purchaseRequestsCount: purchaseRequestsCount || 0,
   };
 }
 
@@ -210,7 +218,7 @@ export async function updateUserProfile(formData: FormData) {
       }
     }
 
-    revalidatePath("/dashboard");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     console.error('Erro ao atualizar perfil:', error);

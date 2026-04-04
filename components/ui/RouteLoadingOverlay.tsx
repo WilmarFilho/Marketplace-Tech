@@ -29,7 +29,7 @@ export default function RouteLoadingOverlay() {
         width: 64,
         height: 64,
         border: "6px solid #333",
-        borderTop: "6px solid #FFD600",
+        borderTop: "6px solid #ecf230",
         borderRadius: "50%",
         animation: "spin 1s linear infinite"
       }} />

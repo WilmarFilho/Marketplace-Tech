@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { updateUserProfile } from "../../app/(main)/dashboard/actions";
 
 interface EditProfileModalProps {
@@ -22,6 +23,7 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName, prof
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [role, setRole] = useState<string | null>(null);
+  const router = useRouter();
 
   // Preenche os campos e só mostra o conteúdo quando estiver pronto
   useEffect(() => {
@@ -60,11 +62,12 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName, prof
       }
 
       await updateUserProfile(formData);
-      
+
       // Reset form e fechar modal
       setNewPassword('');
       setConfirmPassword('');
       onClose();
+      window.location.reload();
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'Erro desconhecido');
     } finally {
@@ -163,18 +166,32 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName, prof
               )}
               {/* Tipo de Conta (não exibe para admin) */}
               {profile.role !== 'admin' && (
-                <div className="space-y-2">
-                  <label htmlFor="role" className="block text-sm font-medium text-white/80">Tipo de Conta</label>
-                  <select
-                    id="role"
-                    value={role || ''}
-                    onChange={e => setRole(e.target.value)}
-                    className="w-full border rounded px-3 py-2 bg-black/20 text-white border-white/10"
-                    disabled={isLoading}
-                  >
-                    <option value="comprador">Comprador</option>
-                    <option value="vendedor">Vendedor</option>
-                  </select>
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-white/80">Tipo de Conta</label>
+                  <div className="flex bg-black/40 border border-white/10 rounded-lg p-1">
+                    <button
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => setRole('comprador')}
+                      className={`flex-1 flex justify-center py-2 px-4 rounded-md text-sm font-medium transition-all ${role === 'comprador'
+                        ? 'bg-[#ecf230] text-black shadow-lg shadow-[#ecf230]/20'
+                        : 'text-white/60 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                      Comprador
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isLoading}
+                      onClick={() => setRole('vendedor')}
+                      className={`flex-1 flex justify-center py-2 px-4 rounded-md text-sm font-medium transition-all ${role === 'vendedor'
+                        ? 'bg-[#ecf230] text-black shadow-lg shadow-[#ecf230]/20'
+                        : 'text-white/60 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                      Vendedor
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -193,7 +210,7 @@ export function EditProfileModal({ isOpen, onClose, currentPhone, userName, prof
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-4 py-2 rounded bg-green-600/80 hover:bg-green-700/80 text-white font-semibold transition flex items-center gap-2 disabled:opacity-60"
+                className="px-4 py-2 rounded bg-white hover:bg-white/80 text-black font-semibold transition flex items-center gap-2 disabled:opacity-60"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Salvar Alterações

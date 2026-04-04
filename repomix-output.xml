@@ -1754,7 +1754,7 @@ export default function RouteLoadingOverlay() {
         width: 64,
         height: 64,
         border: "6px solid #333",
-        borderTop: "6px solid #FFD600",
+        borderTop: "6px solid #ecf230",
         borderRadius: "50%",
         animation: "spin 1s linear infinite"
       }} />
@@ -1895,13 +1895,13 @@ export function TopLoaderControl() {
 
   return (
     <NextTopLoader 
-      color="#FFD600"
+      color="#ecf230"
       initialPosition={0.08}
       crawlSpeed={200}
       height={3}
       showSpinner={false}
       speed={200}
-      shadow="0 0 10px #FFD600"
+      shadow="0 0 10px #ecf230"
       zIndex={99999}
     />
   );
@@ -13744,7 +13744,7 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                     <Link
                       href="/dashboard/anunciar"
                       className={cn(
-                        "text-black font-bold bg-[#FFD600] rounded-lg px-4 py-2 ml-2 hover:brightness-95 transition",
+                        "text-black font-bold bg-[#ecf230] rounded-lg px-4 py-2 ml-2 hover:brightness-95 transition",
                         styles.ctaButton
                       )}
                     >
@@ -13887,7 +13887,7 @@ export default function Cabecalho({ floating }: CabecalhoProps) {
                         <Link
                           href="/dashboard/anunciar"
                           className={cn(
-                            "block w-full text-center py-4 px-6 rounded-xl bg-[#FFD600] text-black font-bold hover:brightness-95 transition-colors",
+                            "block w-full text-center py-4 px-6 rounded-xl bg-[#ecf230] text-black font-bold hover:brightness-95 transition-colors",
                             styles.mobileCtaButton
                           )}
                           onClick={() => setIsMenuOpen(false)}
@@ -15863,7 +15863,7 @@ export default function RootLayout({
       >
         {/* Configuração do Loader de Rota instantâneo */}
         <NextTopLoader 
-          color="#FFD600" // Cor amarela principal da DropTech
+          color="#ecf230" // Cor amarela principal da DropTech
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
@@ -15871,7 +15871,7 @@ export default function RootLayout({
           showSpinner={false}
           easing="ease"
           speed={200}
-          shadow="0 0 10px #FFD600, 0 0 5px #FFD600"
+          shadow="0 0 10px #ecf230, 0 0 5px #ecf230"
           zIndex={99999}
         />
         <RoleProvider>

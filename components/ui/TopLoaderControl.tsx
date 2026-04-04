@@ -33,14 +33,14 @@ export function TopLoaderControl() {
   }, [pathname, searchParams]);
 
   return (
-    <NextTopLoader 
-      color="#FFD600"
+    <NextTopLoader
+      color="#ecf230"
       initialPosition={0.08}
       crawlSpeed={200}
       height={3}
       showSpinner={false}
       speed={200}
-      shadow="0 0 10px #FFD600"
+      shadow="0 0 10px #ecf230"
       zIndex={99999}
     />
   );
